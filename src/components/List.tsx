@@ -1,10 +1,18 @@
 import react from "react";
+import css from "./List.module.scss";
 
-const List = (): JSX.Element =>
+type ListProps = 
 {
+	className?: string | undefined;
+}
+
+const List = ({className}: ListProps): JSX.Element =>
+{
+	
+	const cssList = [className, css.list].join(" ");
 	return (
-		<section>
-			List of items.
+		<section className={cssList}>
+			
 		</section>
 	)
 }

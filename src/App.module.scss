@@ -1,13 +1,11 @@
 .header
 {
-	flex: 0 0 50px;
-	background: green;
+	flex: 0 0 auto;
 }
 
 .list 
 {
-	flex: 0 0 150px;
-	background: yellow;
+	flex: 0 0 auto;
 }
 
 .main
@@ -17,6 +15,5 @@
 
 .footer
 {
-	flex: 0 0 50px;
-	background: pink;
+	flex: 0 0 auto;
 }

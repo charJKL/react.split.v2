@@ -9,18 +9,12 @@ import Footer from "./components/Footer";
 function App() {
 	return (
 		<>
-			<header className={css.header}>
-				<Header />
-			</header>
-			<section className={css.list}>
-				<List />
-			</section>
+			<Header className={css.header}/>
+			<List className={css.list}/>
 			<main className={css.main}> 
-				asd
+				
 			</main>
-			<footer className={css.footer}>
-				<Footer />
-			</footer>
+			<Footer className={css.footer}/>
 		</>
 	);
 }

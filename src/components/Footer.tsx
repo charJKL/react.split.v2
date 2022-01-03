@@ -1,10 +1,18 @@
 import react from "react";
+import css from "./Footer.module.scss";
 
-const Footer = () : JSX.Element => 
+type FooterProps = 
 {
+	className?: string | undefined;
+}
+
+const Footer = ({className}: FooterProps) : JSX.Element => 
+{
+	
+	const cssFooter = [className, css.footer].join(" ");
 	return (
-		<footer>
-			footer
+		<footer className={cssFooter}>
+			
 		</footer>
 	)
 }
