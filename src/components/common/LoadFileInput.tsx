@@ -1,14 +1,21 @@
 import React, { useRef } from "react";
+import css from "./LoadFileInput.module.scss";
 
 type LoadFileInputProps = 
 {
+	className?: string | undefined;
 	children: React.ReactNode;
 	onFiles?: (files: Array<File>) => void;
 }
 
-const LoadFileInput = ({children, onFiles}: LoadFileInputProps) : JSX.Element =>
+const LoadFileInput = ({children, onFiles, ...props}: LoadFileInputProps) : JSX.Element =>
 {
 	var reference = useRef<HTMLInputElement>(null);
+
+	const onRedirectClickHandler = () =>
+	{
+		reference.current?.click();
+	}
 
 	const onChangeHandler = (e: React.ChangeEvent) => {
 		if(onFiles && reference.current)
@@ -21,16 +28,10 @@ const LoadFileInput = ({children, onFiles}: LoadFileInputProps) : JSX.Element =>
 	
 	return (
 		<>
-			<input type="file" accept="image/*" multiple ref={reference} onChange={onChangeHandler} />
+			<button onClick={onRedirectClickHandler} {...props}>{children}</button>
+			<input className={css.hide} type="file" accept="image/*" multiple ref={reference} onChange={onChangeHandler} />
 		</>
 	)
 }
 
 export default LoadFileInput;
-
-/*
-			<button class="load-files" @click="this.$refs.loadImagesFiles.click()">Load files</button>
-	<input class="file-list" type="text" :value="getList" @click="this.$refs.loadImagesFiles.click()" readonly />
-	<input class="input-hide" ref="loadImagesFiles" @change="onLoadImagesFiles" type="file" accept="image/*" multiple />
-		
-	*/	
