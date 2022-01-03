@@ -1,4 +1,22 @@
-.app
+.header
 {
-	background: red;
+	flex: 0 0 50px;
+	background: green;
+}
+
+.list 
+{
+	flex: 0 0 150px;
+	background: yellow;
+}
+
+.main
+{
+	flex: 1 0 0;
+}
+
+.footer
+{
+	flex: 0 0 50px;
+	background: pink;
 }
