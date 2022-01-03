@@ -1,10 +1,11 @@
-import { configureStore } from "@reduxjs/toolkit";
-import FilesReducer from "./slice.files";
+import { configureStore, getDefaultMiddleware } from "@reduxjs/toolkit";
+import PagesReducer from "./slice.pages";
 
 const Store = configureStore({
 	reducer: {
-		files: FilesReducer
+		pages: PagesReducer
 	}
+	
 });
 
 export type StoreState = ReturnType<typeof Store.getState>;
