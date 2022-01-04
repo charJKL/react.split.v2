@@ -1,6 +1,6 @@
 import React, { useEffect, useRef } from "react";
 import { useAppDispatch, useAppSelector } from "../../store/store.hooks";
-import { loadPage, selectPageById } from "../../store/slice.pages";
+import { loadPage, selectPage, selectPageById } from "../../store/slice.pages";
 import css from "./Thumbnail.module.scss";
 import placeholder from "../../assets/placeholder.svg";
 import waiting from "../../assets/waiting.svg";
@@ -30,6 +30,11 @@ const Thumbnail = ({id}: ThumbnailProps) : JSX.Element =>
 		}
 	}, [element])
 
+	const onClickHandler = () =>
+	{
+		dispatch(selectPage(id));
+	}
+
 	switch(file.status)
 	{
 		case "Idle":
@@ -48,7 +53,7 @@ const Thumbnail = ({id}: ThumbnailProps) : JSX.Element =>
 			var image = <span>Error occur</span>;
 	}
 	return (
-		<div className={css.thumbnail} ref={element}>
+		<div className={css.thumbnail} ref={element} onClick={onClickHandler}>
 			{ image }
 			<input className={css.name} value={file.name} />
 		</div>

@@ -2,10 +2,11 @@ import { createAsyncThunk, createSlice, PayloadAction } from "@reduxjs/toolkit";
 import type { StoreState, StoreDispatch } from "./store";
 
 type PageStatus = "Idle" | "Loading" | "Loaded" | "Error";
+type Key = string;
 
 type Page = 
 {
-	id: string,
+	id: Key,
 	status: PageStatus,
 	url: string,
 	name: string,
@@ -17,12 +18,14 @@ type InitialStatePages =
 {
 	ids: Array<string>,
 	entities: { [key: string]: Page },
+	selected: string | null;
 }
 
 const InitialState : InitialStatePages = 
 {
 	ids: [],
-	entities: {}
+	entities: {},
+	selected: null,
 }
 
 
@@ -42,6 +45,11 @@ const Pages = createSlice({
 		{
 			const id = action.payload.id;
 			state.entities[id] = { ...state.entities[id], ...action.payload };
+		},
+		selectPage: (state, action: PayloadAction<string>) => 
+		{
+			const id = action.payload;
+			if(state.ids.includes(id)) state.selected = action.payload;
 		}
 	}
 });
@@ -85,8 +93,9 @@ const loadPage = createAsyncThunk<void, string, ThunkStoreTypes>('pages/loadPage
 
 export const selectPageIds = (state: StoreState) => state.pages.ids;
 export const selectPageById = (id: string) => (state: StoreState) => state.pages.entities[id];
+export const selectSelectedPage = (state: StoreState) => state.pages.selected ? state.pages.entities[state.pages.selected] : null;
 
-export const { addPage, } = Pages.actions;
+export const { addPage, selectPage } = Pages.actions;
 export { loadFile, loadPage };
 
 export default Pages;
