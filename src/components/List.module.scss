@@ -1,7 +1,13 @@
 @import "../index.scss";
 
+$scroll-height: 17px;
+
 .list
 {
-	height: 150px;
+	display: flex;
+	flex-flow: row nowrap;
+	height: 110px + $scroll-height;
 	background: $color-gray-light;
+	overflow-x: scroll;
+	box-sizing: border-box;
 }

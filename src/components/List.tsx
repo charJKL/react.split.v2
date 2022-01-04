@@ -16,7 +16,7 @@ const List = ({className}: ListProps): JSX.Element =>
 	const cssList = [className, css.list].join(" ");
 	return (
 		<section className={cssList}>
-			{ pages.map(pageId => <Thumbnail id={pageId}/>) }
+			{ pages.map(pageId => <Thumbnail key={pageId} id={pageId}/>) }
 		</section>
 	)
 }

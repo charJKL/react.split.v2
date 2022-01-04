@@ -1,0 +1,29 @@
+<svg xmlns="http://www.w3.org/2000/svg" class="widget-poland-map-pin-svg" preserveAspectRatio="xMidYMid meet" viewBox="0 0 4 4" transform-origin="center center">
+	<circle cx="2" cy="0.5" r="0.25">
+		<animate attributeName="opacity" begin="0s" dur="1s" values="1;0;0;0;0;0;0;0;0" calcMode="linear" repeatCount="indefinite"/>
+	</circle>
+	<circle cx="3.05" cy="0.95" r="0.25">
+		<animate attributeName="opacity" begin="0s" dur="1s" values="0;1;0;0;0;0;0;0;0" calcMode="linear" repeatCount="indefinite" />
+	</circle>
+	<circle cx="3.5" cy="2" r="0.25" >
+		<animate attributeName="opacity" begin="0s" dur="1s" values="0;0;1;0;0;0;0;0;0" calcMode="linear" repeatCount="indefinite" />
+	</circle>
+	<circle cx="3.05" cy="3.05" r="0.25" >
+		<animate attributeName="opacity" begin="0s" dur="1s" values="0;0;0;1;0;0;0;0;0" calcMode="linear" repeatCount="indefinite" />
+	</circle>
+	<circle cx="2" cy="3.5" r="0.25" >
+		<animate attributeName="opacity" begin="0s" dur="1s" values="0;0;0;0;1;0;0;0;0" calcMode="linear" repeatCount="indefinite" />
+	</circle>
+	<circle cx="0.95" cy="3.05" r="0.25" >
+		<animate attributeName="opacity" begin="0s" dur="1s" values="0;0;0;0;0;1;0;0;0" calcMode="linear" repeatCount="indefinite" />
+	</circle>
+	<circle cx="0.5" cy="2" r="0.25" >
+		<animate attributeName="opacity" begin="0s" dur="1s" values="0;0;0;0;0;0;1;0;0" calcMode="linear" repeatCount="indefinite" />
+	</circle>
+	<circle cx="0.95" cy="0.95" r="0.25" >
+		<animate attributeName="opacity" begin="0s" dur="1s" values="0;0;0;0;0;0;0;1;0" calcMode="linear" repeatCount="indefinite"/>
+	</circle>
+	<circle cx="2" cy="0.5" r="0.25">
+		<animate attributeName="opacity" begin="0s" dur="1s" values="0;0;0;0;0;0;0;0;1" calcMode="linear" repeatCount="indefinite"/>
+	</circle>
+</svg>
