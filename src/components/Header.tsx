@@ -2,7 +2,7 @@ import React from "react";
 import LoadFileInput from "./common/LoadFileInput";
 import css from "./Header.module.scss";
 import { useAppSelector, useAppDispatch } from "../store/store.hooks";
-import { setFiles } from "../store/slice.pages";
+import { loadFile } from "../store/slice.pages";
 
 type HeaderProps = 
 {
@@ -15,7 +15,7 @@ const Header = ({className}: HeaderProps): JSX.Element =>
 	
 	const onFilesHandler = (files: Array<File>) =>
 	{
-		dispatch(setFiles(files));
+		dispatch(loadFile(files));
 	}
 	
 	const cssHeader = [className, css.header].join(' ');
