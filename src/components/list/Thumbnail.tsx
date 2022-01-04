@@ -41,7 +41,7 @@ const Thumbnail = ({id}: ThumbnailProps) : JSX.Element =>
 			break;
 			
 		case "Loaded":
-			var image = <img className={css.image} src="sss" />;
+			var image = <img className={css.image} src={file.url} />;
 			break;
 			
 		case "Error":
