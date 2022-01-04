@@ -28,11 +28,18 @@ const Pages = createSlice({
 	initialState: InitialState,
 	reducers: 
 	{
-		addPage(state, action: PayloadAction<Page>)
+		addPage: (state, action: PayloadAction<Page>) =>
 		{
 			const id = action.payload.id;
 			state.ids.push(id);
 			state.entities[id] = action.payload;
+		},
+		loadPage: (state, action: PayloadAction<string>) => 
+		{
+			const id = action.payload;
+			state.entities[id].status = "Loading";
+			
+			
 		}
 	}
 });
@@ -55,7 +62,7 @@ const loadFile = createAsyncThunk<void, Array<File>, loadFileTypes>('pages/loadF
 export const selectPageIds = (state: StoreState) => state.pages.ids;
 export const selectPageById = (id: string) => (state: StoreState) => state.pages.entities[id];
 
-export const { addPage } = Pages.actions;
+export const { addPage, loadPage } = Pages.actions;
 export { loadFile };
 
 export default Pages;

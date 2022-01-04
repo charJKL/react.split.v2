@@ -1,5 +1,5 @@
-import { configureStore, getDefaultMiddleware } from "@reduxjs/toolkit";
-import PagesReducer from "./slice.pages";
+import { createStore, combineReducers, configureStore, Middleware } from "@reduxjs/toolkit";
+import PagesSlice from "./slice.pages";
 
 
 const Store = configureStore({
@@ -11,9 +11,10 @@ const Store = configureStore({
 		})
 	},
 	reducer: {
-		pages: PagesReducer
+		pages: PagesSlice.reducer
 	}
 });
+
 
 export type StoreState = ReturnType<typeof Store.getState>;
 export type StoreDispatch = typeof Store.dispatch;
