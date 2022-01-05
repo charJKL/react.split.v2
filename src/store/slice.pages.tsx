@@ -78,13 +78,13 @@ const loadPage = createAsyncThunk<void, string, ThunkStoreTypes>('pages/loadPage
 
 	const image = new Image();
 	dispatch(upsertPage({id: id, status: "Loading"}));
-	image.addEventListener('load', (e) => {
+	image.addEventListener('load', (e: Event) => {
 		const image = e.target as HTMLImageElement;
 		const width = image.naturalWidth;
 		const height = image.naturalHeight;
 		dispatch(upsertPage({id: id, status: "Loaded", width: width, height: height}));
 	});
-	image.addEventListener('error', (e) => {
+	image.addEventListener('error', (e: Event) => {
 		
 		dispatch(upsertPage({id: id, status: "Error"}));
 	});
