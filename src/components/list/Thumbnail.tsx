@@ -1,4 +1,5 @@
-import React, { useEffect, useRef } from "react";
+import React, { useEffect, useRef, useState } from "react";
+import useIsElementVisible from "./useIsElementVisible";
 import { useAppDispatch, useAppSelector } from "../../store/store.hooks";
 import { loadPage, selectPage, selectPageById } from "../../store/slice.pages";
 import css from "./Thumbnail.module.scss";
@@ -12,30 +13,20 @@ type ThumbnailProps =
 
 const Thumbnail = ({id}: ThumbnailProps) : JSX.Element =>
 {
-	const file = useAppSelector(selectPageById(id));
+	const page = useAppSelector(selectPageById(id));
 	const dispatch = useAppDispatch();
-	const element = useRef<HTMLDivElement>(null);
+	const [element, isVisible] = useIsElementVisible<HTMLDivElement>({threshold: [0, 1]});
 	
-	useEffect(() =>{
-		const option : IntersectionObserverInit = { root: null, threshold: [0, 1] }
-		const intersection = new IntersectionObserver((entries) => {
-			const [entry] = entries;
-			if(entry.isIntersecting) dispatch(loadPage(id));
-		}, option);
-		if(element.current) intersection.observe(element.current);
-		
-		return () =>
-		{
-			if(element.current) intersection.unobserve(element.current);
-		}
-	}, [element])
-
+	useEffect(() => {
+		if(isVisible === true && page.status === "Idle") dispatch(loadPage(id))
+	}, [isVisible]);
+	
 	const onClickHandler = () =>
 	{
 		dispatch(selectPage(id));
 	}
 
-	switch(file.status)
+	switch(page.status)
 	{
 		case "Idle":
 			var image = <img className={css.placeholder} src={placeholder} />
@@ -46,7 +37,7 @@ const Thumbnail = ({id}: ThumbnailProps) : JSX.Element =>
 			break;
 			
 		case "Loaded":
-			var image = <img className={css.image} src={file.url} />;
+			var image = <img className={css.image} src={page.url} />;
 			break;
 			
 		case "Error":
@@ -55,7 +46,7 @@ const Thumbnail = ({id}: ThumbnailProps) : JSX.Element =>
 	return (
 		<div className={css.thumbnail} ref={element} onClick={onClickHandler}>
 			{ image }
-			<input className={css.name} value={file.name} />
+			<input className={css.name} value={page.name} />
 		</div>
 	)
 }
