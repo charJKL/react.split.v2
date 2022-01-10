@@ -2,17 +2,15 @@
 {
 	flex: 0 0 auto;
 }
-
 .list 
 {
 	flex: 0 0 auto;
 }
-
 .main
 {
 	flex: 1 0 0;
+	height: 0px; /* this is hack to prevent extending vertically */
 }
-
 .footer
 {
 	flex: 0 0 auto;
