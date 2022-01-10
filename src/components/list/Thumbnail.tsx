@@ -46,7 +46,7 @@ const Thumbnail = ({id}: ThumbnailProps) : JSX.Element =>
 	return (
 		<div className={css.thumbnail} ref={element} onClick={onClickHandler}>
 			{ image }
-			<input className={css.name} value={page.name} />
+			<input className={css.name} value={page.name} readOnly />
 		</div>
 	)
 }
