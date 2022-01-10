@@ -1,0 +1,29 @@
+@use "../../index";
+
+
+.editor
+{
+	position:relative;
+	width: 100%;
+	height: 100%;
+	overflow: hidden;
+	user-select: none;
+}
+
+.toolbar
+{
+	position: absolute;
+	top: 5px; left: 5px;
+	display: flex;
+	flex-flow: row nowrap;
+	font: 12px / 16px index.$font;
+	z-index: 2;
+}
+
+.desktop
+{
+	position: absolute;
+	width: 100%; 
+	height: 100%;
+	z-index: 1;
+}
