@@ -1,30 +1,54 @@
-import { useEffect } from "react";
+import { MouseEvent, useState } from "react";
 
 type Position =
 {
-	x: number;
-	y: number;
+	left: number;
+	top: number;
 }
-
-const usePosition = (element: React.RefObject<HTMLElement>) : [Position] => 
+const MouseButton = 
 {
-	const position = {x: 0, y: 0};
+	left: 0,
+	right: 2
+};
+
+const usePosition = (element: React.RefObject<HTMLElement>) => 
+{
+	const [position, setPosition] = useState<Position>({left: 10, top: 100});
+	const [isMoving, setMoving] = useState<boolean>(false);
+	const [initalPosition, setInitalPosition] = useState<Position>({left: 0, top: 0});
+	const [initalMouse, setInitalMouse] = useState<Position>({left: 0, top: 0});
 	
-	useEffect(() =>{
-		if(element.current)
-		{
-			//element.current.addEventListener
-		}
+	const mousedown = (e: MouseEvent) =>
+	{
+		if(e.button !== MouseButton.right) return;
+		setMoving(true);
+		setInitalPosition({left: position.left, top: position.top});
+		setInitalMouse({left: e.clientX, top: e.clientY});
+	}
+	const mousemove = (e: MouseEvent) =>
+	{
+		if(isMoving === false) return;
 		
-		return () => {
-			if(element.current)
-			{
-				//element.current.removeEventListener()
-			}
-		}
-	}, [element]);
+		const current = {x: e.clientX, y: e.clientY};
+		const diff = {x: initalMouse.left - current.x, y: initalMouse.top - current.y};
+		const pos = {left: initalPosition.left - diff.x, top: initalPosition.top - diff.y};
+		setPosition(pos);
+	}
+	const mouseup = (e: MouseEvent) => 
+	{
+		if(e.button !== MouseButton.right) return;
+		setMoving(false);
+	}
+	const mouseleave = (e: MouseEvent) =>
+	{
+		setMoving(false);
+	}
+	const contextmenu = (e: MouseEvent) =>
+	{
+		e.preventDefault();
+	}
 	
-	return [position];
+	return {position, mousedown, mousemove, mouseup, mouseleave, contextmenu};
 }
 
 export default usePosition;
