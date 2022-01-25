@@ -98,4 +98,5 @@ export const selectSelectedPage = (state: StoreState) => state.pages.selected ? 
 export const { addPage, selectPage } = Pages.actions;
 export { loadFile, loadPage };
 
+export type { Page };
 export default Pages;
