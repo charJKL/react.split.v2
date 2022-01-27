@@ -1,5 +1,5 @@
-import { SIGFPE } from "node:constants";
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, MouseEvent } from "react";
+import MouseButton from "./MouseButton";
 
 type Size = 
 {
@@ -12,12 +12,44 @@ type Scale =
 	y: number;
 }
 
-const useScale = (viewport: Size, element: Size) : [Size, Scale] =>
+const SENSITIVITY = 0.0001;
+
+type ScaleAction = null | "scale-out" | "scale-in";
+
+const useScale = (viewport: Size, element: Size) =>
 {
-	const scale = calculateRationValue(viewport, element);
+	const [scale, setScale] = useState<Scale>({x: 1, y: 1});
+	const [isScaling, setScaling] = useState<boolean>(false);
+	const [wasScaled, setWasScaled] = useState<ScaleAction>(null);
 	const size = calculateSizeValue(element, scale);
 	
-	return [size, scale];
+	useEffect(() => {
+		setScale(calculateRationValue(viewport, element));
+	}, [viewport, element]);
+	
+	const mouseDown = (e: MouseEvent) =>
+	{
+		if(e.button !== MouseButton.right) return;
+		setScaling(true);
+	}
+	
+	const mouseUp = (e: MouseEvent) => 
+	{
+		setScaling(false);
+	}
+	
+	const mouseLeave = (e: MouseEvent) =>
+	{
+		setScaling(false);
+	}
+	
+	const mouseWheel = (e: MouseEvent) =>
+	{
+		if(isScaling === false) return;
+		e.preventDefault();
+	}
+
+	return {size, scale, mouseDown, mouseUp, mouseLeave, mouseWheel};
 }
 
 
@@ -28,7 +60,6 @@ const calculateRationValue = (viewport: Size, size: Size) : Scale =>
 	const x = viewport.width / size.width;
 	const y = viewport.height / size.height;
 	const ratio = Math.min(x, y);
-	console.log('ratio', ratio);
 	return {x: ratio, y: ratio};
 }
 
