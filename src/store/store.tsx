@@ -1,6 +1,6 @@
 import { createStore, combineReducers, configureStore, Middleware } from "@reduxjs/toolkit";
 import PagesSlice from "./slice.pages";
-
+import MetricSlice from "./slice.metrics";
 
 const Store = configureStore({
 	middleware: (getDefaultMiddleware) => {
@@ -11,7 +11,8 @@ const Store = configureStore({
 		})
 	},
 	reducer: {
-		pages: PagesSlice.reducer
+		pages: PagesSlice.reducer,
+		metrics: MetricSlice.reducer
 	}
 });
 
