@@ -1,4 +1,4 @@
-import React, { useState, useEffect, MouseEvent } from "react";
+import React, { useState, useEffect, MouseEvent, WheelEvent } from "react";
 import MouseButton from "./MouseButton";
 
 type Size = 
@@ -23,9 +23,15 @@ const useScale = (viewport: Size, element: Size) =>
 	const [wasScaled, setWasScaled] = useState<ScaleAction>(null);
 	const size = calculateSizeValue(element, scale);
 	
-	useEffect(() => {
+	useEffect(() => { // calculate inital sale
 		setScale(calculateRationValue(viewport, element));
 	}, [viewport, element]);
+	
+	useEffect(() => { // reset indicator that operation scaled was performed
+		if(wasScaled == null) return;
+		const id = setTimeout(() => { setWasScaled(null); }, 200);
+		return () => { clearTimeout(id); }
+	}, [wasScaled]);
 	
 	const mouseDown = (e: MouseEvent) =>
 	{
@@ -43,15 +49,17 @@ const useScale = (viewport: Size, element: Size) =>
 		setScaling(false);
 	}
 	
-	const mouseWheel = (e: MouseEvent) =>
+	const mouseWheel = (e: WheelEvent) =>
 	{
 		if(isScaling === false) return;
-		e.preventDefault();
+		const x = scale.x - e.deltaY * SENSITIVITY;
+		const y = scale.y - e.deltaY * SENSITIVITY;
+		setScale({x: x, y: y});
+		setWasScaled(e.deltaY > 0 ? "scale-out" : "scale-in");
 	}
 
-	return {size, scale, mouseDown, mouseUp, mouseLeave, mouseWheel};
+	return {size, scale, isScaling, wasScaled, mouseDown, mouseUp, mouseLeave, mouseWheel};
 }
-
 
 const calculateRationValue = (viewport: Size, size: Size) : Scale =>
 {
@@ -71,97 +79,5 @@ const calculateSizeValue = (element: Size, scale: Scale) : Size =>
 	}
 }
 
-export type { Size };
+export type { Size, ScaleAction };
 export default useScale;
-
-
-
-/*
-
-type ScaleOperation = "in" | "out";
-
-const useScale = (viewport: React.RefObject<HTMLDivElement>, element: Size | null, sensitivity: number = 0.01) : [Size, Scale] =>
-{
-	console.log('useScale', viewport, element);
-	const [scale, setScale] = useState<Scale>({x: 1, y: 1});
-	
-	// Recalculate scale on change:
-	useEffect(() => {
-		console.log('useScale - useEffect', viewport, element);
-		if(viewport.current == null)  return;
-		if(element == null) return;
-		
-		const viewportSize = viewport.current.getBoundingClientRect();
-		const elementSize = element as Size;
-		const sacle = calculateRationValue(viewportSize, elementSize);
-		setScale(scale);
-	}, [viewport.current, element]);
-	
-	const onWheelHandler = (e: Event) =>
-	{
-		console.log('on mouse whell', e);
-	}
-	const onMouseupHandler = (e: Event) =>
-	{
-		console.log('on mouse up', e);
-	}
-	const onMouseleaveHandler = (e: Event) =>
-	{
-		console.log('on mouse leave', e);
-	}
-	const onMousedownHandler = (e: Event) =>
-	{
-		console.log('on mouse dwon', e);
-	}
-	
-	// Add events listeners:
-	useEffect(() =>{
-		if(viewport.current == null) return;
-		viewport.current.addEventListener('wheel', onWheelHandler);
-		viewport.current.addEventListener('mouseup', onMouseupHandler);
-		viewport.current.addEventListener('mouseleave', onMouseleaveHandler);
-		viewport.current.addEventListener('mousedown', onMousedownHandler);
-		
-		return () =>
-		{
-			if(viewport.current == null) return;
-			viewport.current.removeEventListener('wheel', onWheelHandler);
-			viewport.current.removeEventListener('mouseup', onMouseupHandler);
-			viewport.current.removeEventListener('mouseleave', onMouseleaveHandler);
-			viewport.current.removeEventListener('mousedown', onMousedownHandler);
-		}
-	}, [viewport.current]);
-	
-	
-	if(viewport.current == null && element == null)
-	{
-		const size = {width: 0, height: 0};
-		return [size, scale];
-	}
-	
-	const size = 
-	{
-		width: Math.floor(element.width * scale.x),
-		height: Math.floor(element.height * scale.y)
-	};
-	return [size, scale];
-}
-
-
-
-const changeScale = (operation: ScaleOperation) =>
-{
-	switch(operation)
-	{
-		case "in":
-			setScale({x: scale.x + sensitivity, y: scale.y + sensitivity});
-			return;
-			
-		case "out":
-			setScale({x: scale.x - sensitivity, y: scale.y - sensitivity});
-	}
-};
-
-
-export default useScale;
-*/

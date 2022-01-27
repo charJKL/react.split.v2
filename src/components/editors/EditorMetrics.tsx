@@ -1,11 +1,11 @@
-import React, { useRef, MouseEvent } from "react";
+import React, { useRef, MouseEvent, WheelEvent } from "react";
 import { loadPage, selectSelectedPage } from "../../store/slice.pages";
 import { useAppSelector } from "../../store/store.hooks";
 import useGetEditorSize from "./useGetEditorSize";
 import useGetPageSize from "./useGetPageSize";
 import useScale from "./useScale";
-import css from "./EditorMetrics.module.scss";
 import usePosition from "./usePosition";
+import css from "./EditorMetrics.module.scss";
 
 const EditorMetrics = (): JSX.Element =>
 {
@@ -13,8 +13,8 @@ const EditorMetrics = (): JSX.Element =>
 	const editorRef = useRef<HTMLDivElement>(null);
 	const editorSize = useGetEditorSize(editorRef);
 	const pageSize = useGetPageSize(page);
-	const {size, scale, mouseDown: mouseDownScale, mouseUp: mouseUpScale, mouseLeave: mouseLeaveScale, mouseWheel: mouseWheelScale} = useScale(editorSize, pageSize);
-	const {position, mousedown: mouseDownPosition, mousemove: mouseMovePosition, mouseup: mouseUpPosition, mouseleave: mouseLeavePosition, contextmenu : mouseContextPosition} = usePosition(editorRef);
+	const {size, scale, wasScaled, mouseDown: mouseDownScale, mouseUp: mouseUpScale, mouseLeave: mouseLeaveScale, mouseWheel: mouseWheelScale} = useScale(editorSize, pageSize);
+	const {position, isMoving, mouseDown: mouseDownPosition, mouseMove: mouseMovePosition, mouseUp: mouseUpPosition, mouseLeave: mouseLeavePosition, contextmenu : mouseContextPosition} = usePosition(editorRef);
 	
 	var toolbars: Array<JSX.Element> = [];
 	var desktop : JSX.Element = <></>;
@@ -30,12 +30,14 @@ const EditorMetrics = (): JSX.Element =>
 	
 	const onMouseDownHandler = (e: MouseEvent) => { mouseDownScale(e); mouseDownPosition(e); }
 	const onMouseMoveHandler = (e: MouseEvent) => { mouseMovePosition(e); }
-	const onMouseUpHandler = (e: MouseEvent) => { mouseUpScale(e); mouseDownPosition(e); }
+	const onMouseUpHandler = (e: MouseEvent) => { mouseUpScale(e); mouseUpPosition(e); }
 	const onMouseLeaveHandler = (e: MouseEvent) => { mouseLeaveScale(e); mouseLeavePosition(e); }
 	const onMouseContextHandler = (e: MouseEvent) => { mouseContextPosition(e); }
-	const onMouseWheelHandler = (e: MouseEvent) => { mouseWheelScale(e); }
+	const onMouseWheelHandler = (e: WheelEvent) => { mouseWheelScale(e); }
 	
-	const style = { ...size, ...position };
+	const movingCursor = isMoving ? { cursor: 'move'} : {} ;
+	const scalingCursor = wasScaled ? wasScaled == "scale-out" ? { cursor: 'zoom-out'} : { cursor: 'zoom-in'} : {};
+	const style = { ...size, ...position, ...movingCursor, ...scalingCursor };
 	return (
 		<div className={css.editor} ref={editorRef} onMouseDown={onMouseDownHandler} onMouseMove={onMouseMoveHandler} onMouseUp={onMouseUpHandler} onMouseLeave={onMouseLeaveHandler} onContextMenu={onMouseContextHandler} onWheel={onMouseWheelHandler}>
 			<div className={css.toolbars}>
