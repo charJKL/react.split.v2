@@ -35,13 +35,18 @@ const Metrics = createSlice({
 	initialState: InitialState,
 	reducers: 
 	{
-		
+		addMetric: (state, action: PayloadAction<Metric>) =>
+		{
+			const id = action.payload.id;
+			state.ids.push(id);
+			state.entities[id] = action.payload;
+		},
 	}
 });
 
 export const selectMetricsForPage = (page: Page | null) => (state: StoreState) => page ? state.metrics.entities[page.id] : null;
 
-export const { } = Metrics.actions;
+export const { addMetric } = Metrics.actions;
 export { };
 
 export type { Metric };

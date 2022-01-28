@@ -2,7 +2,7 @@ import React from "react";
 import LoadFileInput from "./common/LoadFileInput";
 import css from "./Header.module.scss";
 import { useAppSelector, useAppDispatch } from "../store/store.hooks";
-import { loadFile } from "../store/slice.pages";
+import { loadFile } from "../store/store.file";
 
 type HeaderProps = 
 {

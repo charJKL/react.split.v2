@@ -1,5 +1,5 @@
 import { createAsyncThunk, createSlice, PayloadAction } from "@reduxjs/toolkit";
-import type { StoreState, StoreDispatch } from "./store";
+import type { StoreState, ThunkStoreTypes } from "./store";
 
 type PageStatus = "Idle" | "Loading" | "Loaded" | "Error";
 type Key = string;
@@ -54,21 +54,6 @@ const Pages = createSlice({
 	}
 });
 
-type ThunkStoreTypes = {dispatch: StoreDispatch, state: StoreState };
-const loadFile = createAsyncThunk<void, Array<File>, ThunkStoreTypes>('pages/loadFile', (files: Array<File>, thunk) => {
-	const state = thunk.getState();
-	const dispatch = thunk.dispatch;
-	
-	let counter = state.pages.ids.length;
-	files.forEach((file) => {
-		const id = (counter++).toString();
-		const evenOdd = (counter % 2) ? 'eve' : 'odd';
-		const name = `page-${evenOdd}-${id}`;
-		const url = URL.createObjectURL(file);
-		const page : Page = {id: id, status: "Idle", url: url, name: name};
-		dispatch(Pages.actions.addPage(page));
-	});
-});
 
 const loadPage = createAsyncThunk<void, string, ThunkStoreTypes>('pages/loadPage', (id, thunk) => {
 	const state = thunk.getState();
@@ -96,7 +81,7 @@ export const selectPageById = (id: string) => (state: StoreState) => state.pages
 export const selectSelectedPage = (state: StoreState) => state.pages.selected ? state.pages.entities[state.pages.selected] : null;
 
 export const { addPage, selectPage } = Pages.actions;
-export { loadFile, loadPage };
+export { loadPage };
 
 export type { Page };
 export default Pages;
