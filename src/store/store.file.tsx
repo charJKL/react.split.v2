@@ -14,7 +14,7 @@ const loadFile = createAsyncThunk<void, Array<File>, ThunkStoreTypes>('pages/loa
 		const name = `page-${evenOdd}-${id}`;
 		const url = URL.createObjectURL(file);
 		const page : Page = {id: id, status: "Idle", url: url, name: name};
-		const metric : Metric = {id: id, wasEdited: false, x1: 0, x2: 0, y1: 0, y2: 0, rotate: 0};
+		const metric : Metric = {id: id, wasEdited: false, x1: 10, x2:150, y1: 10, y2: 250, rotate: 0};
 		dispatch(addPage(page));
 		dispatch(addMetric(metric));
 	});
