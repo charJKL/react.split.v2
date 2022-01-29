@@ -1,5 +1,5 @@
 import { RefObject, useEffect, useState } from "react";
-import {Size} from "./useScale";
+import {Size} from "../useScale";
 
 const useGetEditorSize = (element: RefObject<HTMLDivElement>) : Size =>
 {

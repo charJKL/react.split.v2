@@ -1,19 +1,9 @@
 import React, { useState, useEffect, MouseEvent, WheelEvent } from "react";
-import MouseButton from "./MouseButton";
-
-type Size = 
-{
-	width: number;
-	height: number;
-}
-type Scale = 
-{
-	x: number;
-	y: number;
-}
+import { Size } from "../types/Size";
+import { Scale } from "../types/Scale";
+import { MouseButton } from "../types/MouseButton";
 
 const SENSITIVITY = 0.0001;
-
 type ScaleAction = null | "scale-out" | "scale-in";
 
 const useScale = (viewport: Size, element: Size) =>
@@ -79,5 +69,5 @@ const calculateSizeValue = (element: Size, scale: Scale) : Size =>
 	}
 }
 
-export type { Size, ScaleAction };
+export type { Size, Scale, ScaleAction };
 export default useScale;
