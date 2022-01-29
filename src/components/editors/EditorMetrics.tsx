@@ -2,10 +2,11 @@ import React, { useRef, MouseEvent, WheelEvent } from "react";
 import { selectSelectedPage } from "../../store/slice.pages";
 import { selectMetricsForPage } from "../../store/slice.metrics";
 import { useAppSelector } from "../../store/store.hooks";
-import useGetEditorSize from "./hooks/useGetEditorSize";
+import useGetEditorRect from "./hooks/useGetEditorRect";
 import useGetPageSize from "./hooks/useGetPageSize";
 import useScale from "./hooks/useScale";
 import usePosition from "./hooks/usePosition";
+import useCursorPosition from "./hooks/useCursorPosition";
 import useGetMetrics from "./hooks/useGetMetrics";
 import css from "./EditorMetrics.module.scss";
 
@@ -16,12 +17,12 @@ const EditorMetrics = (): JSX.Element =>
 	
 	
 	const editorRef = useRef<HTMLDivElement>(null);
-	const editorSize = useGetEditorSize(editorRef);
+	const {size: editorSize, position: editorPosition} = useGetEditorRect(editorRef);
 	const pageSize = useGetPageSize(page);
-	const {size, scale, wasScaled, mouseDown: mouseDownScale, mouseUp: mouseUpScale, mouseLeave: mouseLeaveScale, mouseWheel: mouseWheelScale} = useScale(editorSize, pageSize);
-	const {position, isMoving, mouseDown: mouseDownPosition, mouseMove: mouseMovePosition, mouseUp: mouseUpPosition, mouseLeave: mouseLeavePosition, contextmenu : mouseContextPosition} = usePosition(editorRef);
-	const cursorPosition = useCursorPosition(editorRef, position);
-	const {Lines} = useGetMetrics(metrics, size, scale, );
+	const {size: desktopSize, scale, wasScaled, mouseDown: mouseDownScale, mouseUp: mouseUpScale, mouseLeave: mouseLeaveScale, mouseWheel: mouseWheelScale} = useScale(editorSize, pageSize);
+	const {position: desktopPosition, isMoving, mouseDown: mouseDownPosition, mouseMove: mouseMovePosition, mouseUp: mouseUpPosition, mouseLeave: mouseLeavePosition, contextmenu : mouseContextPosition} = usePosition(editorRef);
+	const {cursor: cursorPosition, mouseMove: mouseMoveCursor} = useCursorPosition(editorPosition, desktopPosition);
+	const {Lines} = useGetMetrics(metrics, desktopSize, scale);
 	
 	var toolbars: Array<JSX.Element> = [];
 	var desktop : JSX.Element = <></>;
@@ -46,7 +47,7 @@ const EditorMetrics = (): JSX.Element =>
 	const movingCursor = isMoving ? { cursor: 'move'} : {} ;
 	const scalingCursor = wasScaled ? wasScaled == "scale-out" ? { cursor: 'zoom-out'} : { cursor: 'zoom-in'} : {};
 	const styleForEditor = { ...movingCursor, ...scalingCursor };
-	const styleForDesktop = { ...size, ...position };
+	const styleForDesktop = { ...desktopSize, ...desktopPosition };
 	return (
 		<div className={css.editor} style={styleForEditor} ref={editorRef} onMouseDown={onMouseDownHandler} onMouseMove={onMouseMoveHandler} onMouseUp={onMouseUpHandler} onMouseLeave={onMouseLeaveHandler} onContextMenu={onMouseContextHandler} onWheel={onMouseWheelHandler}>
 			<div className={css.toolbars}>
