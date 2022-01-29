@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { MouseEvent, useState } from "react";
 import type {Position} from "../types/Position";
 
 const useCursorPosition = (editorPosition: Position, desktopPosition: Position) =>

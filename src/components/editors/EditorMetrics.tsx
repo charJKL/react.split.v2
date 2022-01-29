@@ -38,7 +38,7 @@ const EditorMetrics = (): JSX.Element =>
 	}
 	
 	const onMouseDownHandler = (e: MouseEvent) => { mouseDownScale(e); mouseDownPosition(e); }
-	const onMouseMoveHandler = (e: MouseEvent) => { mouseMovePosition(e); }
+	const onMouseMoveHandler = (e: MouseEvent) => { mouseMovePosition(e); mouseMoveCursor(e); }
 	const onMouseUpHandler = (e: MouseEvent) => { mouseUpScale(e); mouseUpPosition(e); }
 	const onMouseLeaveHandler = (e: MouseEvent) => { mouseLeaveScale(e); mouseLeavePosition(e); }
 	const onMouseContextHandler = (e: MouseEvent) => { mouseContextPosition(e); }
@@ -52,6 +52,7 @@ const EditorMetrics = (): JSX.Element =>
 		<div className={css.editor} style={styleForEditor} ref={editorRef} onMouseDown={onMouseDownHandler} onMouseMove={onMouseMoveHandler} onMouseUp={onMouseUpHandler} onMouseLeave={onMouseLeaveHandler} onContextMenu={onMouseContextHandler} onWheel={onMouseWheelHandler}>
 			<div className={css.toolbars}>
 				<label>🔍 {scale.x.toFixed(2)} / {scale.y.toFixed(2)}</label>
+				<label>➡ {cursorPosition.left.toFixed(2)} / {cursorPosition.top.toFixed(2)}</label>
 			</div>
 			<div className={css.desktop} style={styleForDesktop}>
 				{desktop}
