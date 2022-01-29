@@ -9,12 +9,12 @@ import usePosition from "./hooks/usePosition";
 import useCursorPosition from "./hooks/useCursorPosition";
 import useGetMetrics from "./hooks/useGetMetrics";
 import css from "./EditorMetrics.module.scss";
+import EditorMetricsLine from "./EditorMetricsLine";
 
 const EditorMetrics = (): JSX.Element =>
 {
 	const page = useAppSelector(selectSelectedPage);
 	const metrics = useAppSelector(selectMetricsForPage(page));
-	
 	
 	const editorRef = useRef<HTMLDivElement>(null);
 	const {size: editorSize, position: editorPosition} = useGetEditorRect(editorRef);
@@ -22,24 +22,39 @@ const EditorMetrics = (): JSX.Element =>
 	const {size: desktopSize, scale, wasScaled, mouseDown: mouseDownScale, mouseUp: mouseUpScale, mouseLeave: mouseLeaveScale, mouseWheel: mouseWheelScale} = useScale(editorSize, pageSize);
 	const {position: desktopPosition, isMoving, mouseDown: mouseDownPosition, mouseMove: mouseMovePosition, contextmenu : mouseContextPosition} = usePosition(editorRef);
 	const {cursor: cursorPosition, mouseMove: mouseMoveCursor} = useCursorPosition(editorPosition, desktopPosition);
-	const {Lines, mouseMove: mouseMoveMetrics} = useGetMetrics(metrics, desktopSize, cursorPosition, scale);
-	
+	//const {Lines, mouseMove: mouseMoveMetrics} = useGetMetrics(metrics, desktopSize, cursorPosition, scale);
 	
 	var toolbars: Array<JSX.Element> = [];
 	var desktop : JSX.Element = <></>;
+	var metricLines : JSX.Element = <></>;
 	
+	if(metrics)
+	{
+		const offset = 8;
+		const sizeWithOffset = {width: desktopSize.width + offset * 2, height: desktopSize.height + offset * 2};
+		const positionWithOffset = {left: offset * -1, top: offset * -1}
+		const styleForSvg = { ...sizeWithOffset, ...positionWithOffset };
+		metricLines = (
+			<svg className={css.metricsLine} style={styleForSvg}>
+				<EditorMetricsLine name="x1" type="vertical" value={metrics.x1 * scale.x} offset={offset} isHover={false} />
+				<EditorMetricsLine name="x2" type="vertical" value={metrics.x2 * scale.x} offset={offset} isHover={false} />
+				<EditorMetricsLine name="y1" type="horizontal" value={metrics.y1 * scale.y} offset={offset} isHover={false} />
+				<EditorMetricsLine name="y2" type="horizontal" value={metrics.y2 * scale.y} offset={offset} isHover={false} />
+			</svg>
+		)
+	}
 	if(page && page.status == "Loaded")
 	{
 		desktop = (
 			<>
 				<img className={css.image} src={page.url} />
-				<Lines className={css.lines} />
+				{metricLines}
 			</>
 		)
 	}
 	
 	const onMouseDownHandler = (e: MouseEvent) => { mouseDownScale(e); mouseDownPosition(e); }
-	const onMouseMoveHandler = (e: MouseEvent) => { mouseMovePosition(e); mouseMoveCursor(e); mouseMoveMetrics(e); }
+	const onMouseMoveHandler = (e: MouseEvent) => { mouseMovePosition(e); mouseMoveCursor(e); }
 	const onMouseUpHandler = (e: MouseEvent) => { mouseUpScale(e); }
 	const onMouseLeaveHandler = (e: MouseEvent) => { mouseLeaveScale(e); }
 	const onMouseContextHandler = (e: MouseEvent) => { mouseContextPosition(e); }

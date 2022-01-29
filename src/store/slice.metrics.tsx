@@ -4,7 +4,6 @@ import type { StoreState, StoreDispatch } from "./store";
 
 type Key = string;
 
-	
 type Metric = 
 {
 	id: Key,
@@ -15,6 +14,8 @@ type Metric =
 	y2: number;
 	rotate: number;
 }
+
+type MetricLineNames = "x1" | "x2" | "y1" | "y2";
 
 type InitialStateMetrics =
 {
@@ -49,5 +50,5 @@ export const selectMetricsForPage = (page: Page | null) => (state: StoreState) =
 export const { addMetric } = Metrics.actions;
 export { };
 
-export type { Metric };
+export type { Metric, MetricLineNames };
 export default Metrics;
