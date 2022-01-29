@@ -20,13 +20,14 @@ const EditorMetrics = (): JSX.Element =>
 	const {size: editorSize, position: editorPosition} = useGetEditorRect(editorRef);
 	const pageSize = useGetPageSize(page);
 	const {size: desktopSize, scale, wasScaled, mouseDown: mouseDownScale, mouseUp: mouseUpScale, mouseLeave: mouseLeaveScale, mouseWheel: mouseWheelScale} = useScale(editorSize, pageSize);
-	const {position: desktopPosition, isMoving, mouseDown: mouseDownPosition, mouseMove: mouseMovePosition, mouseUp: mouseUpPosition, mouseLeave: mouseLeavePosition, contextmenu : mouseContextPosition} = usePosition(editorRef);
+	const {position: desktopPosition, isMoving, mouseDown: mouseDownPosition, mouseMove: mouseMovePosition, contextmenu : mouseContextPosition} = usePosition(editorRef);
 	const {cursor: cursorPosition, mouseMove: mouseMoveCursor} = useCursorPosition(editorPosition, desktopPosition);
-	const {Lines} = useGetMetrics(metrics, desktopSize, scale);
+	const {Lines, mouseMove: mouseMoveMetrics} = useGetMetrics(metrics, desktopSize, cursorPosition, scale);
+	
 	
 	var toolbars: Array<JSX.Element> = [];
 	var desktop : JSX.Element = <></>;
-
+	
 	if(page && page.status == "Loaded")
 	{
 		desktop = (
@@ -38,9 +39,9 @@ const EditorMetrics = (): JSX.Element =>
 	}
 	
 	const onMouseDownHandler = (e: MouseEvent) => { mouseDownScale(e); mouseDownPosition(e); }
-	const onMouseMoveHandler = (e: MouseEvent) => { mouseMovePosition(e); mouseMoveCursor(e); }
-	const onMouseUpHandler = (e: MouseEvent) => { mouseUpScale(e); mouseUpPosition(e); }
-	const onMouseLeaveHandler = (e: MouseEvent) => { mouseLeaveScale(e); mouseLeavePosition(e); }
+	const onMouseMoveHandler = (e: MouseEvent) => { mouseMovePosition(e); mouseMoveCursor(e); mouseMoveMetrics(e); }
+	const onMouseUpHandler = (e: MouseEvent) => { mouseUpScale(e); }
+	const onMouseLeaveHandler = (e: MouseEvent) => { mouseLeaveScale(e); }
 	const onMouseContextHandler = (e: MouseEvent) => { mouseContextPosition(e); }
 	const onMouseWheelHandler = (e: WheelEvent) => { mouseWheelScale(e); }
 	
