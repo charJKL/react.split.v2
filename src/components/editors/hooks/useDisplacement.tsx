@@ -1,8 +1,7 @@
-import { useEffect } from "react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import type {Position} from "../types/Position";
 
-const useDisplacement = () =>
+const useDisplacement = (button: number) =>
 {
 	const [initalPosition, setInitalPosition] = useState<Position>({left: 0, top: 0});
 	const [displacement, setDisplacement] = useState<Position>({left: 0, top: 0});
@@ -11,8 +10,11 @@ const useDisplacement = () =>
 	useEffect(() => {
 		const mouseDown = (e: MouseEvent) => 
 		{
-			setDisplacementing(true);
-			setInitalPosition({left: e.clientX, top: e.clientY});
+			if(e.button === button)
+			{
+				setDisplacementing(true);
+				setInitalPosition({left: e.clientX, top: e.clientY});
+			}
 		};
 		const mouseMove = (e: MouseEvent) => 
 		{
@@ -22,7 +24,10 @@ const useDisplacement = () =>
 		};
 		const mouseUp = (e: MouseEvent) =>
 		{
-			setDisplacementing(false);
+			if(e.button === button)
+			{
+				setDisplacementing(false);
+			}
 		};
 		const mouseLeave = (e: MouseEvent) =>
 		{
