@@ -27,11 +27,13 @@ const useDisplacement = (button: number) =>
 			if(e.button === button)
 			{
 				setDisplacementing(false);
+				setDisplacement({left: 0, top: 0});
 			}
 		};
 		const mouseLeave = (e: MouseEvent) =>
 		{
 			setDisplacementing(false);
+			setDisplacement({left: 0, top: 0});
 		};
 
 		document.addEventListener('mousedown', mouseDown);
@@ -44,7 +46,7 @@ const useDisplacement = (button: number) =>
 			document.removeEventListener('mouseup', mouseUp);
 			document.removeEventListener('mouseleave', mouseLeave);
 		}
-	}, [displacementing, initalPosition]);
+	}, [displacementing, initalPosition, button]);
 	
 	return {displacementing, displacement};
 }
