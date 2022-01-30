@@ -5,11 +5,11 @@ import { useAppSelector } from "../../store/store.hooks";
 import useGetEditorRect from "./hooks/useGetEditorRect";
 import useGetPageSize from "./hooks/useGetPageSize";
 import useScale from "./hooks/useScale";
-import usePosition from "./hooks/usePosition";
 import useCursorPosition from "./hooks/useCursorPosition";
 import useGetMetrics from "./hooks/useGetMetrics";
 import css from "./EditorMetrics.module.scss";
 import EditorMetricsLine from "./EditorMetricsLine";
+import useAllowRepositioning from "./hooks/useAllowRepositioning";
 
 const EditorMetrics = (): JSX.Element =>
 {
@@ -17,10 +17,14 @@ const EditorMetrics = (): JSX.Element =>
 	const metrics = useAppSelector(selectMetricsForPage(page));
 	
 	const editorRef = useRef<HTMLDivElement>(null);
+	const desktopRef = useRef<HTMLDivElement>(null);
+	
 	const {size: editorSize, position: editorPosition} = useGetEditorRect(editorRef);
 	const pageSize = useGetPageSize(page);
+	const {position: desktopPosition, positioning} = useAllowRepositioning(editorRef, desktopRef);
 	const {size: desktopSize, scale, wasScaled, mouseDown: mouseDownScale, mouseUp: mouseUpScale, mouseLeave: mouseLeaveScale, mouseWheel: mouseWheelScale} = useScale(editorSize, pageSize);
-	const {position: desktopPosition, isMoving, mouseDown: mouseDownPosition, mouseMove: mouseMovePosition, contextmenu : mouseContextPosition} = usePosition(editorRef);
+	
+	
 	const {cursor: cursorPosition, mouseMove: mouseMoveCursor} = useCursorPosition(editorPosition, desktopPosition);
 	//const {Lines, mouseMove: mouseMoveMetrics} = useGetMetrics(metrics, desktopSize, cursorPosition, scale);
 	
@@ -43,34 +47,33 @@ const EditorMetrics = (): JSX.Element =>
 			</svg>
 		)
 	}
-	if(page && page.status == "Loaded")
+	if(page && page.status === "Loaded")
 	{
 		desktop = (
 			<>
-				<img className={css.image} src={page.url} />
+				<img className={css.image} src={page.url} alt="" />
 				{metricLines}
 			</>
 		)
 	}
 	
-	const onMouseDownHandler = (e: MouseEvent) => { mouseDownScale(e); mouseDownPosition(e); }
-	const onMouseMoveHandler = (e: MouseEvent) => { mouseMovePosition(e); mouseMoveCursor(e); }
+	const onMouseDownHandler = (e: MouseEvent) => { mouseDownScale(e); }
+	const onMouseMoveHandler = (e: MouseEvent) => { mouseMoveCursor(e); }
 	const onMouseUpHandler = (e: MouseEvent) => { mouseUpScale(e); }
 	const onMouseLeaveHandler = (e: MouseEvent) => { mouseLeaveScale(e); }
-	const onMouseContextHandler = (e: MouseEvent) => { mouseContextPosition(e); }
 	const onMouseWheelHandler = (e: WheelEvent) => { mouseWheelScale(e); }
 	
-	const movingCursor = isMoving ? { cursor: 'move'} : {} ;
-	const scalingCursor = wasScaled ? wasScaled == "scale-out" ? { cursor: 'zoom-out'} : { cursor: 'zoom-in'} : {};
+	const movingCursor = positioning ? { cursor: 'move'} : {} ;
+	const scalingCursor = wasScaled ? wasScaled === "scale-out" ? { cursor: 'zoom-out'} : { cursor: 'zoom-in'} : {};
 	const styleForEditor = { ...movingCursor, ...scalingCursor };
 	const styleForDesktop = { ...desktopSize, ...desktopPosition };
 	return (
-		<div className={css.editor} style={styleForEditor} ref={editorRef} onMouseDown={onMouseDownHandler} onMouseMove={onMouseMoveHandler} onMouseUp={onMouseUpHandler} onMouseLeave={onMouseLeaveHandler} onContextMenu={onMouseContextHandler} onWheel={onMouseWheelHandler}>
+		<div className={css.editor} style={styleForEditor} ref={editorRef} onMouseDown={onMouseDownHandler} onMouseMove={onMouseMoveHandler} onMouseUp={onMouseUpHandler} onMouseLeave={onMouseLeaveHandler} onWheel={onMouseWheelHandler}>
 			<div className={css.toolbars}>
 				<label>🔍 {scale.x.toFixed(2)} / {scale.y.toFixed(2)}</label>
 				<label>➡ {cursorPosition.left.toFixed(2)} / {cursorPosition.top.toFixed(2)}</label>
 			</div>
-			<div className={css.desktop} style={styleForDesktop}>
+			<div className={css.desktop} style={styleForDesktop} ref={desktopRef}>
 				{desktop}
 			</div>
 		</div>
