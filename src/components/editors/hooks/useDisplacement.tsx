@@ -1,39 +1,39 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import type {Position} from "../types/Position";
 
 const useDisplacement = (button: number) =>
 {
-	const [initalPosition, setInitalPosition] = useState<Position>({left: 0, top: 0});
-	const [displacement, setDisplacement] = useState<Position>({left: 0, top: 0});
-	const [displacementing, setDisplacementing] = useState<boolean>(false);
+	const initalPosition = useRef<Position>({left:0, top: 0});
+	const displacement = useRef<Position>({left: 0, top: 0});
+	const displacementing = useRef<boolean>(false);
 	
 	useEffect(() => {
 		const mouseDown = (e: MouseEvent) => 
 		{
 			if(e.button === button)
 			{
-				setDisplacementing(true);
-				setInitalPosition({left: e.clientX, top: e.clientY});
+				displacementing.current = true;
+				initalPosition.current = {left: e.clientX, top: e.clientY}
 			}
 		};
 		const mouseMove = (e: MouseEvent) => 
 		{
-			if(displacementing === false) return;
-			const diff = {left: e.clientX - initalPosition.left, top: e.clientY - initalPosition.top};
-			setDisplacement(diff);
+			if(displacementing.current === false) return;
+			const diff = {left: e.clientX - initalPosition.current.left, top: e.clientY - initalPosition.current.top};
+			displacement.current = diff;
 		};
 		const mouseUp = (e: MouseEvent) =>
 		{
 			if(e.button === button)
 			{
-				setDisplacementing(false);
-				setDisplacement({left: 0, top: 0});
+				displacementing.current = false;
+				initalPosition.current = {left: 0, top: 0}
 			}
 		};
 		const mouseLeave = (e: MouseEvent) =>
 		{
-			setDisplacementing(false);
-			setDisplacement({left: 0, top: 0});
+			displacementing.current = false;
+			initalPosition.current = {left: 0, top: 0}
 		};
 
 		document.addEventListener('mousedown', mouseDown);
@@ -46,9 +46,9 @@ const useDisplacement = (button: number) =>
 			document.removeEventListener('mouseup', mouseUp);
 			document.removeEventListener('mouseleave', mouseLeave);
 		}
-	}, [displacementing, initalPosition, button]);
+	}, []);
 	
-	return {displacementing, displacement};
+	return {displacementing: displacementing.current, displacement: displacement.current};
 }
 
 export default useDisplacement;
