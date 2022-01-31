@@ -48,7 +48,7 @@ const useDisplacement = (button: number) =>
 		}
 	}, []);
 	
-	return {displacementing: displacementing.current, displacement: displacement.current};
+	return {displacementing, displacement};
 }
 
 export default useDisplacement;
