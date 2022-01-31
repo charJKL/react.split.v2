@@ -1,12 +1,12 @@
 import React, { useRef, MouseEvent, WheelEvent } from "react";
 import { selectSelectedPage } from "../../store/slice.pages";
-import { selectMetricsForPage } from "../../store/slice.metrics";
+import Metrics, { MetricLineNames, selectMetricsForPage } from "../../store/slice.metrics";
 import { useAppSelector } from "../../store/store.hooks";
 import useGetEditorRect from "./hooks/useGetEditorRect";
 import useGetPageSize from "./hooks/useGetPageSize";
 import useScale from "./hooks/useScale";
 import useCursorPosition from "./hooks/useCursorPosition";
-import useGetMetrics from "./hooks/useGetMetrics";
+import useResolveHoverObject from "./hooks/useResolveHoverObject";
 import css from "./EditorMetrics.module.scss";
 import EditorMetricsLine from "./EditorMetricsLine";
 import useAllowRepositioning from "./hooks/useAllowRepositioning";
@@ -23,11 +23,9 @@ const EditorMetrics = (): JSX.Element =>
 	const pageSize = useGetPageSize(page);
 	const {position: desktopPosition, positioning} = useAllowRepositioning(editorRef, desktopRef);
 	const {size: desktopSize, scale, wasScaled, mouseDown: mouseDownScale, mouseUp: mouseUpScale, mouseLeave: mouseLeaveScale, mouseWheel: mouseWheelScale} = useScale(editorSize, pageSize);
-	
-	
 	const {cursor: cursorPosition, mouseMove: mouseMoveCursor} = useCursorPosition(editorPosition, desktopPosition);
-	//const {Lines, mouseMove: mouseMoveMetrics} = useGetMetrics(metrics, desktopSize, cursorPosition, scale);
-	
+	const object = useResolveHoverObject(metrics, cursorPosition);
+
 	var toolbars: Array<JSX.Element> = [];
 	var desktop : JSX.Element = <></>;
 	var metricLines : JSX.Element = <></>;
@@ -35,15 +33,16 @@ const EditorMetrics = (): JSX.Element =>
 	if(metrics)
 	{
 		const offset = 8;
+		const isHover = (name: MetricLineNames) => object === name;
 		const sizeWithOffset = {width: desktopSize.width + offset * 2, height: desktopSize.height + offset * 2};
 		const positionWithOffset = {left: offset * -1, top: offset * -1}
 		const styleForSvg = { ...sizeWithOffset, ...positionWithOffset };
 		metricLines = (
 			<svg className={css.metricsLine} style={styleForSvg}>
-				<EditorMetricsLine name="x1" type="vertical" value={metrics.x1 * scale.x} offset={offset} isHover={false} />
-				<EditorMetricsLine name="x2" type="vertical" value={metrics.x2 * scale.x} offset={offset} isHover={false} />
-				<EditorMetricsLine name="y1" type="horizontal" value={metrics.y1 * scale.y} offset={offset} isHover={false} />
-				<EditorMetricsLine name="y2" type="horizontal" value={metrics.y2 * scale.y} offset={offset} isHover={false} />
+				<EditorMetricsLine name="x1" type="vertical" value={metrics.x1 * scale.x} offset={offset} isHover={isHover("x1")} />
+				<EditorMetricsLine name="x2" type="vertical" value={metrics.x2 * scale.x} offset={offset} isHover={isHover("x2")} />
+				<EditorMetricsLine name="y1" type="horizontal" value={metrics.y1 * scale.y} offset={offset} isHover={isHover("y1")} />
+				<EditorMetricsLine name="y2" type="horizontal" value={metrics.y2 * scale.y} offset={offset} isHover={isHover("y2")} />
 			</svg>
 		)
 	}
