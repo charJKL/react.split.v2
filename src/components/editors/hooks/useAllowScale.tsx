@@ -15,7 +15,7 @@ const useAllowScale = (editor: RefObject<HTMLElement>, desktop: RefObject<HTMLEl
 	
 	useEffect(() =>{
 		setScale(calculateRationValue(viewport, element));
-	}, [viewport, viewport.width, viewport.height, element, element.width, element.height]);
+	}, [viewport, element]);
 	
 	useEffect(() => { // reset indicator that operation scaled was performed
 		if(scaling == null) return;
