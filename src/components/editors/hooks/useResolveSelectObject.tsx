@@ -1,10 +1,11 @@
-import { Metric, MetricLineNames } from "../../../store/slice.metrics";
+import { MetricLineNames } from "../../../store/slice.metrics";
 import { Position } from "../types/Position";
 
 const THRESHOLD = 10;
 
 type ObjectType = MetricLineNames;
-const useResolveHoverObject = (metrics: Metric | null, cursor: Position) : ObjectType | null =>
+type MetricsList = { [Property in MetricLineNames]: number }
+const useResolveSelectObject = (metrics: MetricsList | null, cursor: Position) : ObjectType | null =>
 {
 	if(metrics !== null)
 	{
@@ -21,4 +22,4 @@ const useResolveHoverObject = (metrics: Metric | null, cursor: Position) : Objec
 	return null;
 }
 
-export default useResolveHoverObject;
+export default useResolveSelectObject;

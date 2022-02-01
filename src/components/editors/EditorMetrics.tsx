@@ -1,15 +1,17 @@
 import React, { useRef, MouseEvent, WheelEvent } from "react";
 import { selectSelectedPage } from "../../store/slice.pages";
-import Metrics, { MetricLineNames, selectMetricsForPage } from "../../store/slice.metrics";
+import Metrics, { Metric, MetricLineNames, selectMetricsForPage } from "../../store/slice.metrics";
 import { useAppSelector } from "../../store/store.hooks";
 import useGetEditorRect from "./hooks/useGetEditorRect";
 import useGetPageSize from "./hooks/useGetPageSize";
 import useCursorPosition from "./hooks/useCursorPosition";
-import useResolveHoverObject from "./hooks/useResolveHoverObject";
+import useResolveSelectObject from "./hooks/useResolveSelectObject";
 import css from "./EditorMetrics.module.scss";
 import EditorMetricsLine from "./EditorMetricsLine";
 import useAllowRepositioning from "./hooks/useAllowRepositioning";
 import useAllowScale from "./hooks/useAllowScale";
+import { Scale } from "./types/Scale";
+import { Size } from "./types/Size";
 
 const EditorMetrics = (): JSX.Element =>
 {
@@ -23,31 +25,30 @@ const EditorMetrics = (): JSX.Element =>
 	const pageSize = useGetPageSize(page);
 	const {position: desktopPosition, positioning} = useAllowRepositioning(editorRef, desktopRef);
 	const {scale, scaling} = useAllowScale(editorRef, desktopRef, editorSize, pageSize);
+	const {cursor: cursorPosition} = useCursorPosition(editorPosition, desktopPosition);
+
+	const desktopSize = applayScaleToSize(pageSize, scale);
+	const scaled = applayScaleToMetrics(metrics, scale);
 	
-	//const {cursor: cursorPosition, mouseMove: mouseMoveCursor} = useCursorPosition(editorPosition, desktopPosition);
-	//const object = useResolveHoverObject(metrics, cursorPosition);
-	const object = null;
-	
-	const cursorPosition = {left: 0, top: 0};
-	const desktopSize = { width: pageSize.width * scale.x, height: pageSize.height * scale.y}
-	
+	const select = useResolveSelectObject(scaled, cursorPosition);
+		
 	var toolbars: Array<JSX.Element> = [];
 	var desktop : JSX.Element = <></>;
 	var metricLines : JSX.Element = <></>;
 	
-	if(metrics)
+	if(metrics && scaled)
 	{
 		const offset = 8;
-		const isHover = (name: MetricLineNames) => object === name;
+		const isHover = (name: MetricLineNames) => select === name;
 		const sizeWithOffset = {width: desktopSize.width + offset * 2, height: desktopSize.height + offset * 2};
 		const positionWithOffset = {left: offset * -1, top: offset * -1}
 		const styleForSvg = { ...sizeWithOffset, ...positionWithOffset };
 		metricLines = (
 			<svg className={css.metricsLine} style={styleForSvg}>
-				<EditorMetricsLine name="x1" type="vertical" value={metrics.x1 * scale.x} offset={offset} isHover={isHover("x1")} />
-				<EditorMetricsLine name="x2" type="vertical" value={metrics.x2 * scale.x} offset={offset} isHover={isHover("x2")} />
-				<EditorMetricsLine name="y1" type="horizontal" value={metrics.y1 * scale.y} offset={offset} isHover={isHover("y1")} />
-				<EditorMetricsLine name="y2" type="horizontal" value={metrics.y2 * scale.y} offset={offset} isHover={isHover("y2")} />
+				<EditorMetricsLine name="x1" type="vertical" value={scaled.x1} offset={offset} isHover={isHover("x1")} />
+				<EditorMetricsLine name="x2" type="vertical" value={scaled.x2} offset={offset} isHover={isHover("x2")} />
+				<EditorMetricsLine name="y1" type="horizontal" value={scaled.y1} offset={offset} isHover={isHover("y1")} />
+				<EditorMetricsLine name="y2" type="horizontal" value={scaled.y2} offset={offset} isHover={isHover("y2")} />
 			</svg>
 		)
 	}
@@ -60,15 +61,10 @@ const EditorMetrics = (): JSX.Element =>
 			</>
 		)
 	}
-
-	const onMouseMove = (e: MouseEvent) =>
-	{
-		if(object === null) return;
-	}
-	
+	const selectCursor = select ? { cursor: 'grab'} : {};
 	const movingCursor = positioning ? { cursor: 'move'} : {} ;
 	const scalingCursor = scaling ? scaling === "scale-out" ? { cursor: 'zoom-out'} : { cursor: 'zoom-in'} : {};
-	const styleForEditor = { ...movingCursor, ...scalingCursor };
+	const styleForEditor = { ...movingCursor, ...scalingCursor, ...selectCursor };
 	const styleForDesktop = { ...desktopSize, ...desktopPosition };
 	return (
 		<div className={css.editor} style={styleForEditor} ref={editorRef} >
@@ -81,6 +77,25 @@ const EditorMetrics = (): JSX.Element =>
 			</div>
 		</div>
 	)
+}
+
+const applayScaleToSize = (element: Size, scale : Scale) =>
+{
+	return {
+		width: element.width * scale.x,
+		height: element.height * scale.y
+	}
+}
+
+const applayScaleToMetrics = (metric: Metric | null, scale: Scale) =>
+{
+	if(metric === null) return null;
+	return {
+		x1: metric.x1 * scale.x,
+		x2: metric.x2 * scale.x,
+		y1: metric.y1 * scale.y,
+		y2: metric.y2 * scale.y
+	}
 }
 
 export default EditorMetrics;
