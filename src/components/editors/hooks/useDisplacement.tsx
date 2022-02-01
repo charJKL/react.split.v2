@@ -15,6 +15,8 @@ const useDisplacement = (button: number) =>
 				displacementing.current = true;
 				initalPosition.current.left = e.clientX;
 				initalPosition.current.top = e.clientY;
+				displacement.current.left = 0;
+				displacement.current.top = 0;
 			}
 		};
 		const mouseMove = (e: MouseEvent) => 
@@ -28,8 +30,6 @@ const useDisplacement = (button: number) =>
 			if(e.button === button)
 			{
 				displacementing.current = false;
-				displacement.current.left = 0;
-				displacement.current.top = 0;
 			}
 		};
 		const mouseLeave = (e: MouseEvent) =>
