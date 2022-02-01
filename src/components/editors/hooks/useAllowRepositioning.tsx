@@ -1,13 +1,13 @@
-import { RefObject, useEffect, useCallback, useRef } from "react";
+import { RefObject, useEffect, useState } from "react";
 import type { Position } from "../types/Position";
 import { MouseButton } from "../types/MouseButton";
 import useDisplacement from "./useDisplacement";
 
 const useAllowRepositioning = (editor: RefObject<HTMLElement>, desktop: RefObject<HTMLElement>) =>
 {
-	const position = useRef<Position>({left: 0, top: 0});
-	const initalPosition = useRef<Position>({left: 0, top: 0});
-	const {displacementing, displacement} = useCallback(useDisplacement, [MouseButton.right])(MouseButton.right);
+	const [position, setPosition] = useState<Position>({left: 0, top: 0});
+	const [initalPosition, setInitalPosition] = useState<Position>({left: 0, top: 0});
+	const {displacementing, displacement} = useDisplacement(MouseButton.right);
 	
 	useEffect(() =>{
 		if(editor.current == null) return;
@@ -19,16 +19,14 @@ const useAllowRepositioning = (editor: RefObject<HTMLElement>, desktop: RefObjec
 			{
 				const editorPosition = editor.current!.getBoundingClientRect();
 				const desktopPosition = desktop.current!.getBoundingClientRect();
-				initalPosition.current.left = desktopPosition.left - editorPosition.left;
-				initalPosition.current.top = desktopPosition.top - editorPosition.top;
+				setInitalPosition({ left: desktopPosition.left - editorPosition.left, top: desktopPosition.top - editorPosition.top });
 			}
 		}
 		const mouseMove = (e: MouseEvent) =>
 		{
 			if(displacementing.current === true)
 			{
-				position.current.left = initalPosition.current.left + displacement.current.left;
-				position.current.top = initalPosition.current.top + displacement.current.top;
+				setPosition({ left: initalPosition.left + displacement.current.left, top: initalPosition.top + displacement.current.top });
 			}
 		}
 		const contextmenu = (e: MouseEvent) =>
@@ -45,9 +43,9 @@ const useAllowRepositioning = (editor: RefObject<HTMLElement>, desktop: RefObjec
 			element.removeEventListener('mousemove', mouseMove);
 			element.removeEventListener('contextmenu', contextmenu);
 		}
-	}, [editor, desktop]);
+	}, [editor, desktop, displacement, displacementing, initalPosition]);
 	
-	return {position: position.current, positioning: displacementing.current};
+	return {position: position, positioning: displacementing.current};
 }
 
 export default useAllowRepositioning;
