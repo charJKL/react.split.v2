@@ -1,4 +1,4 @@
-import { RefObject, useEffect, useRef } from "react";
+import { RefObject, useEffect, useCallback, useRef } from "react";
 import type { Position } from "../types/Position";
 import { MouseButton } from "../types/MouseButton";
 import useDisplacement from "./useDisplacement";
@@ -7,7 +7,7 @@ const useAllowRepositioning = (editor: RefObject<HTMLElement>, desktop: RefObjec
 {
 	const position = useRef<Position>({left: 0, top: 0});
 	const initalPosition = useRef<Position>({left: 0, top: 0});
-	const {displacementing, displacement} = useDisplacement(MouseButton.right);
+	const {displacementing, displacement} = useCallback(useDisplacement, [MouseButton.right])(MouseButton.right);
 	
 	useEffect(() =>{
 		if(editor.current == null) return;
