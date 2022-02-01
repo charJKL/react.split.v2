@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef } from "react";
 import type {Position} from "../types/Position";
 
 const useDisplacement = (button: number) =>
@@ -13,27 +13,30 @@ const useDisplacement = (button: number) =>
 			if(e.button === button)
 			{
 				displacementing.current = true;
-				initalPosition.current = {left: e.clientX, top: e.clientY}
+				initalPosition.current.left = e.clientX;
+				initalPosition.current.top = e.clientY;
 			}
 		};
 		const mouseMove = (e: MouseEvent) => 
 		{
 			if(displacementing.current === false) return;
-			const diff = {left: e.clientX - initalPosition.current.left, top: e.clientY - initalPosition.current.top};
-			displacement.current = diff;
+			displacement.current.left = e.clientX - initalPosition.current.left;
+			displacement.current.top = e.clientY - initalPosition.current.top;
 		};
 		const mouseUp = (e: MouseEvent) =>
 		{
 			if(e.button === button)
 			{
 				displacementing.current = false;
-				initalPosition.current = {left: 0, top: 0}
+				displacement.current.left = 0;
+				displacement.current.top = 0;
 			}
 		};
 		const mouseLeave = (e: MouseEvent) =>
 		{
 			displacementing.current = false;
-			initalPosition.current = {left: 0, top: 0}
+			displacement.current.left = 0;
+			displacement.current.top = 0;
 		};
 
 		document.addEventListener('mousedown', mouseDown);
@@ -46,7 +49,7 @@ const useDisplacement = (button: number) =>
 			document.removeEventListener('mouseup', mouseUp);
 			document.removeEventListener('mouseleave', mouseLeave);
 		}
-	}, []);
+	}, [button]);
 	
 	return {displacementing, displacement};
 }
