@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { Size } from "./useScale";
+import { Size } from "../types/Size";
 import { Page } from "../../../store/slice.pages";
 
 const useGetPageSize = (page: Page | null) : Size=>
