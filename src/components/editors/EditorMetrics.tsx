@@ -4,12 +4,12 @@ import Metrics, { MetricLineNames, selectMetricsForPage } from "../../store/slic
 import { useAppSelector } from "../../store/store.hooks";
 import useGetEditorRect from "./hooks/useGetEditorRect";
 import useGetPageSize from "./hooks/useGetPageSize";
-import useScale from "./hooks/useScale";
 import useCursorPosition from "./hooks/useCursorPosition";
 import useResolveHoverObject from "./hooks/useResolveHoverObject";
 import css from "./EditorMetrics.module.scss";
 import EditorMetricsLine from "./EditorMetricsLine";
 import useAllowRepositioning from "./hooks/useAllowRepositioning";
+import useAllowScale from "./hooks/useAllowScale";
 
 const EditorMetrics = (): JSX.Element =>
 {
@@ -22,10 +22,15 @@ const EditorMetrics = (): JSX.Element =>
 	const {size: editorSize, position: editorPosition} = useGetEditorRect(editorRef);
 	const pageSize = useGetPageSize(page);
 	const {position: desktopPosition, positioning} = useAllowRepositioning(editorRef, desktopRef);
-	const {size: desktopSize, scale, wasScaled, mouseDown: mouseDownScale, mouseUp: mouseUpScale, mouseLeave: mouseLeaveScale, mouseWheel: mouseWheelScale} = useScale(editorSize, pageSize);
-	const {cursor: cursorPosition, mouseMove: mouseMoveCursor} = useCursorPosition(editorPosition, desktopPosition);
-	const object = useResolveHoverObject(metrics, cursorPosition);
-
+	const {scale, scaling} = useAllowScale(editorRef, desktopRef, editorSize, pageSize);
+	
+	//const {cursor: cursorPosition, mouseMove: mouseMoveCursor} = useCursorPosition(editorPosition, desktopPosition);
+	//const object = useResolveHoverObject(metrics, cursorPosition);
+	const object = null;
+	
+	const cursorPosition = {left: 0, top: 0};
+	const desktopSize = { width: pageSize.width * scale.x, height: pageSize.height * scale.y}
+	
 	var toolbars: Array<JSX.Element> = [];
 	var desktop : JSX.Element = <></>;
 	var metricLines : JSX.Element = <></>;
@@ -55,19 +60,18 @@ const EditorMetrics = (): JSX.Element =>
 			</>
 		)
 	}
-	
-	const onMouseDownHandler = (e: MouseEvent) => { mouseDownScale(e); }
-	const onMouseMoveHandler = (e: MouseEvent) => { mouseMoveCursor(e); }
-	const onMouseUpHandler = (e: MouseEvent) => { mouseUpScale(e); }
-	const onMouseLeaveHandler = (e: MouseEvent) => { mouseLeaveScale(e); }
-	const onMouseWheelHandler = (e: WheelEvent) => { mouseWheelScale(e); }
+
+	const onMouseMove = (e: MouseEvent) =>
+	{
+		if(object === null) return;
+	}
 	
 	const movingCursor = positioning ? { cursor: 'move'} : {} ;
-	const scalingCursor = wasScaled ? wasScaled === "scale-out" ? { cursor: 'zoom-out'} : { cursor: 'zoom-in'} : {};
+	const scalingCursor = scaling ? scaling === "scale-out" ? { cursor: 'zoom-out'} : { cursor: 'zoom-in'} : {};
 	const styleForEditor = { ...movingCursor, ...scalingCursor };
 	const styleForDesktop = { ...desktopSize, ...desktopPosition };
 	return (
-		<div className={css.editor} style={styleForEditor} ref={editorRef} onMouseDown={onMouseDownHandler} onMouseMove={onMouseMoveHandler} onMouseUp={onMouseUpHandler} onMouseLeave={onMouseLeaveHandler} onWheel={onMouseWheelHandler}>
+		<div className={css.editor} style={styleForEditor} ref={editorRef} >
 			<div className={css.toolbars}>
 				<label>🔍 {scale.x.toFixed(2)} / {scale.y.toFixed(2)}</label>
 				<label>➡ {cursorPosition.left.toFixed(2)} / {cursorPosition.top.toFixed(2)}</label>
