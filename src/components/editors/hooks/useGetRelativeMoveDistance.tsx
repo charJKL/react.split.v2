@@ -1,7 +1,7 @@
 import { useEffect, useRef } from "react";
 import type {Position} from "../types/Position";
 
-const useGetRelativeMoveDistance = (button: number) =>
+const useGetRelativeMoveDistance = (button: number) : Position =>
 {
 	const previous = useRef<Position>({left:0, top: 0});
 	const distance = useRef<Position>({left:0, top: 0});
@@ -49,7 +49,7 @@ const useGetRelativeMoveDistance = (button: number) =>
 		}
 	}, [button]);
 	
-	return {distance: distance.current};
+	return distance.current;
 }
 
 export default useGetRelativeMoveDistance;
