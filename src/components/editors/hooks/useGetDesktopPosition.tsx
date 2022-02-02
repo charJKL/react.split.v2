@@ -17,8 +17,6 @@ const useGetDesktopPosition = (editor: RefObject<HTMLElement>, desktop: RefObjec
 		{
 			if(e.button === MouseButton.Right)
 			{
-				const editorPosition = editor.current!.getBoundingClientRect();
-				const desktopPosition = desktop.current!.getBoundingClientRect();
 				setPositioning(true);
 			}
 		}
@@ -38,8 +36,8 @@ const useGetDesktopPosition = (editor: RefObject<HTMLElement>, desktop: RefObjec
 		}
 		const contextmenu = (e: MouseEvent) =>
 		{
-			const thresholdDistance = (threshold: number) => Math.abs(distance.left) > threshold || Math.abs(distance.top) > threshold;
-			if(thresholdDistance(1)) e.preventDefault();
+			const thresholdDistance = (threshold: number) => Math.abs(absolute.left) > threshold || Math.abs(absolute.top) > threshold;
+			if(thresholdDistance(2)) e.preventDefault();
 		}
 		
 		const element = editor.current;
