@@ -1,4 +1,4 @@
-import react from "react";
+import React from "react";
 import { MetricLineNames } from "../../store/slice.metrics";
 import css from "./EditorMetricsLine.module.scss";
 
@@ -44,4 +44,4 @@ const resolvePointsPositions = (type: LineType, value: number, offset: number ) 
 	}
 }
 
-export default EditorMetricsLine;
+export default React.memo(EditorMetricsLine);
