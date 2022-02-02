@@ -2,6 +2,7 @@ import { createAsyncThunk } from "@reduxjs/toolkit";
 import type { ThunkStoreTypes } from "./store";
 import { Page, addPage } from "./slice.pages";
 import { Metric, addMetric } from "./slice.metrics";
+import { Ocr, addOcr } from "./slice.ocrs";
 
 const loadFile = createAsyncThunk<void, Array<File>, ThunkStoreTypes>('pages/loadFile', (files: Array<File>, thunk) => {
 	const state = thunk.getState();
@@ -15,8 +16,10 @@ const loadFile = createAsyncThunk<void, Array<File>, ThunkStoreTypes>('pages/loa
 		const url = URL.createObjectURL(file);
 		const page : Page = {id: id, status: "Idle", url: url, name: name};
 		const metric : Metric = {id: id, wasEdited: false, x1: 10, x2:150, y1: 10, y2: 250, rotate: 0};
+		const ocr: Ocr = {id: id};
 		dispatch(addPage(page));
 		dispatch(addMetric(metric));
+		dispatch(addOcr(ocr));
 	});
 });
 

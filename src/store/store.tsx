@@ -1,6 +1,7 @@
 import { createStore, combineReducers, configureStore, Middleware } from "@reduxjs/toolkit";
 import PagesSlice from "./slice.pages";
 import MetricSlice from "./slice.metrics";
+import OcrSlice from "./slice.ocrs";
 
 const Store = configureStore({
 	middleware: (getDefaultMiddleware) => {
@@ -12,7 +13,8 @@ const Store = configureStore({
 	},
 	reducer: {
 		pages: PagesSlice.reducer,
-		metrics: MetricSlice.reducer
+		metrics: MetricSlice.reducer,
+		ocrs: OcrSlice.reducer,
 	}
 });
 
