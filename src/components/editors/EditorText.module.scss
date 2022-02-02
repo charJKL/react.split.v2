@@ -1,0 +1,15 @@
+@use "../../index.scss";
+@use "./Editor.module.scss";
+
+.editor
+{
+	@extend %editor;
+}
+.toolbars
+{
+	@extend %toolbars;
+}
+.desktop
+{
+	@extend %desktop;
+}
