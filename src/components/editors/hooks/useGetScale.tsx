@@ -7,68 +7,52 @@ const SENSITIVITY = 0.0001;
 
 type ScaleAction = null | "scale-out" | "scale-in";
 
-const useAllowScale = (editor: RefObject<HTMLElement>, desktop: RefObject<HTMLElement>, viewport: Size, element: Size) =>
+const useGetScale = (editor: RefObject<HTMLElement>, desktop: RefObject<HTMLElement>, viewport: Size, element: Size) : [Scale, ScaleAction] =>
 {
 	const [scale, setScale] = useState<Scale>({x: 1, y: 1});
-	const [scaling, setScaling] = useState<ScaleAction>(null);
-	const isScaling = useRef<boolean>(false);
+	const [isScaling, setScaling] = useState<ScaleAction>(null);
+	const scalingWasMade = useRef<boolean>(false);
 	
+
 	useEffect(() =>{
 		setScale(calculateRationValue(viewport, element));
 	}, [viewport, element]);
 	
+		
 	useEffect(() => { // reset indicator that operation scaled was performed
-		if(scaling == null) return;
+		if(isScaling == null) return;
 		const id = setTimeout(() => { setScaling(null); }, 200);
 		return () => { clearTimeout(id); }
-	}, [scaling]);
-	
+	}, [isScaling]);
+
 	useEffect(()=>{
 		if(editor.current === null) return;
 		
-		const mousedown = (e: MouseEvent) =>
-		{
-			if(e.button === MouseButton.Right)
-			{
-				isScaling.current = true;
-			}
-		}
-		const mouseup = (e: MouseEvent) =>
-		{
-			if(e.button === MouseButton.Right)
-			{
-				isScaling.current = false;
-			}
-		}
-		const mouseleave = (e: MouseEvent) =>
-		{
-			isScaling.current = false;
-		}
 		const mousewheel = (e: WheelEvent) =>
 		{
-			if(isScaling.current === true)
+			if(e.buttons & MouseButton.Right)
 			{
-				const x = scale.x - e.deltaY * SENSITIVITY;
-				const y = scale.y - e.deltaY * SENSITIVITY;
-				setScale({x: x, y: y});
+				setScale((scale) => ({x: scale.x - e.deltaY * SENSITIVITY, y: scale.y - e.deltaY * SENSITIVITY}));
 				setScaling(e.deltaY > 0 ? "scale-out" : "scale-in");
+				scalingWasMade.current = true;
 			}
+		}
+		const contextmenu = (e: MouseEvent) =>
+		{
+			if(scalingWasMade.current === true) e.preventDefault();
+			scalingWasMade.current = false;
 		}
 		
 		const element = editor.current;
-		element.addEventListener('mousedown', mousedown);
-		element.addEventListener('mouseup', mouseup);
-		element.addEventListener('mouseleave', mouseleave);
 		element.addEventListener('wheel', mousewheel);
+		element.addEventListener('contextmenu', contextmenu);
 		return () => {
-			element.removeEventListener('mousedown', mousedown);
-			element.removeEventListener('mouseup', mouseup);
-			element.removeEventListener('mouseleave', mouseleave);
 			element.removeEventListener('wheel', mousewheel);
+			element.removeEventListener('contextmenu', contextmenu);
 		}
-	}, [editor, desktop, isScaling, scale])
+	}, [editor])
 
-	return {scale, scaling};
+	return [scale, isScaling];
 }
 
 const calculateRationValue = (viewport: Size, size: Size) : Scale =>
@@ -81,4 +65,4 @@ const calculateRationValue = (viewport: Size, size: Size) : Scale =>
 	return {x: ratio, y: ratio};
 }
 
-export default useAllowScale;
+export default useGetScale;

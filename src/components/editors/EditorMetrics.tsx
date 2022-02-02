@@ -9,14 +9,14 @@ import useResolveObjectBeingHovered from "./hooks/useResolveObjectBeingHovered";
 import css from "./EditorMetrics.module.scss";
 import EditorMetricsLine from "./EditorMetricsLine";
 import useGetDesktopPosition from "./hooks/useGetDesktopPosition";
-import useAllowScale from "./hooks/useAllowScale";
+import useGetScale from "./hooks/useGetScale";
 import { Scale } from "./types/Scale";
 import { Size } from "./types/Size";
 import { MouseButton } from "./types/MouseButton";
 import useGetMouseMoveDistance from "./hooks/useGetMouseMoveDistance";
 
 
-type SelectableObject = null | MetricLineNames;
+type SelectableObject = MetricLineNames | null;
 
 const EditorMetrics = (): JSX.Element =>
 {
@@ -30,8 +30,7 @@ const EditorMetrics = (): JSX.Element =>
 	const {size: editorSize, position: editorPosition} = useGetEditorRect(editorRef);
 	const pageSize = useGetPageSize(page);
 	const [desktopPosition, isPositioning] = useGetDesktopPosition(editorRef, desktopRef);
-	
-	const {scale, scaling} = useAllowScale(editorRef, desktopRef, editorSize, pageSize);
+	const [scale, isScaling] = useGetScale(editorRef, desktopRef, editorSize, pageSize);
 	const {cursor: cursorPosition} = useCursorPosition(editorPosition, desktopPosition);
 	
 	const scaledDesktopSize = applayScaleToSize(pageSize, scale);
@@ -111,7 +110,7 @@ const EditorMetrics = (): JSX.Element =>
 		)
 	}
 	
-	const cursor = { cursor: resolveCursor(scaling, isPositioning, objectHovered, objectSelected) }
+	const cursor = { cursor: resolveCursor(isScaling, isPositioning, objectHovered, objectSelected) }
 	const styleForEditor = { ...cursor };
 	const styleForDesktop = { ...scaledDesktopSize, ...desktopPosition };
 	return (
@@ -146,7 +145,7 @@ const applayScaleToMetrics = (metric: Metric | null, scale: Scale) =>
 	}
 }
 
-type isScalingType = ReturnType<typeof useAllowScale>['scaling'];
+type isScalingType = ReturnType<typeof useGetScale>[1];
 const resolveCursor = (isScaling: isScalingType, isPositioning: boolean, isObjectHovered: SelectableObject, isObjectSelected: SelectableObject) =>
 {
 	if(isObjectSelected) return 'grabbing';
