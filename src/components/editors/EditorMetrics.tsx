@@ -5,7 +5,7 @@ import { useAppSelector, useAppDispatch } from "../../store/store.hooks";
 import useGetEditorRect from "./hooks/useGetEditorRect";
 import useGetPageSize from "./hooks/useGetPageSize";
 import useCursorPosition from "./hooks/useCursorPosition";
-import useResolveSelectObject from "./hooks/useResolveSelectObject";
+import useResolveObjectBeingHovered from "./hooks/useResolveObjectBeingHovered";
 import css from "./EditorMetrics.module.scss";
 import EditorMetricsLine from "./EditorMetricsLine";
 import useAllowRepositioning from "./hooks/useAllowRepositioning";
@@ -15,6 +15,8 @@ import { Size } from "./types/Size";
 import { MouseButton } from "./types/MouseButton";
 import useGetRelativeMoveDistance from "./hooks/useGetRelativeMoveDistance";
 
+
+type SelectableObject = null | MetricLineNames;
 
 const EditorMetrics = (): JSX.Element =>
 {
@@ -30,32 +32,32 @@ const EditorMetrics = (): JSX.Element =>
 	const {position: desktopPosition, positioning} = useAllowRepositioning(editorRef, desktopRef);
 	const {scale, scaling} = useAllowScale(editorRef, desktopRef, editorSize, pageSize);
 	const {cursor: cursorPosition} = useCursorPosition(editorPosition, desktopPosition);
+	
+	const scaledDesktopSize = applayScaleToSize(pageSize, scale);
+	const scaledMetrics = applayScaleToMetrics(metrics, scale);
+	
+	const [objectSelected, selectObject] = useState<SelectableObject>(null);
+	const objectHovered = useResolveObjectBeingHovered(scaledMetrics, objectSelected, cursorPosition);
 
-	const desktopSize = applayScaleToSize(pageSize, scale);
-	const scaled = applayScaleToMetrics(metrics, scale);
-	
-	const select = useResolveSelectObject(scaled, cursorPosition);
-	const [grab, setGrab] = useState<boolean>(false);
-	
 	const {distance} = useGetRelativeMoveDistance(MouseButton.left);
 
 	const mousedown = (e: MouseEvent) =>
 	{
-		if(select && e.button === MouseButton.left)
+		if(objectHovered && e.button === MouseButton.left)
 		{
-			setGrab(true);
+			selectObject(objectHovered);
 		}
 	}
 	const mousemove = (e: MouseEvent) =>
 	{
-		if(page && metrics && select && grab === true)
+		if(page && metrics && objectHovered && objectSelected)
 		{
-			switch(select)
+			switch(objectSelected)
 			{
 				case "x1":
 				case "x2": {
 					const id = page.id;
-					const metric = select;
+					const metric = objectSelected;
 					const value = metrics[metric] + distance.left / scale.x;
 					dispatch(updateMetricValue({id, metric, value}));
 					return; }
@@ -63,7 +65,7 @@ const EditorMetrics = (): JSX.Element =>
 				case "y1":
 				case "y2": {
 					const id = page.id;
-					const metric = select;
+					const metric = objectSelected;
 					const value = metrics[metric] + distance.top / scale.y;
 					dispatch(updateMetricValue({id, metric, value}));
 					return; }
@@ -74,7 +76,7 @@ const EditorMetrics = (): JSX.Element =>
 	{
 		if(e.button === MouseButton.left)
 		{
-			setGrab(false);
+			selectObject(null);
 		}
 	}
 	
@@ -82,19 +84,19 @@ const EditorMetrics = (): JSX.Element =>
 	var desktop : JSX.Element = <></>;
 	var metricLines : JSX.Element = <></>;
 	
-	if(metrics && scaled)
+	if(metrics && scaledMetrics)
 	{
 		const offset = 8;
-		const isHover = (name: MetricLineNames) => select === name;
-		const sizeWithOffset = {width: desktopSize.width + offset * 2, height: desktopSize.height + offset * 2};
+		const isHover = (name: MetricLineNames) => objectHovered === name;
+		const sizeWithOffset = {width: scaledDesktopSize.width + offset * 2, height: scaledDesktopSize.height + offset * 2};
 		const positionWithOffset = {left: offset * -1, top: offset * -1}
 		const styleForSvg = { ...sizeWithOffset, ...positionWithOffset };
 		metricLines = (
 			<svg className={css.metricsLine} style={styleForSvg}>
-				<EditorMetricsLine name="x1" type="vertical" value={scaled.x1} offset={offset} isHover={isHover("x1")} />
-				<EditorMetricsLine name="x2" type="vertical" value={scaled.x2} offset={offset} isHover={isHover("x2")} />
-				<EditorMetricsLine name="y1" type="horizontal" value={scaled.y1} offset={offset} isHover={isHover("y1")} />
-				<EditorMetricsLine name="y2" type="horizontal" value={scaled.y2} offset={offset} isHover={isHover("y2")} />
+				<EditorMetricsLine name="x1" type="vertical" value={scaledMetrics.x1} offset={offset} isHover={isHover("x1")} />
+				<EditorMetricsLine name="x2" type="vertical" value={scaledMetrics.x2} offset={offset} isHover={isHover("x2")} />
+				<EditorMetricsLine name="y1" type="horizontal" value={scaledMetrics.y1} offset={offset} isHover={isHover("y1")} />
+				<EditorMetricsLine name="y2" type="horizontal" value={scaledMetrics.y2} offset={offset} isHover={isHover("y2")} />
 			</svg>
 		)
 	}
@@ -108,9 +110,9 @@ const EditorMetrics = (): JSX.Element =>
 		)
 	}
 	
-	const cursor = { cursor: resolveCursor(scaling, positioning, select, grab) }
+	const cursor = { cursor: resolveCursor(scaling, positioning, objectHovered, objectSelected) }
 	const styleForEditor = { ...cursor };
-	const styleForDesktop = { ...desktopSize, ...desktopPosition };
+	const styleForDesktop = { ...scaledDesktopSize, ...desktopPosition };
 	return (
 		<div className={css.editor} style={styleForEditor} ref={editorRef} onMouseDown={mousedown} onMouseMove={mousemove} onMouseUp={mouseup}>
 			<div className={css.toolbars}>
@@ -144,8 +146,7 @@ const applayScaleToMetrics = (metric: Metric | null, scale: Scale) =>
 }
 
 type isScalingType = ReturnType<typeof useAllowScale>['scaling'];
-type isObjectHoveredType = ReturnType<typeof useResolveSelectObject>;
-const resolveCursor = (isScaling: isScalingType, isRepositioning: boolean, isObjectHovered: isObjectHoveredType, isObjectSelected: boolean) =>
+const resolveCursor = (isScaling: isScalingType, isRepositioning: boolean, isObjectHovered: SelectableObject, isObjectSelected: SelectableObject) =>
 {
 	if(isObjectSelected) return 'grabbing';
 	if(isScaling) return isScaling == "scale-out" ? 'zoom-out' : 'zoom-in';
@@ -153,4 +154,5 @@ const resolveCursor = (isScaling: isScalingType, isRepositioning: boolean, isObj
 	if(isRepositioning) return 'move';
 }
 
+export type { SelectableObject };
 export default EditorMetrics;
