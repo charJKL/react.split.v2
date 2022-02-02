@@ -1,0 +1,12 @@
+@use "../index.scss";
+
+.main
+{
+	display: flex;
+	flex-flow: row nowrap;
+}
+.separator
+{
+	width: 0px;
+	border-right: 2px dotted index.$color-black-light;
+}
