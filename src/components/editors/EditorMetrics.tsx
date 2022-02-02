@@ -8,7 +8,7 @@ import useCursorPosition from "./hooks/useCursorPosition";
 import useResolveObjectBeingHovered from "./hooks/useResolveObjectBeingHovered";
 import css from "./EditorMetrics.module.scss";
 import EditorMetricsLine from "./EditorMetricsLine";
-import useAllowRepositioning from "./hooks/useAllowRepositioning";
+import useGetDesktopPosition from "./hooks/useGetDesktopPosition";
 import useAllowScale from "./hooks/useAllowScale";
 import { Scale } from "./types/Scale";
 import { Size } from "./types/Size";
@@ -29,9 +29,11 @@ const EditorMetrics = (): JSX.Element =>
 	
 	const {size: editorSize, position: editorPosition} = useGetEditorRect(editorRef);
 	const pageSize = useGetPageSize(page);
-	const {position: desktopPosition, positioning} = useAllowRepositioning(editorRef, desktopRef);
+	const [desktopPosition, isPositioning] = useGetDesktopPosition(editorRef, desktopRef);
+	
 	const {scale, scaling} = useAllowScale(editorRef, desktopRef, editorSize, pageSize);
 	const {cursor: cursorPosition} = useCursorPosition(editorPosition, desktopPosition);
+	
 	
 	const scaledDesktopSize = applayScaleToSize(pageSize, scale);
 	const scaledMetrics = applayScaleToMetrics(metrics, scale);
@@ -39,7 +41,7 @@ const EditorMetrics = (): JSX.Element =>
 	const [objectSelected, selectObject] = useState<SelectableObject>(null);
 	const objectHovered = useResolveObjectBeingHovered(scaledMetrics, objectSelected, cursorPosition);
 
-	const {distance} = useGetRelativeMoveDistance(MouseButton.left);
+	const distance = useGetRelativeMoveDistance(MouseButton.left);
 
 	const mousedown = (e: MouseEvent) =>
 	{
@@ -110,7 +112,7 @@ const EditorMetrics = (): JSX.Element =>
 		)
 	}
 	
-	const cursor = { cursor: resolveCursor(scaling, positioning, objectHovered, objectSelected) }
+	const cursor = { cursor: resolveCursor(scaling, isPositioning, objectHovered, objectSelected) }
 	const styleForEditor = { ...cursor };
 	const styleForDesktop = { ...scaledDesktopSize, ...desktopPosition };
 	return (
@@ -146,12 +148,12 @@ const applayScaleToMetrics = (metric: Metric | null, scale: Scale) =>
 }
 
 type isScalingType = ReturnType<typeof useAllowScale>['scaling'];
-const resolveCursor = (isScaling: isScalingType, isRepositioning: boolean, isObjectHovered: SelectableObject, isObjectSelected: SelectableObject) =>
+const resolveCursor = (isScaling: isScalingType, isPositioning: boolean, isObjectHovered: SelectableObject, isObjectSelected: SelectableObject) =>
 {
 	if(isObjectSelected) return 'grabbing';
 	if(isScaling) return isScaling == "scale-out" ? 'zoom-out' : 'zoom-in';
 	if(isObjectHovered) return 'grab';
-	if(isRepositioning) return 'move';
+	if(isPositioning) return 'move';
 }
 
 export type { SelectableObject };
