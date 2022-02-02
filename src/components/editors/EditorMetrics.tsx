@@ -13,7 +13,7 @@ import useAllowScale from "./hooks/useAllowScale";
 import { Scale } from "./types/Scale";
 import { Size } from "./types/Size";
 import { MouseButton } from "./types/MouseButton";
-import useGetRelativeMoveDistance from "./hooks/useGetRelativeMoveDistance";
+import useGetMouseMoveDistance from "./hooks/useGetMouseMoveDistance";
 
 
 type SelectableObject = null | MetricLineNames;
@@ -40,7 +40,7 @@ const EditorMetrics = (): JSX.Element =>
 	const [objectSelected, selectObject] = useState<SelectableObject>(null);
 	const objectHovered = useResolveObjectBeingHovered(scaledMetrics, objectSelected, cursorPosition);
 
-	const distance = useGetRelativeMoveDistance(MouseButton.Left);
+	const [distance] = useGetMouseMoveDistance(MouseButton.Left);
 
 	const mousedown = (e: MouseEvent) =>
 	{

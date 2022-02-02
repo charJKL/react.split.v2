@@ -1,13 +1,13 @@
 import { RefObject, useEffect, useState } from "react";
 import type { Position } from "../types/Position";
 import { MouseButton } from "../types/MouseButton";
-import useGetRelativeMoveDistance from "./useGetRelativeMoveDistance";
+import useGetMouseMoveDistance from "./useGetMouseMoveDistance";
 
 const useGetDesktopPosition = (editor: RefObject<HTMLElement>, desktop: RefObject<HTMLElement>) : [Position, boolean]=>
 {
 	const [position, setPosition] = useState<Position>({left: 0, top: 0});
 	const [isPositioning, setPositioning] = useState<boolean>(false);
-	const distance = useGetRelativeMoveDistance(MouseButton.Right);
+	const [distance, absolute] = useGetMouseMoveDistance(MouseButton.Right);
 
 	useEffect(() =>{
 		if(editor.current == null) return;
