@@ -1,7 +1,13 @@
-@import "../index.scss";
+@use "../index.scss";
 
 .footer
 {
-	height: 40px;
-	background: $color-gray;
+	display: flex;
+	flex-flow: row nowrap;
+	height: index.$input-main-height + index.$row-margin + index.$row-margin;
+	background: index.$color-gray;
+}
+.editor
+{
+	margin-left: index.$row-margin * 2;
 }

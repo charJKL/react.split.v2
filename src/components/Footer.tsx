@@ -1,18 +1,15 @@
-import react from "react";
+import { CustomElement, CustomElementProps } from "../type/CustomElement";
+import EditorInput from "../components/editors/EditorInput";
 import css from "./Footer.module.scss";
 
-type FooterProps = 
-{
-	className?: string | undefined;
-}
 
-const Footer = ({className}: FooterProps) : JSX.Element => 
+const Footer : CustomElement = ({className}: CustomElementProps) : JSX.Element => 
 {
 	
 	const cssFooter = [className, css.footer].join(" ");
 	return (
 		<footer className={cssFooter}>
-			
+			<EditorInput className={css.editor} />
 		</footer>
 	)
 }
