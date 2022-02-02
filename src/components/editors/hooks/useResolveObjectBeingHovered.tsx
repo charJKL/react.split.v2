@@ -1,12 +1,17 @@
+import { SelectableObject } from "../EditorMetrics";
 import { MetricLineNames } from "../../../store/slice.metrics";
 import { Position } from "../types/Position";
 
 const THRESHOLD = 10;
 
-type ObjectType = MetricLineNames;
+
 type MetricsList = { [Property in MetricLineNames]: number }
-const useResolveSelectObject = (metrics: MetricsList | null, cursor: Position) : ObjectType | null =>
+const useResolveObjectBeingHovered = (metrics: MetricsList | null, selected: SelectableObject, cursor: Position) : SelectableObject =>
 {
+	if(selected !== null)
+	{
+		return selected;
+	}
 	if(metrics !== null)
 	{
 		type Line = { name: MetricLineNames, distance: number };
@@ -22,4 +27,4 @@ const useResolveSelectObject = (metrics: MetricsList | null, cursor: Position) :
 	return null;
 }
 
-export default useResolveSelectObject;
+export default useResolveObjectBeingHovered;
