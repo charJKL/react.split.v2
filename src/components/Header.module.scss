@@ -1,4 +1,4 @@
-@import "../index.scss";
+@use "../index.scss";
 $margin: 7px;
 
 .header
@@ -6,19 +6,19 @@ $margin: 7px;
 	display: flex;
 	flex-flow: row nowrap;
 	align-items: center;
-	height: $input-main-height + $margin + $margin;
+	height: index.$input-main-height + $margin + $margin;
 	background: rgba(180, 180, 180, 1);
 }
 
 .load
 {
-	@include input-main;
+	@extend %input-main;
 	margin: $margin 0px $margin 14px;
 }
 
 .select
 {
-	@include input-main;
+	@extend %input-main;
 	width: 250px;
 	margin: $margin $margin $margin 7px;
 }
