@@ -3,15 +3,16 @@
 
 .editor
 {
-	@extend .editor;
+	@extend %editor;
 }
 .toolbars
 {
-	@extend .toolbars;
+	@extend %toolbars;
 }
 .desktop
 {
-	@extend .desktop;
+	@extend %desktop;
+	border: solid 1px #000;
 }
 
 .image
