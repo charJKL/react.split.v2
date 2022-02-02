@@ -1,4 +1,4 @@
-import React, { useRef, MouseEvent, useState } from "react";
+import React, { useRef, MouseEvent, useState, WheelEvent } from "react";
 import { CustomElement } from "../../type/CustomElement";
 import { useAppSelector, useAppDispatch } from "../../store/store.hooks";
 import { selectSelectedPage } from "../../store/slice.pages";
@@ -79,6 +79,18 @@ const EditorMetrics : CustomElement = (): JSX.Element =>
 			selectObject(null);
 		}
 	}
+	const mousewheel = (e: WheelEvent) =>
+	{
+		if(page && metrics && e.buttons === 0)
+		{
+			const sensitivity = 0.001;
+			const id = page.id;
+			const metric = "rotate";
+			const value = metrics[metric] + e.deltaY * sensitivity;
+			dispatch(updateMetricValue({id, metric, value}));
+			return;
+		}
+	}
 	
 	var toolbars: Array<JSX.Element> = [];
 	var desktop : JSX.Element = <></>;
@@ -100,11 +112,12 @@ const EditorMetrics : CustomElement = (): JSX.Element =>
 			</svg>
 		)
 	}
-	if(page && page.status === "Loaded")
+	if(page && metrics && page.status === "Loaded")
 	{
+		const styleForImage = { transform: `rotate(${metrics.rotate}deg)` }
 		desktop = (
 			<>
-				<img className={css.image} src={page.url} alt="" />
+				<img className={css.image} style={styleForImage} src={page.url} alt="" />
 				{metricLines}
 			</>
 		)
@@ -114,7 +127,7 @@ const EditorMetrics : CustomElement = (): JSX.Element =>
 	const styleForEditor = { ...cursor };
 	const styleForDesktop = { ...scaledDesktopSize, ...desktopPosition };
 	return (
-		<div className={css.editor} style={styleForEditor} ref={editorRef} onMouseDown={mousedown} onMouseMove={mousemove} onMouseUp={mouseup}>
+		<div className={css.editor} style={styleForEditor} ref={editorRef} onMouseDown={mousedown} onMouseMove={mousemove} onMouseUp={mouseup} onWheel={mousewheel}>
 			<div className={css.toolbars}>
 				<label>🔍 {scale.x.toFixed(2)} / {scale.y.toFixed(2)}</label>
 				<label>➡ {cursorPosition.left.toFixed(2)} / {cursorPosition.top.toFixed(2)}</label>
