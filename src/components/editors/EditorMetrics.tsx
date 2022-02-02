@@ -1,24 +1,24 @@
 import React, { useRef, MouseEvent, useState } from "react";
-import { selectSelectedPage } from "../../store/slice.pages";
-import Metrics, { Metric, MetricLineNames, selectMetricsForPage, updateMetricValue } from "../../store/slice.metrics";
+import { CustomElement } from "../../type/CustomElement";
 import { useAppSelector, useAppDispatch } from "../../store/store.hooks";
+import { selectSelectedPage } from "../../store/slice.pages";
+import { Metric, MetricLineNames, selectMetricsForPage, updateMetricValue } from "../../store/slice.metrics";
+import { Scale } from "./types/Scale";
+import { Size } from "./types/Size";
+import { MouseButton } from "./types/MouseButton";
+import EditorMetricsLine from "./EditorMetricsLine";
 import useGetEditorRect from "./hooks/useGetEditorRect";
 import useGetPageSize from "./hooks/useGetPageSize";
 import useCursorPosition from "./hooks/useCursorPosition";
 import useResolveObjectBeingHovered from "./hooks/useResolveObjectBeingHovered";
-import css from "./EditorMetrics.module.scss";
-import EditorMetricsLine from "./EditorMetricsLine";
 import useGetDesktopPosition from "./hooks/useGetDesktopPosition";
 import useGetScale from "./hooks/useGetScale";
-import { Scale } from "./types/Scale";
-import { Size } from "./types/Size";
-import { MouseButton } from "./types/MouseButton";
 import useGetMouseMoveDistance from "./hooks/useGetMouseMoveDistance";
-
+import css from "./EditorMetrics.module.scss";
 
 type SelectableObject = MetricLineNames | null;
 
-const EditorMetrics = (): JSX.Element =>
+const EditorMetrics : CustomElement = (): JSX.Element =>
 {
 	const page = useAppSelector(selectSelectedPage);
 	const metrics = useAppSelector(selectMetricsForPage(page));
@@ -149,7 +149,7 @@ type isScalingType = ReturnType<typeof useGetScale>[1];
 const resolveCursor = (isScaling: isScalingType, isPositioning: boolean, isObjectHovered: SelectableObject, isObjectSelected: SelectableObject) =>
 {
 	if(isObjectSelected) return 'grabbing';
-	if(isScaling) return isScaling == "scale-out" ? 'zoom-out' : 'zoom-in';
+	if(isScaling) return isScaling === "scale-out" ? 'zoom-out' : 'zoom-in';
 	if(isObjectHovered) return 'grab';
 	if(isPositioning) return 'move';
 }

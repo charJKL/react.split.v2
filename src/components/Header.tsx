@@ -1,15 +1,11 @@
 import React from "react";
+import { CustomElement, CustomElementProps } from "../type/CustomElement";
 import LoadFileInput from "./common/LoadFileInput";
 import css from "./Header.module.scss";
-import { useAppSelector, useAppDispatch } from "../store/store.hooks";
+import { useAppDispatch } from "../store/store.hooks";
 import { loadFile } from "../store/store.file";
 
-type HeaderProps = 
-{
-	className?: string | undefined;
-}
-
-const Header = ({className}: HeaderProps): JSX.Element => 
+const Header : CustomElement = ({className} : CustomElementProps) : JSX.Element => 
 {
 	const dispatch = useAppDispatch();
 	
