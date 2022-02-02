@@ -1,5 +1,1 @@
-export const MouseButton =
-{
-	left: 0,
-	right: 2
-}
+export enum MouseButton { Left = 0, Right = 2 };

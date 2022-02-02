@@ -7,7 +7,7 @@ const useGetDesktopPosition = (editor: RefObject<HTMLElement>, desktop: RefObjec
 {
 	const [position, setPosition] = useState<Position>({left: 0, top: 0});
 	const [isPositioning, setPositioning] = useState<boolean>(false);
-	const distance = useGetRelativeMoveDistance(MouseButton.right);
+	const distance = useGetRelativeMoveDistance(MouseButton.Right);
 
 	useEffect(() =>{
 		if(editor.current == null) return;
@@ -15,7 +15,7 @@ const useGetDesktopPosition = (editor: RefObject<HTMLElement>, desktop: RefObjec
 		
 		const mousedown = (e: MouseEvent) =>
 		{
-			if(e.button === MouseButton.right)
+			if(e.button === MouseButton.Right)
 			{
 				const editorPosition = editor.current!.getBoundingClientRect();
 				const desktopPosition = desktop.current!.getBoundingClientRect();
@@ -31,7 +31,7 @@ const useGetDesktopPosition = (editor: RefObject<HTMLElement>, desktop: RefObjec
 		}
 		const mouseup = (e: MouseEvent) =>
 		{
-			if(e.button === MouseButton.right)
+			if(e.button === MouseButton.Right)
 			{
 				setPositioning(false);
 			}
@@ -59,24 +59,3 @@ const useGetDesktopPosition = (editor: RefObject<HTMLElement>, desktop: RefObjec
 }
 
 export default useGetDesktopPosition;
-
-/*
-const useAllowRepositioning = (editor: RefObject<HTMLElement>, desktop: RefObject<HTMLElement>) =>
-{
-	const [position, setPosition] = useState<Position>({left: 0, top: 0});
-	const [initalPosition, setInitalPosition] = useState<Position>({left: 0, top: 0});
-	const [positioning, setPositioning] = useState<boolean>(false);
-	const {displacementing, displacement} = useDisplacement(MouseButton.right);
-	
-	useEffect(() =>{
-		if(editor.current == null) return;
-		if(desktop.current == null) return;
-		
-
-		
-
-	}, [editor, desktop, displacement, displacementing, initalPosition]);
-	
-	return {position, positioning};
-}
-*/

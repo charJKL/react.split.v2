@@ -28,14 +28,14 @@ const useAllowScale = (editor: RefObject<HTMLElement>, desktop: RefObject<HTMLEl
 		
 		const mousedown = (e: MouseEvent) =>
 		{
-			if(e.button === MouseButton.right)
+			if(e.button === MouseButton.Right)
 			{
 				isScaling.current = true;
 			}
 		}
 		const mouseup = (e: MouseEvent) =>
 		{
-			if(e.button === MouseButton.right)
+			if(e.button === MouseButton.Right)
 			{
 				isScaling.current = false;
 			}

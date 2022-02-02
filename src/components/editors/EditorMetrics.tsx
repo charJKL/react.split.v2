@@ -34,18 +34,17 @@ const EditorMetrics = (): JSX.Element =>
 	const {scale, scaling} = useAllowScale(editorRef, desktopRef, editorSize, pageSize);
 	const {cursor: cursorPosition} = useCursorPosition(editorPosition, desktopPosition);
 	
-	
 	const scaledDesktopSize = applayScaleToSize(pageSize, scale);
 	const scaledMetrics = applayScaleToMetrics(metrics, scale);
 	
 	const [objectSelected, selectObject] = useState<SelectableObject>(null);
 	const objectHovered = useResolveObjectBeingHovered(scaledMetrics, objectSelected, cursorPosition);
 
-	const distance = useGetRelativeMoveDistance(MouseButton.left);
+	const distance = useGetRelativeMoveDistance(MouseButton.Left);
 
 	const mousedown = (e: MouseEvent) =>
 	{
-		if(objectHovered && e.button === MouseButton.left)
+		if(objectHovered && e.button === MouseButton.Left)
 		{
 			selectObject(objectHovered);
 		}
@@ -76,7 +75,7 @@ const EditorMetrics = (): JSX.Element =>
 	}
 	const mouseup = (e: MouseEvent) =>
 	{
-		if(e.button === MouseButton.left)
+		if(e.button === MouseButton.Left)
 		{
 			selectObject(null);
 		}
