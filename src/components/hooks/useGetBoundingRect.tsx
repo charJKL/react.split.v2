@@ -6,7 +6,7 @@ const useGetBoundingRect = (element: RefObject<HTMLDivElement>) : DOMRect =>
 	
 	useEffect(() => {
 		if(element.current) setBoundingRect(element.current.getBoundingClientRect());
-	}, [element.current]);
+	}, [element]);
 	
 	return boundingRect;
 }
