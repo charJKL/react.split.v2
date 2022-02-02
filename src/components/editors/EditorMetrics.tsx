@@ -1,5 +1,5 @@
 import React, { useRef, MouseEvent, useState, WheelEvent } from "react";
-import { CustomElement } from "../../type/CustomElement";
+import { CustomElement, CustomElementProps } from "../../type/CustomElement";
 import { useAppSelector, useAppDispatch } from "../../store/store.hooks";
 import { selectSelectedPage } from "../../store/slice.pages";
 import { Metric, MetricLineNames, selectMetricsForPage, updateMetricValue } from "../../store/slice.metrics";
@@ -7,7 +7,7 @@ import { Scale } from "./types/Scale";
 import { Size } from "./types/Size";
 import { MouseButton } from "./types/MouseButton";
 import EditorMetricsLine from "./EditorMetricsLine";
-import useGetEditorRect from "./hooks/useGetEditorRect";
+import useGetBoundingRect from "../hooks/useGetBoundingRect";
 import useGetPageSize from "./hooks/useGetPageSize";
 import useCursorPosition from "./hooks/useCursorPosition";
 import useResolveObjectBeingHovered from "./hooks/useResolveObjectBeingHovered";
@@ -18,7 +18,7 @@ import css from "./EditorMetrics.module.scss";
 
 type SelectableObject = MetricLineNames | null;
 
-const EditorMetrics : CustomElement = (): JSX.Element =>
+const EditorMetrics : CustomElement = ({style} : CustomElementProps): JSX.Element =>
 {
 	const page = useAppSelector(selectSelectedPage);
 	const metrics = useAppSelector(selectMetricsForPage(page));
@@ -27,11 +27,11 @@ const EditorMetrics : CustomElement = (): JSX.Element =>
 	const editorRef = useRef<HTMLDivElement>(null);
 	const desktopRef = useRef<HTMLDivElement>(null);
 	
-	const {size: editorSize, position: editorPosition} = useGetEditorRect(editorRef);
+	const editorRect = useGetBoundingRect(editorRef);
 	const pageSize = useGetPageSize(page);
 	const [desktopPosition, isPositioning] = useGetDesktopPosition(editorRef, desktopRef);
-	const [scale, isScaling] = useGetScale(editorRef, desktopRef, editorSize, pageSize);
-	const {cursor: cursorPosition} = useCursorPosition(editorPosition, desktopPosition);
+	const [scale, isScaling] = useGetScale(editorRef, desktopRef, editorRect, pageSize);
+	const {cursor: cursorPosition} = useCursorPosition(editorRect, desktopPosition);
 	
 	const scaledDesktopSize = applayScaleToSize(pageSize, scale);
 	const scaledMetrics = applayScaleToMetrics(metrics, scale);
@@ -124,7 +124,7 @@ const EditorMetrics : CustomElement = (): JSX.Element =>
 	}
 	
 	const cursor = { cursor: resolveCursor(isScaling, isPositioning, objectHovered, objectSelected) }
-	const styleForEditor = { ...cursor };
+	const styleForEditor = { ...style, ...cursor };
 	const styleForDesktop = { ...scaledDesktopSize, ...desktopPosition };
 	return (
 		<div className={css.editor} style={styleForEditor} ref={editorRef} onMouseDown={mousedown} onMouseMove={mousemove} onMouseUp={mouseup} onWheel={mousewheel}>
