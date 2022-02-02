@@ -3,10 +3,13 @@ import { Page } from "./slice.pages";
 import type { StoreState, StoreDispatch } from "./store";
 
 type Key = string;
+type MetricName = "x1" | "x2" | "y1" | "y2" | "rotate";
+type MetricLineNames = Exclude<MetricName, "rotate">;
+type MetricValue = { id: Key, metric: MetricName, value: number};
 
 type Metric = 
 {
-	id: Key,
+	id: Key;
 	wasEdited: boolean;
 	x1: number;
 	x2: number;
@@ -15,20 +18,16 @@ type Metric =
 	rotate: number;
 }
 
-type MetricLineNames = "x1" | "x2" | "y1" | "y2";
-
 type InitialStateMetrics =
 {
 	ids: Array<string>,
 	entities: { [key: string]: Metric },
-	selected: string | null;
 }
 
 const InitialState : InitialStateMetrics = 
 {
 	ids: [],
 	entities: {},
-	selected: null,
 }
 
 const Metrics = createSlice({
@@ -42,12 +41,18 @@ const Metrics = createSlice({
 			state.ids.push(id);
 			state.entities[id] = action.payload;
 		},
+		updateMetricValue: (state, action: PayloadAction<MetricValue>) =>
+		{
+			const id = action.payload.id;
+			const name = action.payload.metric;
+			state.entities[id][name] = action.payload.value;
+		}
 	}
 });
 
 export const selectMetricsForPage = (page: Page | null) => (state: StoreState) => page ? state.metrics.entities[page.id] : null;
 
-export const { addMetric } = Metrics.actions;
+export const { addMetric, updateMetricValue } = Metrics.actions;
 export { };
 
 export type { Metric, MetricLineNames };
