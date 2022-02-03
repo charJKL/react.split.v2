@@ -13,6 +13,8 @@ type Page =
 	width?: number,
 	height?: number,
 }
+type PageLoaded = Required<Page> & {status: "Loaded"};
+
 
 type InitialStatePages =
 {
@@ -54,6 +56,10 @@ const Pages = createSlice({
 	}
 });
 
+const isPageLoaded = (page: Page | PageLoaded) : page is PageLoaded =>
+{
+	return page.status === "Loaded";
+}
 
 const loadPage = createAsyncThunk<void, string, ThunkStoreTypes>('pages/loadPage', (id, thunk) => {
 	const state = thunk.getState();
@@ -81,7 +87,7 @@ export const selectPageById = (id: string) => (state: StoreState) => state.pages
 export const selectSelectedPage = (state: StoreState) => state.pages.selected ? state.pages.entities[state.pages.selected] : null;
 
 export const { addPage, selectPage } = Pages.actions;
-export { loadPage };
+export { isPageLoaded, loadPage };
 
-export type { Page };
+export type { Page, PageLoaded };
 export default Pages;
