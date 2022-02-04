@@ -1,5 +1,5 @@
 import React, { useRef, MouseEvent, useState, WheelEvent } from "react";
-import { CustomElement, CustomElementProps } from "../../type/CustomElement";
+import { CustomHTMLAttributes } from "../types/CustomHTMLAttributes";
 import { useAppSelector, useAppDispatch } from "../../store/store.hooks";
 import { selectSelectedPage } from "../../store/slice.pages";
 import { Metric, MetricLineNames, selectMetricsForPage, updateMetricValue } from "../../store/slice.metrics";
@@ -18,7 +18,7 @@ import css from "./EditorMetrics.module.scss";
 
 type SelectableObject = MetricLineNames | null;
 
-const EditorMetrics : CustomElement = ({style} : CustomElementProps): JSX.Element =>
+const EditorMetrics = ({style} : CustomHTMLAttributes): JSX.Element =>
 {
 	const page = useAppSelector(selectSelectedPage);
 	const metrics = useAppSelector(selectMetricsForPage(page));

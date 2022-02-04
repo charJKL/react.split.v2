@@ -1,5 +1,5 @@
 import { MouseEvent } from "react"; 
-import {CustomElement, CustomElementProps} from "../../type/CustomElement";
+import { CustomHTMLAttributes } from "../types/CustomHTMLAttributes";
 import { useAppSelector, useAppDispatch } from "../../store/store.hooks";
 import { isPageLoaded, selectSelectedPage } from "../../store/slice.pages";
 import { selectMetricsForPage } from "../../store/slice.metrics";
@@ -7,7 +7,7 @@ import { readPage, selectOcrForPage } from "../../store/slice.ocrs";
 import EditorTextStatus from "./EditorTextStatus";
 import css from "./EditorText.module.scss";
 
-const EditorText : CustomElement = ({className, style} : CustomElementProps) : JSX.Element =>
+const EditorText = ({className, style} : CustomHTMLAttributes) : JSX.Element =>
 {
 	const page = useAppSelector(selectSelectedPage);
 	const metrics = useAppSelector(selectMetricsForPage(page));

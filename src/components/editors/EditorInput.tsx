@@ -1,11 +1,11 @@
 import { ChangeEvent } from "react";
-import { CustomElement } from "../../type/CustomElement";
+import { CustomHTMLAttributes } from "../types/CustomHTMLAttributes";
 import { useAppSelector } from "../../store/store.hooks";
 import { selectSelectedPage } from "../../store/slice.pages";
 import { selectMetricsForPage } from "../../store/slice.metrics";
 import css from "./EditorInput.module.scss";
 
-const EditorInput : CustomElement = ({className}) =>
+const EditorInput = ({className}: CustomHTMLAttributes) =>
 {
 	const page = useAppSelector(selectSelectedPage);
 	const metrics = useAppSelector(selectMetricsForPage(page));

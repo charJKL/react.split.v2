@@ -1,9 +1,9 @@
-import { CustomElementProps } from "../../type/CustomElement";
+import { CustomHTMLAttributes } from "../types/CustomHTMLAttributes";
 import { Ocr } from "../../store/slice.ocrs";
 import css from "./EditorTextStatus.module.scss";
 
 type EditorTextStatusPropsExt = {status: Ocr['status'], details: Ocr['details']}
-type EditorTextStatusProps = CustomElementProps & EditorTextStatusPropsExt;
+type EditorTextStatusProps = CustomHTMLAttributes & EditorTextStatusPropsExt;
 
 const EditorTextStatus = ({className, status, details, ...props}: EditorTextStatusProps) : JSX.Element =>
 {

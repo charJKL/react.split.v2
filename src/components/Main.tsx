@@ -1,11 +1,11 @@
 import { useRef } from "react";
-import {CustomElement, CustomElementProps} from "../type/CustomElement";
+import {CustomHTMLAttributes} from "./types/CustomHTMLAttributes";
 import useGetBoundingRect from "./hooks/useGetBoundingRect";
 import EditorMetrics from './editors/EditorMetrics';
 import EditorText from './editors/EditorText';
 import css from "./Main.module.scss";
 
-const Main : CustomElement = ({className} : CustomElementProps ) : JSX.Element =>
+const Main = ({className} : CustomHTMLAttributes ) : JSX.Element =>
 {
 	const mainRef = useRef<HTMLDivElement>(null);
 	const rect = useGetBoundingRect(mainRef);

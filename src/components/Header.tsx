@@ -1,11 +1,11 @@
 import React from "react";
-import { CustomElement, CustomElementProps } from "../type/CustomElement";
+import { CustomHTMLAttributes } from "./types/CustomHTMLAttributes";
 import LoadFileInput from "./common/LoadFileInput";
 import css from "./Header.module.scss";
 import { useAppDispatch } from "../store/store.hooks";
 import { loadFile } from "../store/store.file";
 
-const Header : CustomElement = ({className} : CustomElementProps) : JSX.Element => 
+const Header = ({className} : CustomHTMLAttributes) : JSX.Element => 
 {
 	const dispatch = useAppDispatch();
 	

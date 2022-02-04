@@ -1,11 +1,11 @@
 
-import { CustomElement, CustomElementProps } from "../type/CustomElement";
+import { CustomHTMLAttributes } from "./types/CustomHTMLAttributes";
 import Thumbnail from "./list/Thumbnail";
 import { useAppSelector } from "../store/store.hooks";
 import { selectPageIds } from "../store/slice.pages";
 import css from "./List.module.scss";
 
-const List : CustomElement = ({className}: CustomElementProps) : JSX.Element =>
+const List = ({className}: CustomHTMLAttributes) : JSX.Element =>
 {
 	const pages = useAppSelector(selectPageIds);
 	

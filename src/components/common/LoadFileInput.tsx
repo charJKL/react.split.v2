@@ -1,5 +1,5 @@
 import React, { useRef } from "react";
-import { CustomElement, CustomElementProps } from "../../type/CustomElement";
+import {CustomHTMLAttributes} from "../types/CustomHTMLAttributes";
 import css from "./LoadFileInput.module.scss";
 
 type LoadFileInputExtendProp = 
@@ -7,9 +7,9 @@ type LoadFileInputExtendProp =
 	onFiles?: (files: Array<File>) => void;
 }
 
-type LoadFileInputProps = CustomElementProps & LoadFileInputExtendProp;
+type LoadFileInputProps = CustomHTMLAttributes & LoadFileInputExtendProp;
 
-const LoadFileInput : CustomElement = ({children, onFiles, ...props}: LoadFileInputProps) : JSX.Element =>
+const LoadFileInput = ({children, onFiles, ...props}: LoadFileInputProps) : JSX.Element =>
 {
 	var reference = useRef<HTMLInputElement>(null);
 

@@ -1,11 +1,10 @@
-import { CustomElement, CustomElementProps } from "../type/CustomElement";
+import { CustomHTMLAttributes } from "./types/CustomHTMLAttributes";
 import EditorInput from "../components/editors/EditorInput";
 import css from "./Footer.module.scss";
 
 
-const Footer : CustomElement = ({className}: CustomElementProps) : JSX.Element => 
+const Footer = ({className}: CustomHTMLAttributes) : JSX.Element => 
 {
-	
 	const cssFooter = [className, css.footer].join(" ");
 	return (
 		<footer className={cssFooter}>
