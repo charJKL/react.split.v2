@@ -6,7 +6,7 @@ $scroll-height: 17px;
 {
 	display: flex;
 	flex-flow: row nowrap;
-	height: 110px + $scroll-height;
+	height: 111px + $scroll-height;
 	background: index.$color-gray-light;
 	overflow-x: scroll;
 	box-sizing: border-box;
