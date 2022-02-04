@@ -1,4 +1,6 @@
-$font: 'Segoe UI', sans-serif;
+@use "sass:list";
+
+$font: Arial, sans-serif;
 
 $row-margin: 7px;
 $color-gray: rgba(170, 170, 170);
@@ -33,7 +35,7 @@ body
 	height: $input-main-height;
 	box-sizing: border-box;
 	padding: 0px 10px;
-	font: 16px / $input-main-height $input-main-font-family;
+	font: list.slash(16px, $input-main-height) $input-main-font-family;
 	border-radius: 0px;
 	border: solid 1px #000;
 	&:focus{
