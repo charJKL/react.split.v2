@@ -1,5 +1,6 @@
 import { CustomHTMLAttributes } from "../types/CustomHTMLAttributes";
 import { Ocr } from "../../store/slice.ocrs";
+import Progress from "../common/Progress";
 import css from "./EditorTextStatus.module.scss";
 
 type EditorTextStatusPropsExt = {status: Ocr['status'], details: Ocr['details']}
@@ -8,6 +9,7 @@ type EditorTextStatusProps = CustomHTMLAttributes & EditorTextStatusPropsExt;
 const EditorTextStatus = ({className, status, details, ...props}: EditorTextStatusProps) : JSX.Element =>
 {
 	const classForStatus = [className, css.block].join(" ");
+
 	switch(status)
 	{
 		case "Idle":
@@ -28,13 +30,11 @@ const EditorTextStatus = ({className, status, details, ...props}: EditorTextStat
 			<div className={classForStatus}>
 				<div className={css.status}>{status}</div>
 				<div className={css.details}>{percent.toFixed(0)} / 100 %</div>
-				<div className={css.progressBar}><div style={{width: `${percent}%`}}></div></div>
+				<Progress className={css.progress} progress={percent} />
 			</div>)
 		
 		case "Parsed":
 			return <></>;
-		
-		
 	}
 }
 
