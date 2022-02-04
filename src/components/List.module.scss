@@ -1,4 +1,4 @@
-@import "../index.scss";
+@use "../index.scss";
 
 $scroll-height: 17px;
 
@@ -7,7 +7,8 @@ $scroll-height: 17px;
 	display: flex;
 	flex-flow: row nowrap;
 	height: 110px + $scroll-height;
-	background: $color-gray-light;
+	background: index.$color-gray-light;
 	overflow-x: scroll;
 	box-sizing: border-box;
+	border-bottom: solid 1px index.$color-gray-light;
 }
