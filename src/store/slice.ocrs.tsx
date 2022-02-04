@@ -8,7 +8,7 @@ import drawRotateImage from "./lib/drawRotateImage"
 
 
 type Key = string;
-type OcrStatus = "Idle" | "Processing" | "Tesseract" | "Parsed" | "Loaded" | "Error";
+type OcrStatus = "Idle" | "Preprocessing" | "Initializaing" | "Parsing" | "Parsed" | "Error";
 type OcrLine = { bbox: Bbox, baseline: Baseline, text: string; }
 type OcrWord = { bbox: Bbox, baseline: Baseline, text: string; choices: Choice[]; }
 
@@ -16,7 +16,7 @@ type Ocr =
 {
 	id: Key;
 	status: OcrStatus;
-	detail: string | number | null;
+	details: string | number | null;
 	text: string;
 	lines: OcrLine[];
 	words: OcrWord[];
@@ -53,7 +53,30 @@ const Ocrs = createSlice({
 		tesseractLog: (state, action: PayloadAction<{id: string, log: any}>) => 
 		{
 			const id = action.payload.id;
-			state.entities[id].detail = action.payload.log;
+			const log = action.payload.log as {status: string, progress: number};
+			switch(log.status)
+			{
+				case "loading tesseract core":
+				case "initializing tesseract":
+				case "initialized tesseract":
+				case "loading language traineddata":
+				case "loaded language traineddata":
+				case "initializing api":
+				case "initialized api":
+					state.entities[id].status = "Initializaing"
+					state.entities[id].details = log.status;
+					return;
+				
+				case "recognizing text":
+					state.entities[id].status = "Parsing";
+					state.entities[id].details = log.progress;
+					return;
+				
+				default:
+					state.entities[id].status = "Error";
+					state.entities[id].details = log.status;
+					return;
+			}
 		}
 	}
 });
@@ -70,7 +93,7 @@ const readPage = createAsyncThunk<void, ReadPageBatch, ThunkStoreTypes>('ocrs/re
 	const metrics = batch.metrics;
 	
 	// Process image for tesseract.js, apply rotation:
-	dispatch(upsertOcr({id: page.id, status: "Processing", detail: "Applying rotation."}));
+	dispatch(upsertOcr({id: page.id, status: "Preprocessing", details: "Applying rotation."}));
 	const rotatedCanvas = new OffscreenCanvas(page.width, page.height);
 	const rotatedContext = rotatedCanvas.getContext("2d", {alpha: false});
 	if(rotatedContext === null) return;
@@ -79,7 +102,7 @@ const readPage = createAsyncThunk<void, ReadPageBatch, ThunkStoreTypes>('ocrs/re
 	drawRotateImage(rotatedContext, image, metrics.rotate);
 	
 	// Continue process image for tesseract.js, apply cliping:
-	dispatch(upsertOcr({id: page.id, status: "Processing", detail: "Clipping image."}));
+	dispatch(upsertOcr({id: page.id, status: "Preprocessing", details: "Clipping image."}));
 	const width = metrics.x2 - metrics.x1;
 	const height = metrics.y2 - metrics.y1;
 	const clippedCanvas = new OffscreenCanvas(width, height);
@@ -88,12 +111,12 @@ const readPage = createAsyncThunk<void, ReadPageBatch, ThunkStoreTypes>('ocrs/re
 	clippedContext.drawImage(rotatedCanvas, metrics.x1, metrics.y1, width, height, 0, 0, width, height);
 
 	// Convert canvas to blob:
-	dispatch(upsertOcr({id: page.id, status: "Processing", detail: "Converting to blob."}));
+	dispatch(upsertOcr({id: page.id, status: "Preprocessing", details: "Converting to blob."}));
 	const blob : any = await clippedCanvas.convertToBlob({ type: 'image/png' });
 			blob.name = 'some-string' // there is a bug in tesseract which require that blob should have name property.
 	
 	// Initialize tesseract:
-	dispatch(upsertOcr({id: page.id, status: "Tesseract", detail: "Converting to blob."}));
+	dispatch(upsertOcr({id: page.id, status: "Initializaing", details: "Converting to blob."}));
 	const tesseract = createWorker({
 		workerPath: '/tesseract/worker.min.js',
 		langPath: '/tesseract',
@@ -117,7 +140,7 @@ const readPage = createAsyncThunk<void, ReadPageBatch, ThunkStoreTypes>('ocrs/re
 	const result = await tesseract.recognize(blob);
 	const lines = result.data.lines.map(line => ({bbox: line.bbox, baseline: line.baseline, text: line.text }) as OcrLine );
 	const words = result.data.words.map(word => ({bbox: word.bbox, baseline: word.baseline, text: word.text, choices: word.choices }) as OcrWord );
-	dispatch(upsertOcr({id: page.id, status: "Parsed", detail: null, text: result.data.text, lines, words}));
+	dispatch(upsertOcr({id: page.id, status: "Parsed", details: null, text: result.data.text, lines, words}));
 	
 	await tesseract.terminate();
 });
