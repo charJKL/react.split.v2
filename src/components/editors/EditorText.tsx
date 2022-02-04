@@ -3,7 +3,7 @@ import { CustomHTMLAttributes } from "../types/CustomHTMLAttributes";
 import { useAppSelector, useAppDispatch } from "../../store/store.hooks";
 import { isPageLoaded, selectSelectedPage } from "../../store/slice.pages";
 import { selectMetricsForPage } from "../../store/slice.metrics";
-import { readPage, selectOcrForPage } from "../../store/slice.ocrs";
+import { isOcrIdle, isOcrNotIdle, readPage, selectOcrForPage } from "../../store/slice.ocrs";
 import EditorTextStatus from "./EditorTextStatus";
 import css from "./EditorText.module.scss";
 
@@ -25,14 +25,25 @@ const EditorText = ({className, style} : CustomHTMLAttributes) : JSX.Element =>
 		}
 	}
 	
+	var toolbars: Array<JSX.Element> = [];
 	var status : JSX.Element = <></>;
 	var desktop : JSX.Element = <></>;
 	
-	if(ocr)
+	if(page && isOcrIdle(ocr))
 	{
+		desktop = (
+			<div className={css.empty}>
+				<button className={css.button} onClick={onProcessHandler}>Proccess file</button>
+			</div>
+		)
+	}
+	if(page && isOcrNotIdle(ocr))
+	{
+		toolbars.push(<button onClick={onProcessHandler}>Proccess file</button>);
 		status = <EditorTextStatus className={css.status} status={ocr.status} details={ocr.details}/>;
 	}
-	if(page && ocr && page.status === "Loaded")
+	
+	if(page && ocr && ocr.status === "Parsed")
 	{
 		desktop = (
 			<div className={css.text}>
@@ -46,7 +57,7 @@ const EditorText = ({className, style} : CustomHTMLAttributes) : JSX.Element =>
 		<div className={classForEditor} style={style}>
 			{ status }
 			<div className={css.toolbars}>
-				<label><button onClick={onProcessHandler}>Proccess file</button></label>
+				{ toolbars.map((toolbar,i) => <label key={i}>{toolbar}</label>)}
 			</div>
 			<div className={css.desktop}>
 				{desktop}
