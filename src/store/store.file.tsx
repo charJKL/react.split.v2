@@ -16,7 +16,7 @@ const loadFile = createAsyncThunk<void, Array<File>, ThunkStoreTypes>('pages/loa
 		const url = URL.createObjectURL(file);
 		const page : Page = {id: id, status: "Idle", url: url, name: name};
 		const metric : Metric = {id: id, wasEdited: false, x1: 10, x2:150, y1: 10, y2: 250, rotate: 0};
-		const ocr: Ocr = {id: id};
+		const ocr: Ocr = {id: id, status: "Idle", detail: null, text: "", lines: [], words: []};
 		dispatch(addPage(page));
 		dispatch(addMetric(metric));
 		dispatch(addOcr(ocr));
