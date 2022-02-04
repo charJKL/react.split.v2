@@ -35,21 +35,24 @@ const EditorText : CustomElement = ({className, style} : CustomElementProps) : J
 	if(page && ocr && page.status === "Loaded")
 	{
 		desktop = (
-			<>
-				{ocr.lines.map((line, i) => <div key={i}>{line.text}</div>)}
-			</>
+			<div className={css.text}>
+				{ocr.lines.map((line, i) => <div className={css.line} key={i}>{line.text}</div>)}
+			</div>
 		)
 	}
 	
 	const classForEditor = [css.editor, className].join(" ");
-	return (<div className={classForEditor} style={style}>
-		<button onClick={onProcessHandler} style={{margin: '50px'}}>Proccess file</button>
-		{ status }
-		<div>
-			{desktop}
+	return (
+		<div className={classForEditor} style={style}>
+			{ status }
+			<div className={css.toolbars}>
+				<label><button onClick={onProcessHandler}>Proccess file</button></label>
+			</div>
+			<div className={css.desktop}>
+				{desktop}
+			</div>
 		</div>
-	</div>)
+	)
 }
-
 
 export default EditorText;
