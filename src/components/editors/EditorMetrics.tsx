@@ -15,6 +15,7 @@ import useGetDesktopPosition from "./hooks/useGetDesktopPosition";
 import useGetScale from "./hooks/useGetScale";
 import useGetMouseMoveDistance from "./hooks/useGetMouseMoveDistance";
 import css from "./EditorMetrics.module.scss";
+import Editor from "./Editor";
 
 type SelectableObject = MetricLineNames | null;
 
@@ -126,17 +127,7 @@ const EditorMetrics = ({style} : CustomHTMLAttributes): JSX.Element =>
 	const cursor = { cursor: resolveCursor(isScaling, isPositioning, objectHovered, objectSelected) }
 	const styleForEditor = { ...style, ...cursor };
 	const styleForDesktop = { ...scaledDesktopSize, ...desktopPosition };
-	return (
-		<div className={css.editor} style={styleForEditor} ref={editorRef} onMouseDown={mousedown} onMouseMove={mousemove} onMouseUp={mouseup} onWheel={mousewheel}>
-			<div className={css.toolbars}>
-				<label>🔍 {scale.x.toFixed(2)} / {scale.y.toFixed(2)}</label>
-				<label>➡ {cursorPosition.left.toFixed(2)} / {cursorPosition.top.toFixed(2)}</label>
-			</div>
-			<div className={css.desktop} style={styleForDesktop} ref={desktopRef}>
-				{desktop}
-			</div>
-		</div>
-	)
+	return <Editor desktop={desktop} toolbars={toolbars} />
 }
 
 const applayScaleToSize = (element: Size, scale : Scale) =>

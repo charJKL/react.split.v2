@@ -33,3 +33,16 @@
 	height: 100%;
 	z-index: 1;
 }
+
+.editor
+{
+	@extend %editor;
+}
+.toolbars
+{
+	@extend %toolbars;
+}
+.desktop
+{
+	@extend %desktop;
+}
