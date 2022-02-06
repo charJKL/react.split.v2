@@ -11,16 +11,15 @@ const useCursorPosition = (editor: HTMLElement | null, desktop: HTMLElement | nu
 		
 		const mouseMove = (e: MouseEvent) =>
 		{
-			const editorPosition = editor.getBoundingClientRect();
 			const desktopPosition = desktop.getBoundingClientRect();
-			const left = e.clientX - desktopPosition.left - editorPosition.left;
-			const top = e.clientY - desktopPosition.top - editorPosition.top;
+			const left = e.clientX - desktopPosition.left;
+			const top = e.clientY - desktopPosition.top;
 			setCursor({left, top});
 		}
 		
-		desktop.addEventListener('mousemove', mouseMove);
+		editor.addEventListener('mousemove', mouseMove);
 		return () => {
-			desktop.removeEventListener('mousemove', mouseMove);
+			editor.removeEventListener('mousemove', mouseMove);
 		}
 	}, [editor, desktop])
 	
