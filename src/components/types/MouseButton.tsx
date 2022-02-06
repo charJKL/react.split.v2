@@ -5,6 +5,7 @@ export enum MouseButtonPress { None = 0, Left = 1, Right = 2, Whell = 4 }
 
 type MouseEventMerge = MouseEvent | MouseEventReact;
 
+export const isButtonClicked = (button: MouseButton, event: MouseEventMerge) : boolean => event.button === button;
 export const isLeftButtonClicked = (event: MouseEventMerge) : boolean => event.button === MouseButton.Left;
 export const isRightButtonClicked = (event: MouseEventMerge) : boolean => event.button === MouseButton.Right;
 
