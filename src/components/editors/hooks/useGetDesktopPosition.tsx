@@ -1,57 +1,45 @@
-import { RefObject, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import type { Position } from "../types/Position";
-import { MouseButton } from "../types/MouseButton";
-import useGetMouseMoveDistance from "./useGetMouseMoveDistance";
+import { isRightButtonClicked } from "../../types/MouseButton";
+import useRelativeMoveDistance from "../../hooks/useRelativeMoveDistance";
 
-const useGetDesktopPosition = (editor: RefObject<HTMLElement>, desktop: RefObject<HTMLElement>) : [Position, boolean]=>
+const useGetDesktopPosition = (editor: HTMLElement | null, initalPosition: Position) : [Position, boolean]=>
 {
-	const [position, setPosition] = useState<Position>({left: 0, top: 0});
+	const [position, setPosition] = useState<Position>(initalPosition);
 	const [isPositioning, setPositioning] = useState<boolean>(false);
-	const [distance, absolute] = useGetMouseMoveDistance(MouseButton.Right);
-
-	useEffect(() =>{
-		if(editor.current == null) return;
-		if(desktop.current == null) return;
+	const relativeMoveDistance = useRelativeMoveDistance();
+	
+	useEffect(() => {
+		if(editor === null) return;
 		
 		const mousedown = (e: MouseEvent) =>
 		{
-			if(e.button === MouseButton.Right)
-			{
-				setPositioning(true);
-			}
+			if(isRightButtonClicked(e.button)) setPositioning(true);
 		}
 		const mousemove = (e: MouseEvent) =>
 		{
-			if(isPositioning === true)
-			{
-				setPosition((position) => ({ left: position.left + distance.left, top: position.top + distance.top }));
-			}
+			if(isPositioning === true) setPosition(state => ({left: state.left + e.movementX, top: state.top + e.movementY}));
 		}
 		const mouseup = (e: MouseEvent) =>
 		{
-			if(e.button === MouseButton.Right)
-			{
-				setPositioning(false);
-			}
+			if(isRightButtonClicked(e.button)) setPositioning(false);
 		}
 		const contextmenu = (e: MouseEvent) =>
 		{
-			const thresholdDistance = (threshold: number) => Math.abs(absolute.left) > threshold || Math.abs(absolute.top) > threshold;
-			if(thresholdDistance(2)) e.preventDefault();
+			if(relativeMoveDistance > 2) e.preventDefault();
 		}
 		
-		const element = editor.current;
-		element.addEventListener('mousedown', mousedown);
-		element.addEventListener('mousemove', mousemove);
-		element.addEventListener('mouseup', mouseup);
-		element.addEventListener('contextmenu', contextmenu);
+		editor.addEventListener('mousedown', mousedown);
+		editor.addEventListener('mousemove', mousemove);
+		editor.addEventListener('mouseup', mouseup);
+		editor.addEventListener('contextmenu', contextmenu);
 		return () => {
-			element.removeEventListener('mousedown', mousedown);
-			element.removeEventListener('mousemove', mousemove);
-			element.removeEventListener('mouseup', mouseup);
-			element.removeEventListener('contextmenu', contextmenu);
+			editor.removeEventListener('mousedown', mousedown);
+			editor.removeEventListener('mousemove', mousemove);
+			editor.removeEventListener('mouseup', mouseup);
+			editor.removeEventListener('contextmenu', contextmenu);
 		}
-	}, [editor, desktop, isPositioning]);
+	}, [editor, isPositioning]);
 	
 	return [position, isPositioning];
 }
