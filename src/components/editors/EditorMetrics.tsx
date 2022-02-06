@@ -26,19 +26,18 @@ const EditorMetrics = ({className, style} : CustomHTMLAttributes): JSX.Element =
 	const metrics = useAppSelector(selectMetricsForPage(page));
 	const dispatch = useAppDispatch();
 	
-	const editorRef1 = useRef<HTMLDivElement>(null);
-	const desktopRef1 = useRef<HTMLDivElement>(null);
 	const [editorRef, setEditorRef] = useRefElement<HTMLDivElement>(null);
+	const editorSize = useGetBoundingRect(editorRef);
+	const pageSize = useGetPageSize(page);
 	
 	const desktopInitalPosition = {left: 0, top: 0};
 	const [desktopPosition, isPositioning] = useGetDesktopPosition(editorRef, desktopInitalPosition);
+	const initalScale = calculateScale(editorSize, pageSize);
+	const [scale, isScaling] = useGetScale(editorRef, initalScale);
 	
-	const editorRect1 = useGetBoundingRect(editorRef);
-	const pageSize = useGetPageSize(page);
-	const [scale, isScaling] = useGetScale(editorRef1, desktopRef1, editorRect1, pageSize);
-	const {cursor: cursorPosition} = useCursorPosition(editorRect1, desktopPosition);
+	const {cursor: cursorPosition} = useCursorPosition(editorSize, desktopPosition);
 	
-	const scaledDesktopSize = applayScaleToSize(pageSize, {x: 1, y: 1});
+	const scaledDesktopSize = applayScaleToSize(pageSize, scale);
 	const scaledMetrics = applayScaleToMetrics(metrics, scale);
 	
 	const [objectSelected, selectObject] = useState<SelectableObject>(null);
@@ -137,6 +136,16 @@ const EditorMetrics = ({className, style} : CustomHTMLAttributes): JSX.Element =
 			</div>
 		</div>
 	)
+}
+
+const calculateScale = (viewport: Size, size: Size) : Scale =>
+{
+	if(size.width === 0 || size.height === 0) return {x: 1, y: 1}
+
+	const x = viewport.width / size.width;
+	const y = viewport.height / size.height;
+	const ratio = Math.min(x, y);
+	return {x: ratio, y: ratio};
 }
 
 const applayScaleToSize = (element: Size, scale : Scale) =>
