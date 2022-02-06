@@ -6,7 +6,6 @@ import { Metric, MetricLineNames, selectMetricsForPage, updateMetricValue } from
 import { Scale } from "./types/Scale";
 import { Size } from "./types/Size";
 import { MouseButton } from "../types/MouseButton";
-import EditorMetricsLine from "./EditorMetricsLine";
 import useGetBoundingRect from "../hooks/useGetBoundingRect";
 import useGetPageSize from "./hooks/useGetPageSize";
 import useCursorPosition from "./hooks/useCursorPosition";
@@ -14,12 +13,13 @@ import useResolveObjectBeingHovered from "./hooks/useResolveObjectBeingHovered";
 import useGetDesktopPosition from "./hooks/useGetDesktopPosition";
 import useGetScale from "./hooks/useGetScale";
 import useGetMouseMoveDistance from "./hooks/useGetMouseMoveDistance";
+import EditorMetricPage from "./EditorMetricsPage";
+import EditorMetricLines from "./EditorMetricLines";
 import css from "./EditorMetrics.module.scss";
 import useRefElement from "./../hooks/useRefElement";
-import EditorMetricPage from "./EditorMetricsPage";
 
 type SelectableObject = MetricLineNames | null;
-type LayerProps = {className: string, page: Page, metric: Metric};
+type LayerProps = {className: string, page: Page, metric: Metric, desktopSize: Size};
 const EditorMetrics = ({className, style} : CustomHTMLAttributes): JSX.Element =>
 {
 	const page = useAppSelector(selectSelectedPage);
@@ -98,28 +98,16 @@ const EditorMetrics = ({className, style} : CustomHTMLAttributes): JSX.Element =
 	
 	var toolbars: Array<JSX.Element> = [];
 	var layers: Array<JSX.Element> = [];
-	var desktop : JSX.Element = <></>;
-	var metricLines : JSX.Element = <></>;
 	
-	if(metrics && scaledMetrics)
-	{
-		const offset = 8;
-		const isHover = (name: MetricLineNames) => objectHovered === name;
-		const sizeWithOffset = {width: scaledDesktopSize.width + offset * 2, height: scaledDesktopSize.height + offset * 2};
-		const positionWithOffset = {left: offset * -1, top: offset * -1}
-		const styleForSvg = { ...sizeWithOffset, ...positionWithOffset };
-		metricLines = (
-			<svg className={css.metricsLine} style={styleForSvg}>
-				<EditorMetricsLine name="x1" type="vertical" value={scaledMetrics.x1} offset={offset} isHover={isHover("x1")} />
-				<EditorMetricsLine name="x2" type="vertical" value={scaledMetrics.x2} offset={offset} isHover={isHover("x2")} />
-				<EditorMetricsLine name="y1" type="horizontal" value={scaledMetrics.y1} offset={offset} isHover={isHover("y1")} />
-				<EditorMetricsLine name="y2" type="horizontal" value={scaledMetrics.y2} offset={offset} isHover={isHover("y2")} />
-			</svg>
-		)
-	}
 	if(page && scaledMetrics && page.status === "Loaded")
 	{
-		layers.push(<EditorMetricPage key="editor-metric-page" className={css.image} page={page} metric={scaledMetrics}/>);
+		layers.push(<EditorMetricPage key="editor-metric-page" className={css.image} page={page} metric={scaledMetrics} desktopSize={scaledDesktopSize} />);
+		toolbars.push(<>🔍 {scale.x.toFixed(2)} / {scale.y.toFixed(2)}</>);
+		toolbars.push(<>➡ {cursorPosition.left.toFixed(2)} / {cursorPosition.top.toFixed(2)}</>);
+	}
+	if(page && metrics && scaledMetrics)
+	{
+		layers.push(<EditorMetricLines key="editor-metric-lines" className={css.metricLines} page={page} metric={scaledMetrics} desktopSize={scaledDesktopSize} objectHovered={objectHovered}/>)
 	}
 	
 	const cursor = { cursor: resolveCursor(isScaling, isPositioning, objectHovered, objectSelected) }
@@ -127,7 +115,7 @@ const EditorMetrics = ({className, style} : CustomHTMLAttributes): JSX.Element =
 	const styleForDesktop = { ...scaledDesktopSize, ...desktopPosition };
 	const classNameForEditor = [className, css.editor].join(" ");
 	return (
-		<div className={classNameForEditor} style={styleForEditor} ref={setEditorRef}>
+		<div className={classNameForEditor} style={styleForEditor} ref={setEditorRef} onMouseDown={mousedown} onMouseMove={mousemove} onMouseUp={mouseup} onWheel={mousewheel}>
 			<div className={css.toolbars}>
 				{ toolbars.map((toolbar, i) => <label key={i}>{ toolbar }</label> ) }
 			</div>
