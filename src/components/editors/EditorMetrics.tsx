@@ -5,14 +5,13 @@ import { Page, selectSelectedPage } from "../../store/slice.pages";
 import { Metric, MetricLineNames, selectMetricsForPage, updateMetricValue } from "../../store/slice.metrics";
 import { Scale } from "./types/Scale";
 import { Size } from "./types/Size";
-import { MouseButton } from "../types/MouseButton";
+import { isLeftButtonClicked, isNoneButtonPressed, MouseButton } from "../types/MouseButton";
 import useGetBoundingRect from "../hooks/useGetBoundingRect";
 import useGetPageSize from "./hooks/useGetPageSize";
 import useCursorPosition from "./hooks/useCursorPosition";
 import useResolveObjectBeingHovered from "./hooks/useResolveObjectBeingHovered";
 import useGetDesktopPosition from "./hooks/useGetDesktopPosition";
 import useGetScale from "./hooks/useGetScale";
-import useGetMouseMoveDistance from "./hooks/useGetMouseMoveDistance";
 import EditorMetricPage from "./EditorMetricsPage";
 import EditorMetricLines from "./EditorMetricLines";
 import css from "./EditorMetrics.module.scss";
@@ -43,14 +42,9 @@ const EditorMetrics = ({className, style} : CustomHTMLAttributes): JSX.Element =
 	const [objectSelected, selectObject] = useState<SelectableObject>(null);
 	const objectHovered = useResolveObjectBeingHovered(scaledMetrics, objectSelected, cursorPosition);
 
-	const [distance] = useGetMouseMoveDistance(MouseButton.Left);
-
 	const mousedown = (e: MouseEvent) =>
 	{
-		if(objectHovered && e.button === MouseButton.Left)
-		{
-			selectObject(objectHovered);
-		}
+		if(objectHovered && isLeftButtonClicked(e)) selectObject(objectHovered);
 	}
 	const mousemove = (e: MouseEvent) =>
 	{
@@ -62,7 +56,7 @@ const EditorMetrics = ({className, style} : CustomHTMLAttributes): JSX.Element =
 				case "x2": {
 					const id = page.id;
 					const metric = objectSelected;
-					const value = metrics[metric] + distance.left / scale.x;
+					const value = metrics[metric] + e.movementX / scale.x;
 					dispatch(updateMetricValue({id, metric, value}));
 					return; }
 					
@@ -70,7 +64,7 @@ const EditorMetrics = ({className, style} : CustomHTMLAttributes): JSX.Element =
 				case "y2": {
 					const id = page.id;
 					const metric = objectSelected;
-					const value = metrics[metric] + distance.top / scale.y;
+					const value = metrics[metric] + e.movementY / scale.y;
 					dispatch(updateMetricValue({id, metric, value}));
 					return; }
 			}
@@ -78,14 +72,11 @@ const EditorMetrics = ({className, style} : CustomHTMLAttributes): JSX.Element =
 	}
 	const mouseup = (e: MouseEvent) =>
 	{
-		if(e.button === MouseButton.Left)
-		{
-			selectObject(null);
-		}
+		if(isLeftButtonClicked(e)) selectObject(null);
 	}
 	const mousewheel = (e: WheelEvent) =>
 	{
-		if(page && metrics && e.buttons === 0)
+		if(page && metrics && isNoneButtonPressed(e))
 		{
 			const sensitivity = 0.001;
 			const id = page.id;
