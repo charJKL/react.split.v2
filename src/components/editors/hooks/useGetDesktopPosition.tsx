@@ -14,7 +14,7 @@ const useGetDesktopPosition = (editor: HTMLElement | null, initalPosition: Posit
 		
 		const mousedown = (e: MouseEvent) =>
 		{
-			if(isRightButtonClicked(e.button)) setPositioning(true);
+			if(isRightButtonClicked(e)) setPositioning(true);
 		}
 		const mousemove = (e: MouseEvent) =>
 		{
@@ -22,7 +22,7 @@ const useGetDesktopPosition = (editor: HTMLElement | null, initalPosition: Posit
 		}
 		const mouseup = (e: MouseEvent) =>
 		{
-			if(isRightButtonClicked(e.button)) setPositioning(false);
+			if(isRightButtonClicked(e)) setPositioning(false);
 		}
 		const contextmenu = (e: MouseEvent) =>
 		{
