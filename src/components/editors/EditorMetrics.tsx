@@ -1,11 +1,11 @@
-import React, { useRef, MouseEvent, useState, WheelEvent } from "react";
+import React, { useRef, MouseEvent, useState, WheelEvent, useCallback } from "react";
 import { CustomHTMLAttributes } from "../types/CustomHTMLAttributes";
 import { useAppSelector, useAppDispatch } from "../../store/store.hooks";
-import { selectSelectedPage } from "../../store/slice.pages";
+import { Page, selectSelectedPage } from "../../store/slice.pages";
 import { Metric, MetricLineNames, selectMetricsForPage, updateMetricValue } from "../../store/slice.metrics";
 import { Scale } from "./types/Scale";
 import { Size } from "./types/Size";
-import { MouseButton } from "./types/MouseButton";
+import { MouseButton } from "../types/MouseButton";
 import EditorMetricsLine from "./EditorMetricsLine";
 import useGetBoundingRect from "../hooks/useGetBoundingRect";
 import useGetPageSize from "./hooks/useGetPageSize";
@@ -15,26 +15,30 @@ import useGetDesktopPosition from "./hooks/useGetDesktopPosition";
 import useGetScale from "./hooks/useGetScale";
 import useGetMouseMoveDistance from "./hooks/useGetMouseMoveDistance";
 import css from "./EditorMetrics.module.scss";
-import Editor from "./Editor";
+import useRefElement from "./../hooks/useRefElement";
+import EditorMetricPage from "./EditorMetricsPage";
 
 type SelectableObject = MetricLineNames | null;
-
-const EditorMetrics = ({style} : CustomHTMLAttributes): JSX.Element =>
+type LayerProps = {className: string, page: Page, metric: Metric};
+const EditorMetrics = ({className, style} : CustomHTMLAttributes): JSX.Element =>
 {
 	const page = useAppSelector(selectSelectedPage);
 	const metrics = useAppSelector(selectMetricsForPage(page));
 	const dispatch = useAppDispatch();
 	
-	const editorRef = useRef<HTMLDivElement>(null);
-	const desktopRef = useRef<HTMLDivElement>(null);
+	const editorRef1 = useRef<HTMLDivElement>(null);
+	const desktopRef1 = useRef<HTMLDivElement>(null);
+	const [editorRef, setEditorRef] = useRefElement<HTMLDivElement>(null);
 	
-	const editorRect = useGetBoundingRect(editorRef);
+	const desktopInitalPosition = {left: 0, top: 0};
+	const [desktopPosition, isPositioning] = useGetDesktopPosition(editorRef, desktopInitalPosition);
+	
+	const editorRect1 = useGetBoundingRect(editorRef);
 	const pageSize = useGetPageSize(page);
-	const [desktopPosition, isPositioning] = useGetDesktopPosition(editorRef, desktopRef);
-	const [scale, isScaling] = useGetScale(editorRef, desktopRef, editorRect, pageSize);
-	const {cursor: cursorPosition} = useCursorPosition(editorRect, desktopPosition);
+	const [scale, isScaling] = useGetScale(editorRef1, desktopRef1, editorRect1, pageSize);
+	const {cursor: cursorPosition} = useCursorPosition(editorRect1, desktopPosition);
 	
-	const scaledDesktopSize = applayScaleToSize(pageSize, scale);
+	const scaledDesktopSize = applayScaleToSize(pageSize, {x: 1, y: 1});
 	const scaledMetrics = applayScaleToMetrics(metrics, scale);
 	
 	const [objectSelected, selectObject] = useState<SelectableObject>(null);
@@ -94,6 +98,7 @@ const EditorMetrics = ({style} : CustomHTMLAttributes): JSX.Element =>
 	}
 	
 	var toolbars: Array<JSX.Element> = [];
+	var layers: Array<JSX.Element> = [];
 	var desktop : JSX.Element = <></>;
 	var metricLines : JSX.Element = <></>;
 	
@@ -113,40 +118,44 @@ const EditorMetrics = ({style} : CustomHTMLAttributes): JSX.Element =>
 			</svg>
 		)
 	}
-	if(page && metrics && page.status === "Loaded")
+	if(page && scaledMetrics && page.status === "Loaded")
 	{
-		const styleForImage = { transform: `rotate(${metrics.rotate}deg)` }
-		desktop = (
-			<>
-				<img className={css.image} style={styleForImage} src={page.url} alt="" />
-				{metricLines}
-			</>
-		)
+		layers.push(<EditorMetricPage className={css.image} page={page} metric={scaledMetrics}/>);
 	}
 	
 	const cursor = { cursor: resolveCursor(isScaling, isPositioning, objectHovered, objectSelected) }
 	const styleForEditor = { ...style, ...cursor };
 	const styleForDesktop = { ...scaledDesktopSize, ...desktopPosition };
-	return <Editor desktop={desktop} toolbars={toolbars} />
+	const classNameForEditor = [className, css.editor].join(" ");
+	return (
+		<div className={classNameForEditor} style={styleForEditor} ref={setEditorRef}>
+			<div className={css.toolbars}>
+				{ toolbars.map((toolbar, i) => <label key={i}>{ toolbar }</label> ) }
+			</div>
+			<div className={css.desktop} style={styleForDesktop}>
+				{ layers.map((layer) => layer ) }
+			</div>
+		</div>
+	)
 }
 
 const applayScaleToSize = (element: Size, scale : Scale) =>
 {
-	return {
-		width: element.width * scale.x,
-		height: element.height * scale.y
-	}
+	const scaled = { ...element };
+			scaled.width = element.width * scale.x;
+			scaled.height = element.height * scale.y;
+	return scaled;
 }
 
 const applayScaleToMetrics = (metric: Metric | null, scale: Scale) =>
 {
 	if(metric === null) return null;
-	return {
-		x1: metric.x1 * scale.x,
-		x2: metric.x2 * scale.x,
-		y1: metric.y1 * scale.y,
-		y2: metric.y2 * scale.y
-	}
+	const scaled = { ...metric };
+			scaled.x1 = metric.x1 * scale.x;
+			scaled.x2 = metric.x2 * scale.x;
+			scaled.y1 = metric.y1 * scale.y;
+			scaled.y2 = metric.y2 * scale.y;
+	return scaled;
 }
 
 type isScalingType = ReturnType<typeof useGetScale>[1];
@@ -158,5 +167,5 @@ const resolveCursor = (isScaling: isScalingType, isPositioning: boolean, isObjec
 	if(isPositioning) return 'move';
 }
 
-export type { SelectableObject };
+export type { SelectableObject, LayerProps };
 export default EditorMetrics;
