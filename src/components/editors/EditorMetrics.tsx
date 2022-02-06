@@ -27,19 +27,19 @@ const EditorMetrics = ({className, style} : CustomHTMLAttributes): JSX.Element =
 	const dispatch = useAppDispatch();
 	
 	const [editorRef, setEditorRef] = useRefElement<HTMLDivElement>(null);
+	const [desktopRef, setDesktopRef] = useRefElement<HTMLDivElement>(null);
 	const editorSize = useGetBoundingRect(editorRef);
-	const pageSize = useGetPageSize(page);
-	
+
 	const desktopInitalPosition = {left: 0, top: 0};
 	const [desktopPosition, isPositioning] = useGetDesktopPosition(editorRef, desktopInitalPosition);
+	
+	const pageSize = useGetPageSize(page);
 	const initalScale = calculateScale(editorSize, pageSize);
 	const [scale, isScaling] = useGetScale(editorRef, initalScale);
-	
-	const {cursor: cursorPosition} = useCursorPosition(editorSize, desktopPosition);
-	
 	const scaledDesktopSize = applayScaleToSize(pageSize, scale);
 	const scaledMetrics = applayScaleToMetrics(metrics, scale);
 	
+	const cursorPosition = useCursorPosition(editorRef, desktopRef);
 	const [objectSelected, selectObject] = useState<SelectableObject>(null);
 	const objectHovered = useResolveObjectBeingHovered(scaledMetrics, objectSelected, cursorPosition);
 
@@ -119,7 +119,7 @@ const EditorMetrics = ({className, style} : CustomHTMLAttributes): JSX.Element =
 	}
 	if(page && scaledMetrics && page.status === "Loaded")
 	{
-		layers.push(<EditorMetricPage className={css.image} page={page} metric={scaledMetrics}/>);
+		layers.push(<EditorMetricPage key="editor-metric-page" className={css.image} page={page} metric={scaledMetrics}/>);
 	}
 	
 	const cursor = { cursor: resolveCursor(isScaling, isPositioning, objectHovered, objectSelected) }
@@ -131,7 +131,7 @@ const EditorMetrics = ({className, style} : CustomHTMLAttributes): JSX.Element =
 			<div className={css.toolbars}>
 				{ toolbars.map((toolbar, i) => <label key={i}>{ toolbar }</label> ) }
 			</div>
-			<div className={css.desktop} style={styleForDesktop}>
+			<div className={css.desktop} style={styleForDesktop} ref={setDesktopRef}>
 				{ layers.map((layer) => layer ) }
 			</div>
 		</div>
