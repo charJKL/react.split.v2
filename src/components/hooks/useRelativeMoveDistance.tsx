@@ -2,7 +2,7 @@ import { useEffect, useRef } from "react";
 
 type Position = {x: 0, y: 0};
 
-const useGetMouseMoveDistance = () : number =>
+const useRelativeMoveDistance = () : number =>
 {
 	const relative = useRef<Position>({x: 0, y: 0});
 	
@@ -29,4 +29,4 @@ const useGetMouseMoveDistance = () : number =>
 	return Math.sqrt(Math.abs(relative.current.x) + Math.abs(relative.current.y));
 }
 
-export default useGetMouseMoveDistance;
+export default useRelativeMoveDistance;
