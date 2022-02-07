@@ -1,9 +1,20 @@
+@use "../../index.scss";
+
+
+.init
+{
+	font: bold 16px / 16px index.$font;
+}
+.parsing
+{
+	font: bold 16px / 16px index.$font;
+}
 .check
 {
-	font: bold 30px / 30px Arial;
+	font: bold 30px / 30px index.$font;
 }
 .error
 {
-	font: bold 30px / 30px Arial;
+	font: bold 30px / 30px index.$font;
 	color: #f00;
 }

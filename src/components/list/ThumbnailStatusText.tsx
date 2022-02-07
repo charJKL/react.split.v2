@@ -18,12 +18,12 @@ const ThumbnailStatusText = ({className, ocr}: ThumbnailStatusTextProps) : JSX.E
 		
 		case "Preprocessing":
 		case "Initializaing":
-			status = 'init';
+			status = <div className={css.init}>init</div>;
 			break;
 			
 		case "Parsing":
 			const percent = ocr.details as number * 100;
-			status = `${percent.toFixed(0)}%`;
+			status = <div className={css.parsing}>{percent.toFixed(0)}%</div>; 
 			break;
 		
 		case "Parsed":

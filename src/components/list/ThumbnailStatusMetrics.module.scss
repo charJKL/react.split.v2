@@ -1,8 +1,10 @@
+@use "../../index.scss";
+
 .div
 {
 	
 }
 .checked
 {
-	font: bold 30px / 30px Arial;
+	font: bold 30px / 30px index.$font;
 }
