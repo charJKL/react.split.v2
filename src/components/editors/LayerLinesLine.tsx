@@ -1,6 +1,6 @@
 import React from "react";
 import { MetricLineNames } from "../../store/slice.metrics";
-import css from "./EditorMetricsLine.module.scss";
+import css from "./LayerLinesLine.module.scss";
 
 type LineType = "horizontal" | "vertical";
 
@@ -13,7 +13,7 @@ type LineProps =
 	isHover: boolean;
 }
 
-const EditorMetricsLine = ({name, type, value, offset, isHover}: LineProps) : JSX.Element =>
+const LayerLinesLine = ({name, type, value, offset, isHover}: LineProps) : JSX.Element =>
 {
 	const points = resolvePointsPositions(type, value, offset);
 	const styleForLine = isHover ? {stroke: "rgba(255, 50, 50, 1)"} : {};
@@ -44,4 +44,4 @@ const resolvePointsPositions = (type: LineType, value: number, offset: number ) 
 	}
 }
 
-export default React.memo(EditorMetricsLine);
+export default React.memo(LayerLinesLine);

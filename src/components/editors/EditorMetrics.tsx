@@ -1,4 +1,4 @@
-import React, { useRef, MouseEvent, useState, WheelEvent, useCallback, ChangeEvent } from "react";
+import {MouseEvent, useState, WheelEvent, ChangeEvent } from "react";
 import { CustomHTMLAttributes } from "../types/CustomHTMLAttributes";
 import { useAppSelector, useAppDispatch } from "../../store/store.hooks";
 import { Page, selectSelectedPage } from "../../store/slice.pages";
@@ -12,8 +12,8 @@ import useCursorPosition from "./hooks/useCursorPosition";
 import useResolveObjectBeingHovered from "./hooks/useResolveObjectBeingHovered";
 import useGetDesktopPosition from "./hooks/useGetDesktopPosition";
 import useGetScale from "./hooks/useGetScale";
-import EditorMetricPage from "./EditorMetricsPage";
-import EditorMetricLines from "./EditorMetricLines";
+import LayerPage from "./LayerPage";
+import LayerLines from "./LayerLines";
 import LayerHighlight from "./LayerHighlight";
 import css from "./EditorMetrics.module.scss";
 import useRefElement from "./../hooks/useRefElement";
@@ -43,11 +43,11 @@ const EditorMetrics = ({className, style} : CustomHTMLAttributes): JSX.Element =
 	const [objectSelected, selectObject] = useState<SelectableObject>(null);
 	const objectHovered = useResolveObjectBeingHovered(scaledMetrics, objectSelected, cursorPosition);
 
-	const mousedown = (e: MouseEvent) =>
+	const onMouseDown = (e: MouseEvent) =>
 	{
 		if(objectHovered && isLeftButtonClicked(e)) selectObject(objectHovered);
 	}
-	const mousemove = (e: MouseEvent) =>
+	const onMouseMove = (e: MouseEvent) =>
 	{
 		if(page && metrics && objectHovered && objectSelected)
 		{
@@ -71,11 +71,11 @@ const EditorMetrics = ({className, style} : CustomHTMLAttributes): JSX.Element =
 			}
 		}
 	}
-	const mouseup = (e: MouseEvent) =>
+	const onMouseUp = (e: MouseEvent) =>
 	{
 		if(isLeftButtonClicked(e)) selectObject(null);
 	}
-	const mousewheel = (e: WheelEvent) =>
+	const onWheel = (e: WheelEvent) =>
 	{
 		if(page && metrics && isNoneButtonPressed(e))
 		{
@@ -87,7 +87,7 @@ const EditorMetrics = ({className, style} : CustomHTMLAttributes): JSX.Element =
 			return;
 		}
 	}
-	const waseditedchecked = (e: ChangeEvent<HTMLInputElement>) =>
+	const onChangeWasEdited = (e: ChangeEvent<HTMLInputElement>) =>
 	{
 		if(page && metrics)
 		{
@@ -103,14 +103,14 @@ const EditorMetrics = ({className, style} : CustomHTMLAttributes): JSX.Element =
 	
 	if(page && scaledMetrics && page.status === "Loaded")
 	{
-		layers.push(<EditorMetricPage key="editor-metric-page" className={css.image} page={page} metric={scaledMetrics} desktopSize={scaledDesktopSize} />);
+		layers.push(<LayerPage key="editor-metric-page" className={css.image} page={page} metric={scaledMetrics} desktopSize={scaledDesktopSize} />);
 		toolbars.push(<>🔍 {scale.x.toFixed(2)} / {scale.y.toFixed(2)}</>);
 		toolbars.push(<>➡ {cursorPosition.left.toFixed(2)} / {cursorPosition.top.toFixed(2)}</>);
 	}
 	if(page && metrics && scaledMetrics)
 	{
-		layers.push(<EditorMetricLines key="editor-metric-lines" className={css.metricLines} page={page} metric={scaledMetrics} desktopSize={scaledDesktopSize} objectHovered={objectHovered}/>)
-		toolbars.push(<div className={css.toolbarWasEdited}><input type="checkbox" id="" checked={metrics.wasEdited} onChange={waseditedchecked}/> was edited</div>);
+		layers.push(<LayerLines key="editor-metric-lines" className={css.metricLines} page={page} metric={scaledMetrics} desktopSize={scaledDesktopSize} objectHovered={objectHovered}/>)
+		toolbars.push(<div className={css.toolbarWasEdited}><input type="checkbox" id="" checked={metrics.wasEdited} onChange={onChangeWasEdited}/> was edited</div>);
 	}
 	if(page && metrics && scaledMetrics)
 	{
@@ -122,7 +122,7 @@ const EditorMetrics = ({className, style} : CustomHTMLAttributes): JSX.Element =
 	const styleForDesktop = { ...scaledDesktopSize, ...desktopPosition };
 	const classNameForEditor = [className, css.editor].join(" ");
 	return (
-		<div className={classNameForEditor} style={styleForEditor} ref={setEditorRef} onMouseDown={mousedown} onMouseMove={mousemove} onMouseUp={mouseup} onWheel={mousewheel}>
+		<div className={classNameForEditor} style={styleForEditor} ref={setEditorRef} onMouseDown={onMouseDown} onMouseMove={onMouseMove} onMouseUp={onMouseUp} onWheel={onWheel}>
 			<div className={css.toolbars}>
 				{ toolbars.map((toolbar, i) => <label key={i}>{ toolbar }</label> ) }
 			</div>
