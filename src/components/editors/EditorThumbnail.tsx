@@ -24,7 +24,6 @@ const EditorThumbnail = ({className, page, metric} : EditorThumbnailProps): JSX.
 	
 	const pageSize = useGetPageSize(page);
 	const scale = calculateScale(editorSize, pageSize);
-	console.log(editorSize, scale);
 	
 	const scaledDesktopSize = applayScaleToSize(pageSize, scale);
 	const scaledMetrics = applayScaleToMetrics(metric, scale);
@@ -33,7 +32,7 @@ const EditorThumbnail = ({className, page, metric} : EditorThumbnailProps): JSX.
 	
 	if(page && scaledMetrics && page.status === "Loaded")
 	{
-		layers.push(<LayerPage key="editor-metric-page" className={css.image} page={page} metric={scaledMetrics} desktopSize={scaledDesktopSize} />);
+		layers.push(<LayerPage key="editor-metric-page" className={css.page} page={page} metric={scaledMetrics} desktopSize={scaledDesktopSize} />);
 	}
 	if(page && metric && scaledMetrics)
 	{

@@ -103,7 +103,7 @@ const EditorMetrics = ({className, style} : CustomHTMLAttributes): JSX.Element =
 	
 	if(page && scaledMetrics && page.status === "Loaded")
 	{
-		layers.push(<LayerPage key="editor-metric-page" className={css.image} page={page} metric={scaledMetrics} desktopSize={scaledDesktopSize} />);
+		layers.push(<LayerPage key="editor-metric-page" className={css.page} page={page} metric={scaledMetrics} desktopSize={scaledDesktopSize} />);
 		toolbars.push(<>🔍 {scale.x.toFixed(2)} / {scale.y.toFixed(2)}</>);
 		toolbars.push(<>➡ {cursorPosition.left.toFixed(2)} / {cursorPosition.top.toFixed(2)}</>);
 	}
