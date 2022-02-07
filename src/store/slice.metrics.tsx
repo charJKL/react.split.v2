@@ -6,6 +6,7 @@ type Key = string;
 type MetricName = "x1" | "x2" | "y1" | "y2" | "rotate";
 type MetricLineNames = Exclude<MetricName, "rotate">;
 type MetricValue = { id: Key, metric: MetricName, value: number};
+type WasEditedValue = { id: Key, checked: boolean};
 
 type Metric = 
 {
@@ -47,13 +48,19 @@ const Metrics = createSlice({
 			const name = action.payload.metric;
 			state.entities[id].wasEdited = true;
 			state.entities[id][name] = action.payload.value;
+		},
+		updateWasEdited: (state, action: PayloadAction<WasEditedValue>) =>
+		{
+			const id = action.payload.id;
+			const checked = action.payload.checked;
+			state.entities[id].wasEdited = checked;
 		}
 	}
 });
 
 export const selectMetricsForPage = (page: Page | null) => (state: StoreState) => page ? state.metrics.entities[page.id] : null;
 
-export const { addMetric, updateMetricValue } = Metrics.actions;
+export const { addMetric, updateMetricValue, updateWasEdited } = Metrics.actions;
 export { };
 
 export type { Metric, MetricLineNames };

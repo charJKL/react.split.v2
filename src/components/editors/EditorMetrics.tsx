@@ -1,8 +1,8 @@
-import React, { useRef, MouseEvent, useState, WheelEvent, useCallback } from "react";
+import React, { useRef, MouseEvent, useState, WheelEvent, useCallback, ChangeEvent } from "react";
 import { CustomHTMLAttributes } from "../types/CustomHTMLAttributes";
 import { useAppSelector, useAppDispatch } from "../../store/store.hooks";
 import { Page, selectSelectedPage } from "../../store/slice.pages";
-import { Metric, MetricLineNames, selectMetricsForPage, updateMetricValue } from "../../store/slice.metrics";
+import { Metric, MetricLineNames, selectMetricsForPage, updateMetricValue, updateWasEdited } from "../../store/slice.metrics";
 import { Scale } from "./types/Scale";
 import { Size } from "./types/Size";
 import { isLeftButtonClicked, isNoneButtonPressed, MouseButton } from "../types/MouseButton";
@@ -86,6 +86,16 @@ const EditorMetrics = ({className, style} : CustomHTMLAttributes): JSX.Element =
 			return;
 		}
 	}
+	const waseditedchecked = (e: ChangeEvent<HTMLInputElement>) =>
+	{
+		if(page && metrics)
+		{
+			const id = page.id;
+			const checked = e.target.checked;
+			dispatch(updateWasEdited({id, checked}));
+			return;
+		}
+	}
 	
 	var toolbars: Array<JSX.Element> = [];
 	var layers: Array<JSX.Element> = [];
@@ -99,6 +109,7 @@ const EditorMetrics = ({className, style} : CustomHTMLAttributes): JSX.Element =
 	if(page && metrics && scaledMetrics)
 	{
 		layers.push(<EditorMetricLines key="editor-metric-lines" className={css.metricLines} page={page} metric={scaledMetrics} desktopSize={scaledDesktopSize} objectHovered={objectHovered}/>)
+		toolbars.push(<div className={css.toolbarWasEdited}><input type="checkbox" id="" checked={metrics.wasEdited} onChange={waseditedchecked}/> was edited</div>);
 	}
 	
 	const cursor = { cursor: resolveCursor(isScaling, isPositioning, objectHovered, objectSelected) }
