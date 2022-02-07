@@ -1,7 +1,7 @@
 import { useEffect } from "react";
 import useIsElementVisible from "./useIsElementVisible";
 import { useAppDispatch, useAppSelector } from "../../store/store.hooks";
-import { loadPage, selectPage, selectPageById } from "../../store/slice.pages";
+import { loadPage, selectPage, selectPageById, selectSelectedPage } from "../../store/slice.pages";
 import { selectMetricsForPage } from "../../store/slice.metrics";
 import { selectOcrForPage } from "../../store/slice.ocrs";
 import ThumbnailStatusMetric from "./ThumbnailStatusMetric";
@@ -18,10 +18,12 @@ type ThumbnailProps =
 const Thumbnail = ({id}: ThumbnailProps) : JSX.Element =>
 {
 	const page = useAppSelector(selectPageById(id));
+	const selected = useAppSelector(selectSelectedPage);
 	const metric = useAppSelector(selectMetricsForPage(page));
 	const ocr = useAppSelector(selectOcrForPage(page));
 	const dispatch = useAppDispatch();
 	const [element, isVisible] = useIsElementVisible<HTMLDivElement>({threshold: [0, 1]});
+	const isSelected = page === selected;
 	
 	useEffect(() => {
 		if(isVisible === true && page.status === "Idle") dispatch(loadPage(id))
@@ -31,7 +33,7 @@ const Thumbnail = ({id}: ThumbnailProps) : JSX.Element =>
 	{
 		dispatch(selectPage(id));
 	}
-
+	
 	switch(page.status)
 	{
 		case "Idle":
@@ -61,8 +63,11 @@ const Thumbnail = ({id}: ThumbnailProps) : JSX.Element =>
 	{
 		ocrStatus = <ThumbnailStatusOcr className={css.ocr} ocr={ocr} />
 	}
+	
+	const isSelectedClass = isSelected ? css.selected : '';
+	const classNameForThumbnail = [css.thumbnail, isSelectedClass].join(" ");
 	return (
-		<div className={css.thumbnail} ref={element} onClick={onClickHandler}>
+		<div className={classNameForThumbnail} ref={element} onClick={onClickHandler}>
 			{ image }
 			{ metricStatus }
 			{ ocrStatus }

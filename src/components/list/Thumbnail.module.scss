@@ -11,6 +11,7 @@
 	border: solid 1px #000;
 	overflow: hidden;
 	cursor: pointer;
+	&.selected{ border: solid 1px #f00; }
 }
 %source
 {
