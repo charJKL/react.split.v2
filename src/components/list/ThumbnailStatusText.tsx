@@ -1,14 +1,14 @@
 import { CustomHTMLAttributes } from "../types/CustomHTMLAttributes";
 import { Ocr } from "../../store/slice.ocrs";
-import css from "./ThumbnailStatusOcr.module.scss";
+import css from "./ThumbnailStatusText.module.scss";
 
-type ThumbnailStatusOcrPropsCustom = 
+type ThumbnailStatusTextPropsCustom = 
 {
 	ocr: Ocr;
 }
-type ThumbnailStatusOcrProps = CustomHTMLAttributes & ThumbnailStatusOcrPropsCustom;
+type ThumbnailStatusTextProps = CustomHTMLAttributes & ThumbnailStatusTextPropsCustom;
 
-const ThumbnailStatusOcr = ({className, ocr}: ThumbnailStatusOcrProps) : JSX.Element => 
+const ThumbnailStatusText = ({className, ocr}: ThumbnailStatusTextProps) : JSX.Element => 
 {
 	var status = null;
 	switch(ocr.status)
@@ -43,4 +43,4 @@ const ThumbnailStatusOcr = ({className, ocr}: ThumbnailStatusOcrProps) : JSX.Ele
 	)
 }
 
-export default ThumbnailStatusOcr;
+export default ThumbnailStatusText;

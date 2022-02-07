@@ -1,16 +1,15 @@
 import { CustomHTMLAttributes } from "../types/CustomHTMLAttributes";
 import { Metric } from "../../store/slice.metrics";
-import css from "./ThumbnailStatusMetric.module.scss";
+import css from "./ThumbnailStatusMetrics.module.scss";
 
-type ThumbnailStatusMetricPropsCustom = 
+type ThumbnailStatusMetricsPropsCustom = 
 {
 	metric: Metric;
 }
-type ThumbnailStatusMetricProps = CustomHTMLAttributes & ThumbnailStatusMetricPropsCustom;
+type ThumbnailStatusMetricsProps = CustomHTMLAttributes & ThumbnailStatusMetricsPropsCustom;
 
-const ThumbnailStatusMetric = ({className, metric}: ThumbnailStatusMetricProps) : JSX.Element => 
+const ThumbnailStatusMetrics = ({className, metric}: ThumbnailStatusMetricsProps) : JSX.Element => 
 {
-	
 	const classNameForDiv = [className, css.div].join(" ");
 	return (
 		<div className={classNameForDiv}>
@@ -19,4 +18,4 @@ const ThumbnailStatusMetric = ({className, metric}: ThumbnailStatusMetricProps) 
 	)
 }
 
-export default ThumbnailStatusMetric;
+export default ThumbnailStatusMetrics;
