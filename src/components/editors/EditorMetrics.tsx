@@ -14,6 +14,7 @@ import useGetDesktopPosition from "./hooks/useGetDesktopPosition";
 import useGetScale from "./hooks/useGetScale";
 import EditorMetricPage from "./EditorMetricsPage";
 import EditorMetricLines from "./EditorMetricLines";
+import LayerHighlight from "./LayerHighlight";
 import css from "./EditorMetrics.module.scss";
 import useRefElement from "./../hooks/useRefElement";
 
@@ -110,6 +111,10 @@ const EditorMetrics = ({className, style} : CustomHTMLAttributes): JSX.Element =
 	{
 		layers.push(<EditorMetricLines key="editor-metric-lines" className={css.metricLines} page={page} metric={scaledMetrics} desktopSize={scaledDesktopSize} objectHovered={objectHovered}/>)
 		toolbars.push(<div className={css.toolbarWasEdited}><input type="checkbox" id="" checked={metrics.wasEdited} onChange={waseditedchecked}/> was edited</div>);
+	}
+	if(page && metrics && scaledMetrics)
+	{
+		layers.push(<LayerHighlight key="editor-metric-highlight" className={css.highlight} page={page} metric={scaledMetrics} desktopSize={scaledDesktopSize}/>);
 	}
 	
 	const cursor = { cursor: resolveCursor(isScaling, isPositioning, objectHovered, objectSelected) }
