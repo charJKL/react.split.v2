@@ -4,6 +4,7 @@ import { useAppDispatch, useAppSelector } from "../../store/store.hooks";
 import { loadPage, selectPage, selectPageById, selectSelectedPage } from "../../store/slice.pages";
 import { selectMetricsForPage } from "../../store/slice.metrics";
 import { selectOcrForPage } from "../../store/slice.ocrs";
+import EditorThumbnail from "../editors/EditorThumbnail";
 import ThumbnailStatusMetrics from "./ThumbnailStatusMetrics";
 import ThumbnailStatusText from "./ThumbnailStatusText";
 import placeholder from "../../assets/placeholder.svg";
@@ -45,7 +46,7 @@ const Thumbnail = ({id}: ThumbnailProps) : JSX.Element =>
 			break;
 			
 		case "Loaded":
-			var image = <img className={css.image} src={page.url} />;
+			var image = <EditorThumbnail page={page} metric={metric!} />;
 			break;
 			
 		case "Error":
