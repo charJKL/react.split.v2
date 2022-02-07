@@ -12,8 +12,7 @@
 	overflow: hidden;
 	cursor: pointer;
 }
-
-.source
+%source
 {
 	position: absolute;
 	top: 0px; left: 0px;
@@ -23,27 +22,26 @@
 }
 .placeholder
 {
-	@extend .source;
+	@extend %source;
 	height: 80px;
 }
 .loading
 {
-	@extend .source;
+	@extend %source;
 	top: 20px;
 	height: 30px;
 }
 .image
 {
-	@extend .source;
+	@extend %source;
 }
 .error
 {
-	@extend .source;
+	@extend %source;
 	text-align: center;
 	font: bold 16px / 80px $font;
 	color: #000;
 }
-
 
 .name
 {
@@ -53,8 +51,21 @@
 	box-sizing: border-box;
 	border: none;
 	text-align: center;
+	height: 20px;
 	z-index: 2;
 	&:focus{
 		outline: none;
 	}
+}
+.metric
+{
+	position: absolute;
+	left: 0px; bottom: 20px;
+	display: flex;
+	flex-flow: column nowrap;
+	justify-content: flex-end;
+	align-items: center;
+	width: 50%;
+	height: 100%;
+	z-index: 3;
 }
