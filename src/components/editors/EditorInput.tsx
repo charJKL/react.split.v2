@@ -21,9 +21,9 @@ const EditorInput = ({className}: CustomHTMLAttributes) =>
 		if(page && metrics)
 		{
 			const id = page.id;
-			const metric = e.target.name as MetricName;
+			const name = e.target.name as MetricName;
 			const value = parseFloat(e.target.value);
-			dispatch(updateMetricValue({id, metric, value}));
+			dispatch(updateMetricValue({id, name, value}));
 		}
 	}
 	

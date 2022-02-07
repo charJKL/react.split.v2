@@ -23,7 +23,7 @@ type LayerProps = {className: string, page: Page, metric: Metric, desktopSize: S
 const EditorMetrics = ({className, style} : CustomHTMLAttributes): JSX.Element =>
 {
 	const page = useAppSelector(selectSelectedPage);
-	const metrics = useAppSelector(selectMetricsForPage(page));
+	const metric = useAppSelector(selectMetricsForPage(page));
 	const dispatch = useAppDispatch();
 	
 	const [editorRef, setEditorRef] = useRefElement<HTMLDivElement>(null);
@@ -37,7 +37,7 @@ const EditorMetrics = ({className, style} : CustomHTMLAttributes): JSX.Element =
 	const initalScale = calculateScale(editorSize, pageSize);
 	const [scale, isScaling] = useGetScale(editorRef, initalScale);
 	const scaledDesktopSize = applayScaleToSize(pageSize, scale);
-	const scaledMetrics = applayScaleToMetrics(metrics, scale);
+	const scaledMetrics = applayScaleToMetrics(metric, scale);
 	
 	const cursorPosition = useCursorPosition(editorRef, desktopRef);
 	const [objectSelected, selectObject] = useState<SelectableObject>(null);
@@ -49,24 +49,24 @@ const EditorMetrics = ({className, style} : CustomHTMLAttributes): JSX.Element =
 	}
 	const onMouseMove = (e: MouseEvent) =>
 	{
-		if(page && metrics && objectHovered && objectSelected)
+		if(page && metric && objectHovered && objectSelected)
 		{
 			switch(objectSelected)
 			{
 				case "x1":
 				case "x2": {
 					const id = page.id;
-					const metric = objectSelected;
-					const value = metrics[metric] + e.movementX / scale.x;
-					dispatch(updateMetricValue({id, metric, value}));
+					const name = objectSelected;
+					const value = metric[name] + e.movementX / scale.x;
+					dispatch(updateMetricValue({id, name, value}));
 					return; }
 					
 				case "y1":
 				case "y2": {
 					const id = page.id;
-					const metric = objectSelected;
-					const value = metrics[metric] + e.movementY / scale.y;
-					dispatch(updateMetricValue({id, metric, value}));
+					const name = objectSelected;
+					const value = metric[name] + e.movementY / scale.y;
+					dispatch(updateMetricValue({id, name, value}));
 					return; }
 			}
 		}
@@ -77,19 +77,19 @@ const EditorMetrics = ({className, style} : CustomHTMLAttributes): JSX.Element =
 	}
 	const onWheel = (e: WheelEvent) =>
 	{
-		if(page && metrics && isNoneButtonPressed(e))
+		if(page && metric && isNoneButtonPressed(e))
 		{
 			const sensitivity = 0.001;
 			const id = page.id;
-			const metric = "rotate";
-			const value = metrics[metric] + e.deltaY * sensitivity;
-			dispatch(updateMetricValue({id, metric, value}));
+			const name = "rotate";
+			const value = metric[name] + e.deltaY * sensitivity;
+			dispatch(updateMetricValue({id, name, value}));
 			return;
 		}
 	}
 	const onChangeWasEdited = (e: ChangeEvent<HTMLInputElement>) =>
 	{
-		if(page && metrics)
+		if(page && metric)
 		{
 			const id = page.id;
 			const checked = e.target.checked;
@@ -107,12 +107,12 @@ const EditorMetrics = ({className, style} : CustomHTMLAttributes): JSX.Element =
 		toolbars.push(<>🔍 {scale.x.toFixed(2)} / {scale.y.toFixed(2)}</>);
 		toolbars.push(<>➡ {cursorPosition.left.toFixed(2)} / {cursorPosition.top.toFixed(2)}</>);
 	}
-	if(page && metrics && scaledMetrics)
+	if(page && metric && scaledMetrics)
 	{
 		layers.push(<LayerLines key="editor-metric-lines" className={css.metricLines} page={page} metric={scaledMetrics} desktopSize={scaledDesktopSize} objectHovered={objectHovered}/>)
-		toolbars.push(<div className={css.toolbarWasEdited}><input type="checkbox" id="" checked={metrics.wasEdited} onChange={onChangeWasEdited}/> was edited</div>);
+		toolbars.push(<div className={css.toolbarWasEdited}><input type="checkbox" id="" checked={metric.wasEdited} onChange={onChangeWasEdited}/> was edited</div>);
 	}
-	if(page && metrics && scaledMetrics)
+	if(page && metric && scaledMetrics)
 	{
 		layers.push(<LayerHighlight key="editor-metric-highlight" className={css.highlight} page={page} metric={scaledMetrics} desktopSize={scaledDesktopSize}/>);
 	}

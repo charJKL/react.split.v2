@@ -5,7 +5,7 @@ import type { StoreState, StoreDispatch } from "./store";
 type Key = string;
 type MetricName = "x1" | "x2" | "y1" | "y2" | "rotate";
 type MetricLineNames = Exclude<MetricName, "rotate">;
-type MetricValue = { id: Key, metric: MetricName, value: number};
+type MetricValue = { id: Key, name: MetricName, value: number};
 type WasEditedValue = { id: Key, checked: boolean};
 
 type Metric = 
@@ -45,7 +45,7 @@ const Metrics = createSlice({
 		updateMetricValue: (state, action: PayloadAction<MetricValue>) =>
 		{
 			const id = action.payload.id;
-			const name = action.payload.metric;
+			const name = action.payload.name;
 			state.entities[id].wasEdited = true;
 			state.entities[id][name] = action.payload.value;
 		},
