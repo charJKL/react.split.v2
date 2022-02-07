@@ -1,13 +1,14 @@
-import React, { useEffect, useRef, useState } from "react";
+import { useEffect } from "react";
 import useIsElementVisible from "./useIsElementVisible";
 import { useAppDispatch, useAppSelector } from "../../store/store.hooks";
 import { loadPage, selectPage, selectPageById } from "../../store/slice.pages";
 import { selectMetricsForPage } from "../../store/slice.metrics";
 import { selectOcrForPage } from "../../store/slice.ocrs";
-import css from "./Thumbnail.module.scss";
+import ThumbnailStatusMetric from "./ThumbnailStatusMetric";
+import ThumbnailStatusOcr from "./ThumbnailStatusOcr";
 import placeholder from "../../assets/placeholder.svg";
 import waiting from "../../assets/waiting.svg";
-import ThumbnailStatusMetric from "./ThumbnailStatusMetric";
+import css from "./Thumbnail.module.scss";
 
 type ThumbnailProps = 
 {
@@ -50,15 +51,21 @@ const Thumbnail = ({id}: ThumbnailProps) : JSX.Element =>
 	}
 	
 	let metricStatus = null;
+	let ocrStatus = null;
 	
 	if(metric)
 	{
 		metricStatus = <ThumbnailStatusMetric className={css.metric} metric={metric} />
 	}
+	if(ocr)
+	{
+		ocrStatus = <ThumbnailStatusOcr className={css.ocr} ocr={ocr} />
+	}
 	return (
 		<div className={css.thumbnail} ref={element} onClick={onClickHandler}>
 			{ image }
 			{ metricStatus }
+			{ ocrStatus }
 			<input className={css.name} value={page.name} readOnly />
 		</div>
 	)

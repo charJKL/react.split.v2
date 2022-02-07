@@ -69,3 +69,15 @@
 	height: 100%;
 	z-index: 3;
 }
+.ocr
+{
+	position: absolute;
+	right: 0px; bottom: 20px;
+	display: flex;
+	flex-flow: column nowrap;
+	justify-content: flex-end;
+	align-items: center;
+	width: 50%;
+	height: 100%;
+	z-index: 3;
+}
