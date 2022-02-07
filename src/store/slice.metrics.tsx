@@ -63,5 +63,5 @@ export const selectMetricsForPage = (page: Page | null) => (state: StoreState) =
 export const { addMetric, updateMetricValue, updateWasEdited } = Metrics.actions;
 export { };
 
-export type { Metric, MetricLineNames };
+export type { Metric, MetricName, MetricLineNames };
 export default Metrics;
