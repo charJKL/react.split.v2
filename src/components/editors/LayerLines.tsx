@@ -3,11 +3,11 @@ import LayerLinesLine from "./LayerLinesLine";
 
 type LayerLinesPropsCustom = 
 {
-	objectHovered: SelectableObject
+	objectHovered?: SelectableObject
 }
 type LayerLinesProps = LayerProps & LayerLinesPropsCustom;
 
-const LayerLines = ({className, page, metric, desktopSize, objectHovered}: LayerLinesProps) : JSX.Element=>
+const LayerLines = ({className, page, metric, desktopSize, objectHovered = null}: LayerLinesProps) : JSX.Element=>
 {
 	const offset = 8;
 	const isHover = (name: SelectableObject) => objectHovered === name;
