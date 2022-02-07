@@ -45,6 +45,7 @@ const Metrics = createSlice({
 		{
 			const id = action.payload.id;
 			const name = action.payload.metric;
+			state.entities[id].wasEdited = true;
 			state.entities[id][name] = action.payload.value;
 		}
 	}
