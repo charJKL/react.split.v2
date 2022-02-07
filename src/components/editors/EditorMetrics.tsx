@@ -3,9 +3,9 @@ import { CustomHTMLAttributes } from "../types/CustomHTMLAttributes";
 import { useAppSelector, useAppDispatch } from "../../store/store.hooks";
 import { Page, selectSelectedPage } from "../../store/slice.pages";
 import { Metric, MetricLineNames, selectMetricsForPage, updateMetricValue, updateWasEdited } from "../../store/slice.metrics";
-import { Scale } from "./types/Scale";
 import { Size } from "./types/Size";
 import { isLeftButtonClicked, isNoneButtonPressed, MouseButton } from "../types/MouseButton";
+import { calculateScale, applayScaleToSize, applayScaleToMetrics} from "./Editor";
 import useGetBoundingRect from "../hooks/useGetBoundingRect";
 import useGetPageSize from "./hooks/useGetPageSize";
 import useCursorPosition from "./hooks/useCursorPosition";
@@ -131,35 +131,6 @@ const EditorMetrics = ({className, style} : CustomHTMLAttributes): JSX.Element =
 			</div>
 		</div>
 	)
-}
-
-const calculateScale = (viewport: Size, size: Size) : Scale =>
-{
-	if(size.width === 0 || size.height === 0) return {x: 1, y: 1}
-
-	const x = viewport.width / size.width;
-	const y = viewport.height / size.height;
-	const ratio = Math.min(x, y);
-	return {x: ratio, y: ratio};
-}
-
-const applayScaleToSize = (element: Size, scale : Scale) =>
-{
-	const scaled = { ...element };
-			scaled.width = element.width * scale.x;
-			scaled.height = element.height * scale.y;
-	return scaled;
-}
-
-const applayScaleToMetrics = (metric: Metric | null, scale: Scale) =>
-{
-	if(metric === null) return null;
-	const scaled = { ...metric };
-			scaled.x1 = metric.x1 * scale.x;
-			scaled.x2 = metric.x2 * scale.x;
-			scaled.y1 = metric.y1 * scale.y;
-			scaled.y2 = metric.y2 * scale.y;
-	return scaled;
 }
 
 type isScalingType = ReturnType<typeof useGetScale>[1];
