@@ -87,16 +87,6 @@ const EditorMetrics = ({className, style} : CustomHTMLAttributes): JSX.Element =
 			return;
 		}
 	}
-	const onChangeWasEdited = (e: ChangeEvent<HTMLInputElement>) =>
-	{
-		if(page && metric)
-		{
-			const id = page.id;
-			const status = "Edited";
-			dispatch(updateStatus({id, status}));
-			return;
-		}
-	}
 	
 	var toolbars: Array<JSX.Element> = [];
 	var layers: Array<JSX.Element> = [];
@@ -110,7 +100,6 @@ const EditorMetrics = ({className, style} : CustomHTMLAttributes): JSX.Element =
 	if(page && metric && scaledMetrics)
 	{
 		layers.push(<LayerLines key="editor-metric-lines" className={css.metricLines} page={page} metric={scaledMetrics} desktopSize={scaledDesktopSize} objectHovered={objectHovered}/>)
-		//toolbars.push(<div className={css.toolbarWasEdited}><input type="checkbox" id="" checked={metric.wasEdited} onChange={onChangeWasEdited}/> was edited</div>);
 	}
 	if(page && metric && scaledMetrics)
 	{
