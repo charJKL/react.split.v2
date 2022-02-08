@@ -2,6 +2,7 @@ import { createStore, combineReducers, configureStore, Middleware } from "@redux
 import PagesSlice from "./slice.pages";
 import MetricSlice from "./slice.metrics";
 import OcrSlice from "./slice.ocrs";
+import GuiSlice from "./slice.gui";
 
 const Store = configureStore({
 	middleware: (getDefaultMiddleware) => {
@@ -15,6 +16,7 @@ const Store = configureStore({
 		pages: PagesSlice.reducer,
 		metrics: MetricSlice.reducer,
 		ocrs: OcrSlice.reducer,
+		gui: GuiSlice.reducer
 	}
 });
 
