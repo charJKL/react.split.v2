@@ -13,7 +13,7 @@ const Main = ({className} : CustomHTMLAttributes ) : JSX.Element =>
 	const [mainRef, setMainRef] = useRefElement<HTMLDivElement>(null);
 	const [separatorRef, setSeparatorRef] = useRefElement<HTMLDivElement>(null);
 	const rect = useGetBoundingRect(mainRef);
-	const [separator, setSeparator] = useState<number>(document.body.clientWidth / 2);
+	const [separator, setSeparator] = useState<number>(document.body.clientWidth * 0.7);
 	const isSeparatorHovered = useHoverInRange(mainRef, separatorRef, MouseButton.Left, 3);
 	
 	useEffect(() => {
