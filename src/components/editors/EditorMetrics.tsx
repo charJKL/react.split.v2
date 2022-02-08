@@ -2,9 +2,9 @@ import {MouseEvent, useState, WheelEvent, ChangeEvent } from "react";
 import { CustomHTMLAttributes } from "../types/CustomHTMLAttributes";
 import { useAppSelector, useAppDispatch } from "../../store/store.hooks";
 import { Page, selectSelectedPage } from "../../store/slice.pages";
-import { Metric, MetricLineNames, selectMetricsForPage, updateMetricValue, updateWasEdited } from "../../store/slice.metrics";
+import { Metric, MetricLineNames, selectMetricsForPage, updateMetricValue, updateStatus } from "../../store/slice.metrics";
 import { Size } from "./types/Size";
-import { isLeftButtonClicked, isNoneButtonPressed, MouseButton } from "../types/MouseButton";
+import { isLeftButtonClicked, isNoneButtonPressed } from "../types/MouseButton";
 import { calculateScale, applayScaleToSize, applayScaleToMetrics} from "./Editor";
 import useGetBoundingRect from "../hooks/useGetBoundingRect";
 import useGetPageSize from "./hooks/useGetPageSize";
@@ -92,8 +92,8 @@ const EditorMetrics = ({className, style} : CustomHTMLAttributes): JSX.Element =
 		if(page && metric)
 		{
 			const id = page.id;
-			const checked = e.target.checked;
-			dispatch(updateWasEdited({id, checked}));
+			const status = "Edited";
+			dispatch(updateStatus({id, status}));
 			return;
 		}
 	}
@@ -110,7 +110,7 @@ const EditorMetrics = ({className, style} : CustomHTMLAttributes): JSX.Element =
 	if(page && metric && scaledMetrics)
 	{
 		layers.push(<LayerLines key="editor-metric-lines" className={css.metricLines} page={page} metric={scaledMetrics} desktopSize={scaledDesktopSize} objectHovered={objectHovered}/>)
-		toolbars.push(<div className={css.toolbarWasEdited}><input type="checkbox" id="" checked={metric.wasEdited} onChange={onChangeWasEdited}/> was edited</div>);
+		//toolbars.push(<div className={css.toolbarWasEdited}><input type="checkbox" id="" checked={metric.wasEdited} onChange={onChangeWasEdited}/> was edited</div>);
 	}
 	if(page && metric && scaledMetrics)
 	{

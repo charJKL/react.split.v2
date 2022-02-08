@@ -10,10 +10,25 @@ type ThumbnailStatusMetricsProps = CustomHTMLAttributes & ThumbnailStatusMetrics
 
 const ThumbnailStatusMetrics = ({className, metric}: ThumbnailStatusMetricsProps) : JSX.Element => 
 {
+	let status = null;
+	switch(metric.status)
+	{
+		case "Idle":
+			break;
+			
+		case "Invalid":
+			status = <div className={css.invalid}>🗴</div>
+			break;
+			
+		case "Edited":
+			status = <div className={css.edited}>🗸</div>
+			break;
+	}
+	
 	const classNameForDiv = [className, css.div].join(" ");
 	return (
 		<div className={classNameForDiv}>
-			{metric.wasEdited && <div className={css.checked}>🗸</div>}
+			{status}
 		</div>
 	)
 }

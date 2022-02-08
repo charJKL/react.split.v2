@@ -8,14 +8,13 @@ type MetricDetails = "x1>x2" | "x2<x1" | "y1>y2" | "y2<y1";
 type MetricName = "x1" | "x2" | "y1" | "y2" | "rotate";
 type MetricLineNames = Exclude<MetricName, "rotate">;
 type MetricValue = { id: Key, name: MetricName, value: number};
-type WasEditedValue = { id: Key, checked: boolean};
+type StatusValue = { id: Key, status: MetricStatus};
 
 type Metric = 
 {
 	id: Key;
 	status: MetricStatus;
 	details: MetricDetails | null;
-	wasEdited: boolean;
 	x1: number;
 	x2: number;
 	y1: number;
@@ -53,7 +52,6 @@ const Metrics = createSlice({
 			const entity = state.entities[id];
 			if(entity)
 			{
-				entity.wasEdited= true;
 				entity.status = "Edited";
 				entity[name] = action.payload.value;
 				switch(true)
@@ -80,14 +78,14 @@ const Metrics = createSlice({
 				}
 			}
 		},
-		updateWasEdited: (state, action: PayloadAction<WasEditedValue>) =>
+		updateStatus: (state, action: PayloadAction<StatusValue>) =>
 		{
 			const id = action.payload.id;
-			const checked = action.payload.checked;
+			const status = action.payload.status;
 			const entity = state.entities[id];
 			if(entity)
 			{
-				entity.wasEdited = checked;
+				entity.status = status;
 			}
 		}
 	}
@@ -95,7 +93,7 @@ const Metrics = createSlice({
 
 export const selectMetricsForPage = (page: Page | null) => (state: StoreState) => page ? state.metrics.entities[page.id] : null;
 
-export const { addMetric,updateMetricValue, updateWasEdited } = Metrics.actions;
+export const { addMetric,updateMetricValue, updateStatus } = Metrics.actions;
 
 export type { Metric, MetricName, MetricLineNames };
 export default Metrics;
