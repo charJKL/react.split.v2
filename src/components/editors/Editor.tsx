@@ -5,7 +5,7 @@ import {Scale} from "./types/Scale";
 export const calculateScale = (viewport: Size, size: Size) : Scale =>
 {
 	if(size.width === 0 || size.height === 0) return {x: 1, y: 1}
-
+	
 	const x = viewport.width / size.width;
 	const y = viewport.height / size.height;
 	const ratio = Math.min(x, y);
@@ -20,9 +20,8 @@ export const applayScaleToSize = (element: Size, scale : Scale) =>
 	return scaled;
 }
 
-export const applayScaleToMetrics = (metric: Metric | null, scale: Scale) =>
+export const applayScaleToMetrics = (metric: Metric, scale: Scale) =>
 {
-	if(metric === null) return null;
 	const scaled = { ...metric };
 			scaled.x1 = metric.x1 * scale.x;
 			scaled.x2 = metric.x2 * scale.x;
