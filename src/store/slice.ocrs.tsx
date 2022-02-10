@@ -52,53 +52,48 @@ const Ocrs = createSlice({
 		{
 			const id = action.payload.id;
 			const ocr = state.entities[id];
-			if(ocr)
-			{
-				ocr.status = action.payload.status;
-				ocr.details = action.payload.details;
-			}
+			if(ocr === undefined) throw console.error(`You update ocr status for nonexisting page`, action.payload);
+			if(action.payload.status === "Parsed" && (ocr.text === undefined || ocr.lines === undefined || ocr.words === undefined)) throw console.error(`You can't set status="Parsed" until results are set.`, action.payload, ocr);
+			ocr.status = action.payload.status;
+			ocr.details = action.payload.details;
 		},
 		setResults: (state, action: PayloadAction<ResultValue> ) =>
 		{
 			const id = action.payload.id;
 			const ocr = state.entities[id];
-			if(ocr)
-			{
-				ocr.text = action.payload.text;
-				ocr.lines = action.payload.lines;
-				ocr.words = action.payload.words;
-			}
+			if(ocr === undefined) throw console.error(`You set ocr result of nonexistent page.`, action.payload);
+			ocr.text = action.payload.text;
+			ocr.lines = action.payload.lines;
+			ocr.words = action.payload.words;
 		},
 		tesseractLog: (state, action: PayloadAction<{id: string, log: any}>) => 
 		{
 			const id = action.payload.id;
 			const log = action.payload.log as {status: string, progress: number};
 			const ocr = state.entities[id];
-			if(ocr)
+			if(ocr === undefined) throw console.error(`You logging for nonexisting page.`, action.payload);
+			switch(log.status)
 			{
-				switch(log.status)
-				{
-					case "loading tesseract core":
-					case "initializing tesseract":
-					case "initialized tesseract":
-					case "loading language traineddata":
-					case "loaded language traineddata":
-					case "initializing api":
-					case "initialized api":
-						ocr.status = "Initializaing"
-						ocr.details = log.status;
-						return;
+				case "loading tesseract core":
+				case "initializing tesseract":
+				case "initialized tesseract":
+				case "loading language traineddata":
+				case "loaded language traineddata":
+				case "initializing api":
+				case "initialized api":
+					ocr.status = "Initializaing"
+					ocr.details = log.status;
+					return;
+				
+				case "recognizing text":
+					ocr.status = "Parsing";
+					ocr.details = log.progress;
+					return;
 					
-					case "recognizing text":
-						ocr.status = "Parsing";
-						ocr.details = log.progress;
-						return;
-					
-					default:
-						ocr.status = "Error";
-						ocr.details = log.status;
-						return;
-				}
+				default:
+					ocr.status = "Error";
+					ocr.details = log.status;
+					return;
 			}
 		}
 	}
@@ -169,8 +164,8 @@ const readPage = createAsyncThunk<void, ReadPageBatch, ThunkStoreTypes>('ocrs/re
 	const result = await tesseract.recognize(blob);
 	const lines = result.data.lines.map(line => ({bbox: line.bbox, baseline: line.baseline, text: line.text }) as OcrLine );
 	const words = result.data.words.map(word => ({bbox: word.bbox, baseline: word.baseline, text: word.text, choices: word.choices }) as OcrWord );
-	dispatch(updateStatus({id: page.id, status: "Parsed", details: null}));
 	dispatch(setResults({id: page.id, text: result.data.text, lines, words}));
+	dispatch(updateStatus({id: page.id, status: "Parsed", details: null}));
 	await tesseract.terminate();
 });
 

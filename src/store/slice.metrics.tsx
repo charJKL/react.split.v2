@@ -49,32 +49,30 @@ const Metrics = createSlice({
 			const id = action.payload.id;
 			const name = action.payload.name;
 			const entity = state.entities[id];
-			if(entity)
+			if(entity === undefined) throw console.error(`You update metrics value for nonexisting page`, action.payload);
+			entity.status = "Edited";
+			entity[name] = action.payload.value;
+			switch(true)
 			{
-				entity.status = "Edited";
-				entity[name] = action.payload.value;
-				switch(true)
-				{
-					case entity.x1 > entity.x2:
-						entity.status = "Invalid";
-						entity.details = "x1>x2";
-						break;
+				case entity.x1 > entity.x2:
+					entity.status = "Invalid";
+					entity.details = "x1>x2";
+					break;
 					
-					case entity.x2 < entity.x1:
-						entity.status = "Invalid";
-						entity.details = "x2<x1";
-						break;
+				case entity.x2 < entity.x1:
+					entity.status = "Invalid";
+					entity.details = "x2<x1";
+					break;
 						
-					case entity.y1 > entity.y2:
-						entity.status = "Invalid";
-						entity.details = "y1>y2";
-						break;
+				case entity.y1 > entity.y2:
+					entity.status = "Invalid";
+					entity.details = "y1>y2";
+					break;
 					
-					case entity.y2 < entity.y1:
-						entity.status = "Invalid";
-						entity.details = "y2<y1";
-						break;
-				}
+				case entity.y2 < entity.y1:
+					entity.status = "Invalid";
+					entity.details = "y2<y1";
+					break;
 			}
 		},
 		updateStatus: (state, action: PayloadAction<StatusValue>) =>
@@ -82,10 +80,8 @@ const Metrics = createSlice({
 			const id = action.payload.id;
 			const status = action.payload.status;
 			const entity = state.entities[id];
-			if(entity)
-			{
-				entity.status = status;
-			}
+			if(entity === undefined) throw console.error(`You update metrics status for nonexisting page`, action.payload);
+			entity.status = status;
 		}
 	}
 });
