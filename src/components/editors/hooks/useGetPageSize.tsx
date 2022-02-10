@@ -1,14 +1,16 @@
 import { useState, useEffect } from "react";
-import { Size } from "../types/Size";
-import { Page } from "../../../store/slice.pages";
+import { Size } from "../../../types"
+import { isPageLoaded, selectPageById } from "../../../store/slice.pages";
+import { useAppSelector } from "../../../store/store.hooks";
 
-const useGetPageSize = (page: Page | null) : Size=>
+const useGetPageSize = (pageId: string) : Size | null =>
 {
-	const [size, setSize] = useState<Size>({width: 0, height: 0});
+	const page = useAppSelector(selectPageById(pageId));
+	const [size, setSize] = useState<Size | null>(null);
 	
 	useEffect(() => {
 		if(page === null) return;
-		if(page.status !== "Loaded") return;
+		if(isPageLoaded(page) === false) return;
 		
 		setSize(page as Size); // now we are sure that page size is available
 	}, [page]);
