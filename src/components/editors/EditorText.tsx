@@ -33,16 +33,16 @@ const EditorText = ({style} : EditorTextProps) : JSX.Element =>
 	var layers: Array<JSX.Element> = [];
 	if(page && ocr && isOcrIdle(ocr))
 	{
-		layers.push(<div className={css.empty}><button className={css.button} onClick={onProcessHandler}>Proccess file</button></div>);
+		layers.push(<div key="editor-text-button" className={css.empty}><button className={css.button} onClick={onProcessHandler}>Proccess file</button></div>);
 	}
 	if(page && ocr && isOcrNotIdle(ocr))
 	{
-		layers.push(<EditorTextStatus className={css.status} status={ocr.status} details={ocr.details}/>);
+		layers.push(<EditorTextStatus key="editor-text-status" className={css.status} status={ocr.status} details={ocr.details}/>);
 		toolbars.push(<button onClick={onProcessHandler}>Proccess file</button>);
 	}
 	if(page && ocr && isOcrParsed(ocr))
 	{
-		layers.push(<div className={css.text}>{ocr.lines.map((line, i) => <div className={css.line} key={i}>{line.text}</div>)}</div>);
+		layers.push(<div key="editor-text-results" className={css.text}>{ocr.lines.map((line, i) => <div className={css.line} key={i}>{line.text}</div>)}</div>);
 	}
 	const styleForEditor = { ...style };
 	const styleForDesktop = { };
