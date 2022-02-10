@@ -3,6 +3,8 @@ import type { StoreState, ThunkStoreTypes } from "./store";
 
 type PageStatus = "Idle" | "Loading" | "Loaded" | "Error";
 type Key = string;
+type StatusValue = {id: Key; status: PageStatus; }
+type SizeValue = {id: Key; width: number, height: number; }
 
 type Page = 
 {
@@ -30,8 +32,6 @@ const InitialState : InitialStatePages =
 	selected: null,
 }
 
-
-
 const Pages = createSlice({
 	name: "pages",
 	initialState: InitialState,
@@ -43,10 +43,24 @@ const Pages = createSlice({
 			state.ids.push(id);
 			state.entities[id] = action.payload;
 		},
-		upsertPage: (state, action: PayloadAction<Partial<Page> & {id: string}>) =>
+		updateStatus: (state, action: PayloadAction<StatusValue>) =>
 		{
 			const id = action.payload.id;
-			state.entities[id] = { ...state.entities[id], ...action.payload };
+			const page = state.entities[id];
+			if(page)
+			{
+				page.status = action.payload.status;
+			}
+		},
+		setSize: (state, action: PayloadAction<SizeValue>) => 
+		{
+			const id = action.payload.id;
+			const page = state.entities[id];
+			if(page)
+			{
+				page.width = action.payload.width;
+				page.height = action.payload.height;
+			}
 		},
 		selectPage: (state, action: PayloadAction<string>) => 
 		{
@@ -56,6 +70,10 @@ const Pages = createSlice({
 	}
 });
 
+const isPageIdle = (page: Page) : boolean =>
+{
+	return page.status === "Idle";
+}
 const isPageLoaded = (page: Page | PageLoaded) : page is PageLoaded =>
 {
 	return page.status === "Loaded";
@@ -64,30 +82,31 @@ const isPageLoaded = (page: Page | PageLoaded) : page is PageLoaded =>
 const loadPage = createAsyncThunk<void, string, ThunkStoreTypes>('pages/loadPage', (id, thunk) => {
 	const state = thunk.getState();
 	const dispatch = thunk.dispatch;
-	const page = state.pages.entities[id];
-	const upsertPage = Pages.actions.upsertPage;
+	const { updateStatus, setSize } = Pages.actions;
+	const page = state.pages.entities[id] as Page;
 
 	const image = new Image();
-	dispatch(upsertPage({id: id, status: "Loading"}));
+	dispatch(updateStatus({id: id, status: "Loading"}));
 	image.addEventListener('load', (e: Event) => {
 		const image = e.target as HTMLImageElement;
 		const width = image.naturalWidth;
 		const height = image.naturalHeight;
-		dispatch(upsertPage({id: id, status: "Loaded", width: width, height: height}));
+		dispatch(updateStatus({id: id, status: "Loaded"}));
+		dispatch(setSize({id: id, width, height}));
 	});
 	image.addEventListener('error', (e: Event) => {
 		
-		dispatch(upsertPage({id: id, status: "Error"}));
+		dispatch(updateStatus({id: id, status: "Error"}));
 	});
 	image.src = page.url;
 });
 
 export const selectPageIds = (state: StoreState) => state.pages.ids;
-export const selectPageById = (id: string) => (state: StoreState) => state.pages.entities[id];
-export const selectSelectedPage = (state: StoreState) => state.pages.selected ? state.pages.entities[state.pages.selected] : null;
+export const selectPageById = (id: string) => (state: StoreState) : Page | null => state.pages.entities[id] ?? null;
+export const selectSelectedPage = (state: StoreState) : Page | null => state.pages.selected ? state.pages.entities[state.pages.selected] ?? null : null;
 
 export const { addPage, selectPage } = Pages.actions;
-export { isPageLoaded, loadPage };
+export { isPageIdle, isPageLoaded, loadPage };
 
 export type { Page, PageLoaded };
 export default Pages;
