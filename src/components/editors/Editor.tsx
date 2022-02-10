@@ -1,6 +1,5 @@
 import {Metric} from "../../store/slice.metrics";
-import {Size} from "./types/Size";
-import {Scale} from "./types/Scale";
+import {Size, Scale} from "../../types";
 
 export const calculateScale = (viewport: Size, size: Size) : Scale =>
 {
