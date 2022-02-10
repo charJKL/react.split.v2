@@ -1,9 +1,9 @@
 import { useEffect, useState } from "react";
-import type {Position} from "../types/Position";
+import { Position } from "../../../types";
 
-const useCursorPosition = (editor: HTMLElement | null, desktop: HTMLElement | null) =>
+const useCursorPosition = (editor: HTMLElement | null, desktop: HTMLElement | null) : Position | null =>
 {
-	const [cursor, setCursor] = useState<Position>({left:0, top: 0});
+	const [cursor, setCursor] = useState<Position | null>(null);
 	
 	useEffect(() =>{
 		if(editor === null) return;
