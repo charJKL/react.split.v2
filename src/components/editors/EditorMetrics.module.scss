@@ -12,6 +12,7 @@
 .desktop
 {
 	@extend %desktop;
+	top: -1px; left: -1px;
 	border: solid 1px #222;
 }
 
