@@ -1,12 +1,11 @@
 import { useState, useRef, useEffect } from "react";
-import { MouseButton, isButtonClicked } from "../types/MouseButton";
+import { MouseButton, isButtonClicked } from "../../types";
 
 const useHoverInRange = (root: HTMLElement|null, element: HTMLElement|null, button: MouseButton, range: number) =>
 {
 	const [inRange, setInRange] = useState<boolean>(false);
 	const isLocked = useRef(false);
 
-	
 	useEffect(() =>{
 		if(root === null) return;
 		if(element === null) return;

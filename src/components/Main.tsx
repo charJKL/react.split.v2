@@ -32,7 +32,7 @@ const Main = ({className} : CustomHTMLAttributes) : JSX.Element =>
 	
 	let editorMetricSize = 0;
 	let editorTextSize = 0;
-	if(mainRef && rect && rect.width > 0)
+	if(rect && rect.width > 0)
 	{
 		editorMetricSize = separator;
 		editorTextSize = rect.width - separator;
@@ -46,6 +46,7 @@ const Main = ({className} : CustomHTMLAttributes) : JSX.Element =>
 		<main className={classForMain} style={styleForMain} ref={setMainRef}>
 			<EditorMetrics style={styleForEditorMetric} />
 			<div className={css.separator} ref={setSeparatorRef}></div>
+			<EditorText style={styleForEditorText} />
 		</main>
 	)
 }

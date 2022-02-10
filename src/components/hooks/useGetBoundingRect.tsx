@@ -1,8 +1,8 @@
-import { RefObject, useEffect, useLayoutEffect, useState } from "react";
+import { useEffect, useLayoutEffect, useState } from "react";
 
-const useGetBoundingRect = (element: HTMLDivElement | null) : DOMRect =>
+const useGetBoundingRect = (element: HTMLDivElement | null) : DOMRect | null =>
 {
-	const [boundingRect, setBoundingRect] = useState<DOMRect>(new DOMRect(0,0,0,0));
+	const [boundingRect, setBoundingRect] = useState<DOMRect | null>(null);
 	
 	useLayoutEffect(() => {
 		if(element) setBoundingRect(element.getBoundingClientRect());
@@ -10,7 +10,7 @@ const useGetBoundingRect = (element: HTMLDivElement | null) : DOMRect =>
 	
 	useEffect(() =>{
 		if(element === null)  return;
-		const observer = new ResizeObserver((entries) => { setBoundingRect(entries[0].contentRect) });
+		const observer = new ResizeObserver((entries) => { setBoundingRect(entries[0]!.contentRect) });
 		observer.observe(element);
 		return () =>
 		{
