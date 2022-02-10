@@ -1,12 +1,15 @@
-import { CustomHTMLAttributes } from "../types/CustomHTMLAttributes";
 import { Ocr } from "../../store/slice.ocrs";
 import Progress from "../common/Progress";
 import css from "./EditorTextStatus.module.scss";
 
-type EditorTextStatusPropsExt = {status: Ocr['status'], details: Ocr['details']}
-type EditorTextStatusProps = CustomHTMLAttributes & EditorTextStatusPropsExt;
+interface EditorTextStatusProps 
+{
+	className?: string;
+	status: Ocr['status'];
+	details: Ocr['details'];
+}
 
-const EditorTextStatus = ({className, status, details, ...props}: EditorTextStatusProps) : JSX.Element =>
+const EditorTextStatus = ({className, status, details}: EditorTextStatusProps) : JSX.Element =>
 {
 	const classForStatus = [className, css.block].join(" ");
 

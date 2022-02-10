@@ -106,16 +106,9 @@ const Ocrs = createSlice({
 
 export const selectOcrForPage = (pageId: string) => (state: StoreState) : Ocr | null => state.ocrs.entities[pageId] ?? null;
 
-const isOcrIdle = (ocr: Ocr | OcrIdle) : ocr is OcrIdle =>
-{
-	return ocr.status === "Idle";
-}
-
-const isOcrNotIdle = (ocr: Ocr) : ocr is Ocr =>
-{
-	return ocr.status !== "Idle";
-}
-
+const isOcrIdle = (ocr: Ocr | OcrIdle) : ocr is OcrIdle => ocr.status === "Idle"; 
+const isOcrNotIdle = (ocr: Ocr) : ocr is Ocr => ocr.status !== "Idle";
+const isOcrParsed = (ocr: Ocr) : ocr is Ocr => ocr.status === "Parsed";
 
 type ReadPageBatch = {page: PageLoaded, metrics: Metric};
 const readPage = createAsyncThunk<void, ReadPageBatch, ThunkStoreTypes>('ocrs/readPage', async (batch, thunk) => {
@@ -179,7 +172,7 @@ const readPage = createAsyncThunk<void, ReadPageBatch, ThunkStoreTypes>('ocrs/re
 });
 
 export const { addOcr } = Ocrs.actions;
-export { isOcrIdle, isOcrNotIdle, readPage };
+export { isOcrIdle, isOcrNotIdle, isOcrParsed, readPage };
 
 export type { Ocr };
 export default Ocrs;
