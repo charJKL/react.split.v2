@@ -41,6 +41,7 @@ const Gui = createSlice({
 		{
 			const key = action.payload.editorName + action.payload.pageId;
 			const setting = state.settings[key];
+			if(setting === undefined) console.warn(`You update "position" for nonexistent setting "${key}":`, action.payload);
 			if(setting)
 			{
 				setting.position.top += action.payload.movementY;
@@ -51,6 +52,7 @@ const Gui = createSlice({
 		{
 			const key = action.payload.editorName + action.payload.pageId;
 			const setting = state.settings[key];
+			if(setting === undefined) console.warn(`You update "scale" for nonexistent setting "${key}":`, action.payload);
 			if(setting)
 			{
 				setting.scale.x += action.payload.x;
