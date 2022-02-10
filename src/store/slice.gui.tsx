@@ -1,7 +1,4 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
-import { access } from "fs/promises";
-import { toEditorSettings } from "typescript";
-import { Page } from "./slice.pages";
 import type { StoreState } from "./store";
 
 type Key = string;
@@ -9,7 +6,7 @@ type Position = {top: number, left: number};
 type Scale = {x: number, y: number};
 type KeyValue = {editorName: string; pageId: string; setting: Omit<Setting, "id">; }
 type PositionValue = {editorName: string, pageId: string, movementX: number, movementY: number };
-type ScaleValue = {editorName: string, pageId: Page['id'], scale: Scale };
+type ScaleValue = {editorName: string, pageId: string, x: number, y: number };
 
 type Setting = 
 {
@@ -24,8 +21,6 @@ type InitialStateGui =
 	settings: { [key: Key]: Setting },
 }
 
-const InitalPosition = {top: 0, left: 0};
-const InitalScale = {x: 0, y: 0};
 const InitialState : InitialStateGui = 
 {
 	ids: [],
@@ -58,15 +53,16 @@ const Gui = createSlice({
 			const setting = state.settings[key];
 			if(setting)
 			{
-				setting.scale = action.payload.scale;
+				setting.scale.x += action.payload.x;
+				setting.scale.y += action.payload.y;
 			}
 		},
 	}
 });
 
-export const isSettingInitialized = (editorName: string, pageId: string | null) => (state: StoreState) => pageId === null || state.gui.settings[editorName+pageId] !== undefined;
-export const selectPositionSetting = (editorName: string, pageId: string | null) => (state: StoreState) => state.gui.settings[editorName+pageId]?.position ?? null;
-export const selectScaleSetting = (editorName: string, pageId: string | null) => (state: StoreState) => state.gui.settings[editorName+pageId]?.scale ?? null;
+export const isSettingInitialized = (editorName: string, pageId: string) => (state: StoreState) : boolean => state.gui.settings[editorName+pageId] !== undefined;
+export const selectPositionSetting = (editorName: string, pageId: string) => (state: StoreState) : Position | null => state.gui.settings[editorName+pageId]?.position ?? null;
+export const selectScaleSetting = (editorName: string, pageId: string) => (state: StoreState) : Scale | null => state.gui.settings[editorName+pageId]?.scale ?? null;
 
 export const { initializeSetting, updatePosition, updateScale } = Gui.actions;
 
