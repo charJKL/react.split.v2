@@ -20,7 +20,7 @@ const Store = configureStore({
 	}
 });
 
-
+export type GetStoreState = typeof Store.getState;
 export type StoreState = ReturnType<typeof Store.getState>;
 export type StoreDispatch = typeof Store.dispatch;
 export type ThunkStoreTypes = {dispatch: StoreDispatch, state: StoreState };

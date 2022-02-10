@@ -20,14 +20,12 @@ type InitialStatePages =
 {
 	ids: Array<string>,
 	entities: { [key: string]: Page },
-	selected: string | null;
 }
 
 const InitialState : InitialStatePages = 
 {
 	ids: [],
 	entities: {},
-	selected: null,
 }
 
 const Pages = createSlice({
@@ -56,11 +54,6 @@ const Pages = createSlice({
 			if(page === undefined) throw console.error(`You updating status of nonexistent page`, action.payload);
 			page.width = action.payload.width;
 			page.height = action.payload.height;
-		},
-		selectPage: (state, action: PayloadAction<string>) => 
-		{
-			const id = action.payload;
-			if(state.ids.includes(id)) state.selected = action.payload;
 		}
 	}
 });
@@ -93,9 +86,9 @@ const loadPage = createAsyncThunk<void, string, ThunkStoreTypes>('pages/loadPage
 
 export const selectPageIds = (state: StoreState) => state.pages.ids;
 export const selectPageById = (id: string) => (state: StoreState) : Page | null => state.pages.entities[id] ?? null;
-export const selectSelectedPage = (state: StoreState) : Page | null => state.pages.selected ? state.pages.entities[state.pages.selected] ?? null : null;
+export const selectSelectedPage = (state: StoreState) : Page | null => state.gui.selected ? state.pages.entities[state.gui.selected] ?? null : null;
 
-export const { addPage, selectPage } = Pages.actions;
+export const { addPage } = Pages.actions;
 export { isPageIdle, isPageLoaded, loadPage };
 
 export type { Page, PageLoaded };

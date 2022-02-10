@@ -1,5 +1,5 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
-import type { StoreState } from "./store";
+import type { GetStoreState, StoreDispatch, StoreState } from "./store";
 
 type Key = string;
 type Position = {top: number, left: number};
@@ -17,13 +17,13 @@ type Setting =
 
 type InitialStateGui =
 {
-	ids: Array<string>,
+	selected: string | null;
 	settings: { [key: Key]: Setting },
 }
 
 const InitialState : InitialStateGui = 
 {
-	ids: [],
+	selected: null,
 	settings: {},
 }
 
@@ -32,6 +32,10 @@ const Gui = createSlice({
 	initialState: InitialState,
 	reducers: 
 	{
+		selectPage: (state, action: PayloadAction<string>) =>
+		{
+			state.selected = action.payload;
+		},
 		initializeSetting: (state, action: PayloadAction<KeyValue>) =>
 		{
 			const key = action.payload.editorName + action.payload.pageId;
@@ -52,7 +56,7 @@ const Gui = createSlice({
 			if(setting === undefined) throw console.error(`You update "scale" for nonexistent setting "${key}":`, action.payload);
 			setting.scale.x += action.payload.x;
 			setting.scale.y += action.payload.y;
-		},
+		}
 	}
 });
 
@@ -60,7 +64,16 @@ export const isSettingInitialized = (editorName: string, pageId: string) => (sta
 export const selectPositionSetting = (editorName: string, pageId: string) => (state: StoreState) : Position | null => state.gui.settings[editorName+pageId]?.position ?? null;
 export const selectScaleSetting = (editorName: string, pageId: string) => (state: StoreState) : Scale | null => state.gui.settings[editorName+pageId]?.scale ?? null;
 
+const selectPage = (pageId: string) => (dispatch: StoreDispatch, getState: GetStoreState ) => 
+{
+	const store = getState();
+	const pages = store.pages;
+	const { selectPage } = Gui.actions;
+	if(pages.ids.includes(pageId)) dispatch(selectPage(pageId));
+}
+
 export const { initializeSetting, updatePosition, updateScale } = Gui.actions;
+export { selectPage };
 
 export type { Setting };
 export default Gui;

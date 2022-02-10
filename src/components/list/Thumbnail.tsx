@@ -1,8 +1,9 @@
 import { useEffect } from "react";
 import { useAppDispatch, useAppSelector } from "../../store/store.hooks";
-import { Page, isPageIdle, loadPage, selectPage, selectPageById, selectSelectedPage } from "../../store/slice.pages";
+import { Page, isPageIdle, loadPage, selectPageById, selectSelectedPage } from "../../store/slice.pages";
 import { Metric, selectMetricsForPage } from "../../store/slice.metrics";
 import { selectOcrForPage } from "../../store/slice.ocrs";
+import { selectPage } from "../../store/slice.gui";
 import useIsElementVisible from "../hooks/useIsElementVisible";
 import EditorThumbnail from "../editors/EditorThumbnail";
 import ThumbnailStatusMetrics from "./ThumbnailStatusMetrics";
