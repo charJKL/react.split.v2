@@ -1,22 +1,24 @@
 import { createAsyncThunk, createSlice, PayloadAction } from "@reduxjs/toolkit"
 import { Metric } from "./slice.metrics";
-import { Page, PageLoaded } from "./slice.pages";
+import { PageLoaded } from "./slice.pages";
 import { StoreState, ThunkStoreTypes } from "./store";
 import { Baseline, Bbox, Choice, createWorker,  } from 'tesseract.js';
 import getHTMLImageElement from "./lib/getHTMLImageElement"
 import drawRotateImage from "./lib/drawRotateImage"
 
-
 type Key = string;
 type OcrStatus = "Idle" | "Preprocessing" | "Initializaing" | "Parsing" | "Parsed" | "Error";
-type OcrLine = { bbox: Bbox, baseline: Baseline, text: string; }
-type OcrWord = { bbox: Bbox, baseline: Baseline, text: string; choices: Choice[]; }
+type OcrDetails = string | number | null;
+type OcrLine = { bbox: Bbox; baseline: Baseline; text: string; }
+type OcrWord = { bbox: Bbox; baseline: Baseline; text: string; choices: Choice[]; }
+type StatusValue = {id: Key; status: OcrStatus; details: string | number | null; }
+type ResultValue = {id: Key; text: string; lines: OcrLine[]; words: OcrWord[]; }
 
 type Ocr = 
 {
 	id: Key;
 	status: OcrStatus;
-	details: string | number | null;
+	details: OcrDetails;
 	text: string;
 	lines: OcrLine[];
 	words: OcrWord[];
@@ -46,66 +48,85 @@ const Ocrs = createSlice({
 			state.ids.push(id);
 			state.entities[id] = action.payload;
 		},
-		upsertOcr: (state, action: PayloadAction<Partial<Ocr> & {id: string}>) =>
+		updateStatus: (state, action: PayloadAction<StatusValue>) =>
 		{
 			const id = action.payload.id;
-			state.entities[id] = { ...state.entities[id], ...action.payload };
+			const ocr = state.entities[id];
+			if(ocr)
+			{
+				ocr.status = action.payload.status;
+				ocr.details = action.payload.details;
+			}
+		},
+		setResults: (state, action: PayloadAction<ResultValue> ) =>
+		{
+			const id = action.payload.id;
+			const ocr = state.entities[id];
+			if(ocr)
+			{
+				ocr.text = action.payload.text;
+				ocr.lines = action.payload.lines;
+				ocr.words = action.payload.words;
+			}
 		},
 		tesseractLog: (state, action: PayloadAction<{id: string, log: any}>) => 
 		{
 			const id = action.payload.id;
 			const log = action.payload.log as {status: string, progress: number};
-			switch(log.status)
+			const ocr = state.entities[id];
+			if(ocr)
 			{
-				case "loading tesseract core":
-				case "initializing tesseract":
-				case "initialized tesseract":
-				case "loading language traineddata":
-				case "loaded language traineddata":
-				case "initializing api":
-				case "initialized api":
-					state.entities[id].status = "Initializaing"
-					state.entities[id].details = log.status;
-					return;
-				
-				case "recognizing text":
-					state.entities[id].status = "Parsing";
-					state.entities[id].details = log.progress;
-					return;
-				
-				default:
-					state.entities[id].status = "Error";
-					state.entities[id].details = log.status;
-					return;
+				switch(log.status)
+				{
+					case "loading tesseract core":
+					case "initializing tesseract":
+					case "initialized tesseract":
+					case "loading language traineddata":
+					case "loaded language traineddata":
+					case "initializing api":
+					case "initialized api":
+						ocr.status = "Initializaing"
+						ocr.details = log.status;
+						return;
+					
+					case "recognizing text":
+						ocr.status = "Parsing";
+						ocr.details = log.progress;
+						return;
+					
+					default:
+						ocr.status = "Error";
+						ocr.details = log.status;
+						return;
+				}
 			}
 		}
 	}
 });
 
-export const selectOcrForPage = (page: Page | null) => (state: StoreState) => page ? state.ocrs.entities[page.id] : null;
+export const selectOcrForPage = (pageId: string) => (state: StoreState) : Ocr | null => state.ocrs.entities[pageId] ?? null;
 
-const isOcrIdle = (ocr: Ocr | OcrIdle | null) : ocr is OcrIdle =>
+const isOcrIdle = (ocr: Ocr | OcrIdle) : ocr is OcrIdle =>
 {
-	return ocr !== null && ocr.status === "Idle";
+	return ocr.status === "Idle";
 }
 
-const isOcrNotIdle = (ocr: Ocr | null) : ocr is Ocr =>
+const isOcrNotIdle = (ocr: Ocr) : ocr is Ocr =>
 {
-	return ocr !== null && ocr.status !== "Idle";
+	return ocr.status !== "Idle";
 }
 
 
 type ReadPageBatch = {page: PageLoaded, metrics: Metric};
 const readPage = createAsyncThunk<void, ReadPageBatch, ThunkStoreTypes>('ocrs/readPage', async (batch, thunk) => {
 	const dispatch = thunk.dispatch;
-	const upsertOcr = Ocrs.actions.upsertOcr;
-	const tesseractLog = Ocrs.actions.tesseractLog;
+	const { updateStatus, setResults, tesseractLog } = Ocrs.actions;
 	
 	const page = batch.page;
 	const metrics = batch.metrics;
 	
 	// Process image for tesseract.js, apply rotation:
-	dispatch(upsertOcr({id: page.id, status: "Preprocessing", details: "Applying rotation."}));
+	dispatch(updateStatus({id: page.id, status: "Preprocessing", details: "Applying rotation."}));
 	const rotatedCanvas = new OffscreenCanvas(page.width, page.height);
 	const rotatedContext = rotatedCanvas.getContext("2d", {alpha: false});
 	if(rotatedContext === null) return;
@@ -114,7 +135,7 @@ const readPage = createAsyncThunk<void, ReadPageBatch, ThunkStoreTypes>('ocrs/re
 	drawRotateImage(rotatedContext, image, metrics.rotate);
 	
 	// Continue process image for tesseract.js, apply cliping:
-	dispatch(upsertOcr({id: page.id, status: "Preprocessing", details: "Clipping image."}));
+	dispatch(updateStatus({id: page.id, status: "Preprocessing", details: "Clipping image."}));
 	const width = metrics.x2 - metrics.x1;
 	const height = metrics.y2 - metrics.y1;
 	const clippedCanvas = new OffscreenCanvas(width, height);
@@ -123,12 +144,12 @@ const readPage = createAsyncThunk<void, ReadPageBatch, ThunkStoreTypes>('ocrs/re
 	clippedContext.drawImage(rotatedCanvas, metrics.x1, metrics.y1, width, height, 0, 0, width, height);
 
 	// Convert canvas to blob:
-	dispatch(upsertOcr({id: page.id, status: "Preprocessing", details: "Converting to blob."}));
+	dispatch(updateStatus({id: page.id, status: "Preprocessing", details: "Converting to blob."}));
 	const blob : any = await clippedCanvas.convertToBlob({ type: 'image/png' });
 			blob.name = 'some-string' // there is a bug in tesseract which require that blob should have name property.
 	
 	// Initialize tesseract:
-	dispatch(upsertOcr({id: page.id, status: "Initializaing", details: "Converting to blob."}));
+	dispatch(updateStatus({id: page.id, status: "Initializaing", details: "Converting to blob."}));
 	const tesseract = createWorker({
 		workerPath: '/tesseract/worker.min.js',
 		langPath: '/tesseract',
@@ -152,8 +173,8 @@ const readPage = createAsyncThunk<void, ReadPageBatch, ThunkStoreTypes>('ocrs/re
 	const result = await tesseract.recognize(blob);
 	const lines = result.data.lines.map(line => ({bbox: line.bbox, baseline: line.baseline, text: line.text }) as OcrLine );
 	const words = result.data.words.map(word => ({bbox: word.bbox, baseline: word.baseline, text: word.text, choices: word.choices }) as OcrWord );
-	dispatch(upsertOcr({id: page.id, status: "Parsed", details: null, text: result.data.text, lines, words}));
-	
+	dispatch(updateStatus({id: page.id, status: "Parsed", details: null}));
+	dispatch(setResults({id: page.id, text: result.data.text, lines, words}));
 	await tesseract.terminate();
 });
 
