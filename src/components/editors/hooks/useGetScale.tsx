@@ -1,17 +1,16 @@
 import { useEffect, useRef, useState } from "react";
-import { isRightButtonPressed } from "../../types/MouseButton";
-import { Size } from "../types/Size";
-import { Scale} from "../types/Scale";
+import { Scale, isRightButtonPressed } from "../../../types";
+import { useAppDispatch, useAppSelector } from "../../../store/store.hooks";
+import { selectScaleSetting, updateScale } from "../../../store/slice.gui";
 
 const SENSITIVITY = 0.0001;
-
 type ScaleAction = null | "scale-out" | "scale-in";
-
-const useGetScale = (editor: HTMLElement | null, initalScale: Scale) : [Scale, ScaleAction] =>
+const useGetScale = (editor: HTMLElement | null, editorName: string, pageId: string) : [Scale | null, ScaleAction] =>
 {
-	const [scale, setScale] = useState<Scale>(initalScale);
+	const scale = useAppSelector(selectScaleSetting(editorName, pageId));
 	const [isScaling, setScaling] = useState<ScaleAction>(null);
 	const scalingWasMade = useRef<boolean>(false);
+	const dispatch = useAppDispatch();
 	
 	useEffect(() => { // reset indicator that operation scaled was performed
 		if(isScaling == null) return;
@@ -26,7 +25,7 @@ const useGetScale = (editor: HTMLElement | null, initalScale: Scale) : [Scale, S
 		{
 			if(isRightButtonPressed(e))
 			{
-				setScale((scale) => ({x: scale.x - e.deltaY * SENSITIVITY, y: scale.y - e.deltaY * SENSITIVITY}));
+				dispatch(updateScale({editorName, pageId, x: -e.deltaY * SENSITIVITY, y: -e.deltaY * SENSITIVITY}));
 				setScaling(e.deltaY > 0 ? "scale-out" : "scale-in");
 				scalingWasMade.current = true;
 			}
@@ -43,8 +42,8 @@ const useGetScale = (editor: HTMLElement | null, initalScale: Scale) : [Scale, S
 			editor.removeEventListener('wheel', mousewheel);
 			editor.removeEventListener('contextmenu', contextmenu);
 		}
-	}, [editor])
-
+	}, [editor, editorName, pageId])
+	
 	return [scale, isScaling];
 }
 
