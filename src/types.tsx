@@ -1,7 +1,7 @@
 import { HTMLAttributes } from "react";
 import {MouseEvent as MouseEventReact} from "react";
 
-export type CustomHTMLAttributes = HTMLAttributes<HTMLElement>;
+export interface CustomHTMLAttributes extends HTMLAttributes<HTMLElement> { };
 
 // Common used types:
 export type Position =
