@@ -1,14 +1,18 @@
 import { ChangeEvent } from "react";
-import { CustomHTMLAttributes } from "../types/CustomHTMLAttributes";
 import { useAppSelector, useAppDispatch } from "../../store/store.hooks";
 import { selectSelectedPage } from "../../store/slice.pages";
 import { MetricName, selectMetricsForPage, updateMetricValue } from "../../store/slice.metrics";
 import css from "./EditorInput.module.scss";
 
-const EditorInput = ({className}: CustomHTMLAttributes) =>
+interface EditorInputProps 
+{
+	className?: string;
+}
+
+const EditorInput = ({className}: EditorInputProps) =>
 {
 	const page = useAppSelector(selectSelectedPage);
-	const metrics = useAppSelector(selectMetricsForPage(page));
+	const metrics = useAppSelector(selectMetricsForPage(page ? page.id : ""));
 	const dispatch = useAppDispatch();
 	const isDisabled = page === null;
 
