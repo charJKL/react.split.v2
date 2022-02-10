@@ -1,5 +1,4 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
-import { Page } from "./slice.pages";
 import type { StoreState } from "./store";
 
 type Key = string;
@@ -91,7 +90,7 @@ const Metrics = createSlice({
 	}
 });
 
-export const selectMetricsForPage = (page: Page | null) => (state: StoreState) => page ? state.metrics.entities[page.id] : null;
+export const selectMetricsForPage = (pageId: string) => (state: StoreState) : Metric | null => state.metrics.entities[pageId] ?? null;
 
 export const { addMetric,updateMetricValue, updateStatus } = Metrics.actions;
 
