@@ -1,14 +1,16 @@
 import { useEffect, useState } from "react";
-import type { Position } from "../types/Position";
-import { isRightButtonClicked } from "../../types/MouseButton";
+import { Position, isRightButtonClicked } from "../../../types";
 import useRelativeMoveDistance from "../../hooks/useRelativeMoveDistance";
+import { useAppDispatch, useAppSelector } from "../../../store/store.hooks";
+import { selectPositionSetting, updatePosition } from "../../../store/slice.gui";
 
-const useGetDesktopPosition = (editor: HTMLElement | null, initalPosition: Position) : [Position, boolean]=>
+const useGetDesktopPosition = (editor: HTMLElement | null, editorName: string, pageId: string) : [Position | null, boolean]=>
 {
-	const [position, setPosition] = useState<Position>(initalPosition);
+	const position = useAppSelector(selectPositionSetting(editorName, pageId));
 	const [isPositioning, setPositioning] = useState<boolean>(false);
 	const relativeMoveDistance = useRelativeMoveDistance();
-	
+	const dispatch = useAppDispatch();
+
 	useEffect(() => {
 		if(editor === null) return;
 		
@@ -18,7 +20,7 @@ const useGetDesktopPosition = (editor: HTMLElement | null, initalPosition: Posit
 		}
 		const mousemove = (e: MouseEvent) =>
 		{
-			if(isPositioning === true) setPosition(state => ({left: state.left + e.movementX, top: state.top + e.movementY}));
+			if(isPositioning === true) dispatch(updatePosition({editorName, pageId, movementX: e.movementX, movementY: e.movementY}));
 		}
 		const mouseup = (e: MouseEvent) =>
 		{
@@ -39,7 +41,7 @@ const useGetDesktopPosition = (editor: HTMLElement | null, initalPosition: Posit
 			editor.removeEventListener('mouseup', mouseup);
 			editor.removeEventListener('contextmenu', contextmenu);
 		}
-	}, [editor, isPositioning]);
+	}, [editor, editorName, pageId, isPositioning]);
 	
 	return [position, isPositioning];
 }
