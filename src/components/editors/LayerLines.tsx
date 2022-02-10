@@ -1,11 +1,11 @@
-import {LayerProps, SelectableObject} from "./EditorMetrics";
+import {LayerProps} from "./Layer";
 import LayerLinesLine from "./LayerLinesLine";
+import {SelectableObject} from "./EditorMetrics";
 
-type LayerLinesPropsCustom = 
+interface LayerLinesProps extends LayerProps
 {
 	objectHovered?: SelectableObject
 }
-type LayerLinesProps = LayerProps & LayerLinesPropsCustom;
 
 const LayerLines = ({className, page, metric, desktopSize, objectHovered = null}: LayerLinesProps) : JSX.Element=>
 {

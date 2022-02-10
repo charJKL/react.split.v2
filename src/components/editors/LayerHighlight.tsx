@@ -1,10 +1,8 @@
 import { useLayoutEffect } from "react";
-import { LayerProps } from "./EditorMetrics";
+import { LayerProps } from "./Layer";
 import useRefElement from "../hooks/useRefElement";
 
-type LayerHighlightType = LayerProps;
-
-const LayerHighlight = ({className, desktopSize, metric}: LayerHighlightType) : JSX.Element => 
+const LayerHighlight = ({className, desktopSize, metric}: LayerProps) : JSX.Element => 
 {
 	const [canvasRef, setCanvasRef] = useRefElement<HTMLCanvasElement>(null);
 	

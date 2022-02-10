@@ -1,7 +1,7 @@
-import {LayerProps} from "./EditorMetrics";
+import {LayerProps} from "./Layer";
 import css from "./LayerPage.module.scss";
 
-const LayerPage = ({className, page, desktopSize, metric}: LayerProps) : JSX.Element=>
+const LayerPage = ({className, page, desktopSize, metric}: LayerProps) : JSX.Element =>
 {
 	const styleForBoundary = { width: desktopSize.width, height: desktopSize.height };
 	const classNameForBoundary = [className, css.boundary].join(" ");

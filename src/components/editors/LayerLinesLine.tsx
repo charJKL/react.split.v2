@@ -4,7 +4,7 @@ import css from "./LayerLinesLine.module.scss";
 
 type LineType = "horizontal" | "vertical";
 
-type LineProps = 
+interface LineProps
 {
 	name: MetricLineNames;
 	type: LineType;
