@@ -1,6 +1,6 @@
 import { createAsyncThunk, createSlice, PayloadAction } from "@reduxjs/toolkit"
 import { Metric } from "./slice.metrics";
-import { PageLoaded } from "./slice.pages";
+import { isPageLoaded, Page, PageLoaded } from "./slice.pages";
 import { StoreState, ThunkStoreTypes } from "./store";
 import { Baseline, Bbox, Choice, createWorker,  } from 'tesseract.js';
 import getHTMLImageElement from "./lib/getHTMLImageElement"
@@ -110,13 +110,16 @@ const isOcrIdle = (ocr: Ocr | OcrIdle) : ocr is OcrIdle => ocr.status === "Idle"
 const isOcrNotIdle = (ocr: Ocr) : ocr is Ocr => ocr.status !== "Idle";
 const isOcrParsed = (ocr: Ocr) : ocr is Ocr => ocr.status === "Parsed";
 
-type ReadPageBatch = {page: PageLoaded, metrics: Metric};
+type ReadPageBatch = {page: Page, metrics: Metric};
 const readPage = createAsyncThunk<void, ReadPageBatch, ThunkStoreTypes>('ocrs/readPage', async (batch, thunk) => {
 	const dispatch = thunk.dispatch;
 	const { updateStatus, setResults, tesseractLog } = Ocrs.actions;
 	
-	const page = batch.page;
+	if(isPageLoaded(batch.page) === false) throw `asd`;
+	const page = batch.page as PageLoaded;
 	const metrics = batch.metrics;
+	
+	
 	
 	// Process image for tesseract.js, apply rotation:
 	dispatch(updateStatus({id: page.id, status: "Preprocessing", details: "Applying rotation."}));

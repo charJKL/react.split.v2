@@ -22,18 +22,15 @@ const EditorThumbnail = ({page, metric} : EditorThumbnailProps): JSX.Element =>
 	const editorSize = useGetBoundingRect(editorRef);
 	const pageSize = useGetPageSize(page.id);
 	const scale = editorSize && pageSize && calculateScale(editorSize, pageSize);
-	
 	const scaledDesktopSize = pageSize && scale && applayScaleToSize(pageSize, scale);
 	const scaledMetrics = scale && applayScaleToMetrics(metric, scale);
 	
 	var layers: Array<JSX.Element> = [];
-	
-	if(isPageLoaded(page) && scaledDesktopSize  && scaledMetrics)
+	if(isPageLoaded(page) && scaledDesktopSize && scaledMetrics)
 	{
 		layers.push(<LayerPage key="editor-metric-page" className={css.page} page={page} metric={scaledMetrics} desktopSize={scaledDesktopSize} />);
 		layers.push(<LayerHighlight key="editor-metric-highlight" className={css.highlight} page={page} metric={scaledMetrics} desktopSize={scaledDesktopSize}/>);
 	}
-	
 	return (
 		<div className={css.editor} ref={setEditorRef} >
 			{ layers.map((layer) => layer ) }

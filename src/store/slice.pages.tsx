@@ -15,8 +15,6 @@ type Page =
 	width?: number,
 	height?: number,
 }
-type PageLoaded = Required<Page> & {status: "Loaded"};
-
 
 type InitialStatePages =
 {
@@ -47,20 +45,17 @@ const Pages = createSlice({
 		{
 			const id = action.payload.id;
 			const page = state.entities[id];
-			if(page)
-			{
-				page.status = action.payload.status;
-			}
+			if(page === undefined) throw console.error(`You updating status of nonexistent page`, action.payload);
+			if(action.payload.status === "Loaded" && (page.width === undefined || page.height === undefined)) throw console.error(`You can't set status="Loaded" for page ${page.name}#${page.id} before setting size.`, action.payload,);
+			page.status = action.payload.status;
 		},
 		setSize: (state, action: PayloadAction<SizeValue>) => 
 		{
 			const id = action.payload.id;
 			const page = state.entities[id];
-			if(page)
-			{
-				page.width = action.payload.width;
-				page.height = action.payload.height;
-			}
+			if(page === undefined) throw console.error(`You updating status of nonexistent page`, action.payload);
+			page.width = action.payload.width;
+			page.height = action.payload.height;
 		},
 		selectPage: (state, action: PayloadAction<string>) => 
 		{
@@ -70,14 +65,9 @@ const Pages = createSlice({
 	}
 });
 
-const isPageIdle = (page: Page) : boolean =>
-{
-	return page.status === "Idle";
-}
-const isPageLoaded = (page: Page | PageLoaded) : page is PageLoaded =>
-{
-	return page.status === "Loaded";
-}
+type PageLoaded = Page & {status: "Loaded"; width: number; height: number;}
+const isPageIdle = (page: Page) : boolean => page.status === "Idle";
+const isPageLoaded = (page: Page) : page is PageLoaded => page.status === "Loaded";
 
 const loadPage = createAsyncThunk<void, string, ThunkStoreTypes>('pages/loadPage', (id, thunk) => {
 	const state = thunk.getState();
@@ -91,8 +81,8 @@ const loadPage = createAsyncThunk<void, string, ThunkStoreTypes>('pages/loadPage
 		const image = e.target as HTMLImageElement;
 		const width = image.naturalWidth;
 		const height = image.naturalHeight;
-		dispatch(updateStatus({id: id, status: "Loaded"}));
 		dispatch(setSize({id: id, width, height}));
+		dispatch(updateStatus({id: id, status: "Loaded"}));
 	});
 	image.addEventListener('error', (e: Event) => {
 		
