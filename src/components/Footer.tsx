@@ -1,4 +1,4 @@
-import { CustomHTMLAttributes } from "./types/CustomHTMLAttributes";
+import {CustomHTMLAttributes} from "../types";
 import EditorInput from "../components/editors/EditorInput";
 import css from "./Footer.module.scss";
 

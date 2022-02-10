@@ -1,4 +1,4 @@
-import {CustomHTMLAttributes} from "../types/CustomHTMLAttributes";
+import {CustomHTMLAttributes} from "../../types";
 import css from "./Progress.module.scss";
 
 type ProgressPropsCustom = 

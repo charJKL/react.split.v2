@@ -1,5 +1,5 @@
 
-import { CustomHTMLAttributes } from "./types/CustomHTMLAttributes";
+import {CustomHTMLAttributes} from "../types";
 import Thumbnail from "./list/Thumbnail";
 import { useAppSelector } from "../store/store.hooks";
 import { selectPageIds } from "../store/slice.pages";

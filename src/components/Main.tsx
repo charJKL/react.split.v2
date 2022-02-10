@@ -1,14 +1,13 @@
 import { useEffect, useState } from "react";
-import {CustomHTMLAttributes} from "./types/CustomHTMLAttributes";
+import { CustomHTMLAttributes, MouseButton, isLeftButtonPressed } from "../types";
 import useGetBoundingRect from "./hooks/useGetBoundingRect";
 import EditorMetrics from './editors/EditorMetrics';
 import EditorText from './editors/EditorText';
 import css from "./Main.module.scss";
 import useRefElement from "./hooks/useRefElement";
-import { isLeftButtonPressed, MouseButton } from "./types/MouseButton";
 import useHoverInRange from "./hooks/useHoverInRange";
 
-const Main = ({className} : CustomHTMLAttributes ) : JSX.Element =>
+const Main = ({className} : CustomHTMLAttributes) : JSX.Element =>
 {
 	const [mainRef, setMainRef] = useRefElement<HTMLDivElement>(null);
 	const [separatorRef, setSeparatorRef] = useRefElement<HTMLDivElement>(null);
@@ -33,7 +32,7 @@ const Main = ({className} : CustomHTMLAttributes ) : JSX.Element =>
 	
 	let editorMetricSize = 0;
 	let editorTextSize = 0;
-	if(mainRef && rect.width > 0)
+	if(mainRef && rect && rect.width > 0)
 	{
 		editorMetricSize = separator;
 		editorTextSize = rect.width - separator;
@@ -45,9 +44,8 @@ const Main = ({className} : CustomHTMLAttributes ) : JSX.Element =>
 	const styleForMain = { ...styleCursor };
 	return (
 		<main className={classForMain} style={styleForMain} ref={setMainRef}>
-			<EditorMetrics style={ styleForEditorMetric } />
+			<EditorMetrics style={styleForEditorMetric} />
 			<div className={css.separator} ref={setSeparatorRef}></div>
-			<EditorText style={ styleForEditorText } />
 		</main>
 	)
 }

@@ -1,5 +1,5 @@
 import React, { useRef } from "react";
-import {CustomHTMLAttributes} from "../types/CustomHTMLAttributes";
+import {CustomHTMLAttributes} from "../../types";
 import css from "./LoadFileInput.module.scss";
 
 type LoadFileInputExtendProp = 

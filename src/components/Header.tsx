@@ -1,5 +1,5 @@
 import React from "react";
-import { CustomHTMLAttributes } from "./types/CustomHTMLAttributes";
+import {CustomHTMLAttributes} from "../types";
 import LoadFileInput from "./common/LoadFileInput";
 import css from "./Header.module.scss";
 import { useAppDispatch } from "../store/store.hooks";
