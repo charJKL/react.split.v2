@@ -1,9 +1,9 @@
 import { useEffect } from "react";
-import useIsElementVisible from "./useIsElementVisible";
 import { useAppDispatch, useAppSelector } from "../../store/store.hooks";
-import { loadPage, selectPage, selectPageById, selectSelectedPage } from "../../store/slice.pages";
-import { selectMetricsForPage } from "../../store/slice.metrics";
+import { Page, isPageIdle, loadPage, selectPage, selectPageById, selectSelectedPage } from "../../store/slice.pages";
+import { Metric, selectMetricsForPage } from "../../store/slice.metrics";
 import { selectOcrForPage } from "../../store/slice.ocrs";
+import useIsElementVisible from "../hooks/useIsElementVisible";
 import EditorThumbnail from "../editors/EditorThumbnail";
 import ThumbnailStatusMetrics from "./ThumbnailStatusMetrics";
 import ThumbnailStatusText from "./ThumbnailStatusText";
@@ -18,16 +18,17 @@ type ThumbnailProps =
 
 const Thumbnail = ({id}: ThumbnailProps) : JSX.Element =>
 {
-	const page = useAppSelector(selectPageById(id));
+	const page = useAppSelector(selectPageById(id)) as Page;
+	const metric = useAppSelector(selectMetricsForPage(page.id)) as Metric;
 	const selected = useAppSelector(selectSelectedPage);
-	const metric = useAppSelector(selectMetricsForPage(page));
-	const ocr = useAppSelector(selectOcrForPage(page));
-	const dispatch = useAppDispatch();
+	const ocr = useAppSelector(selectOcrForPage(page.id));
 	const [element, isVisible] = useIsElementVisible<HTMLDivElement>({threshold: [0, 1]});
 	const isSelected = page === selected;
+	const dispatch = useAppDispatch();
 	
 	useEffect(() => {
-		if(isVisible === true && page.status === "Idle") dispatch(loadPage(id))
+		if(page == null) return;
+		if(isVisible === true && isPageIdle(page) ) dispatch(loadPage(id))
 	}, [isVisible]);
 	
 	const onClickHandler = () =>
@@ -46,7 +47,7 @@ const Thumbnail = ({id}: ThumbnailProps) : JSX.Element =>
 			break;
 			
 		case "Loaded":
-			var image = <EditorThumbnail page={page} metric={metric!} />;
+			var image = <EditorThumbnail page={page} metric={metric} />;
 			break;
 			
 		case "Error":

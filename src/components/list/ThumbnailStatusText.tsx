@@ -1,12 +1,11 @@
-import { CustomHTMLAttributes } from "../types/CustomHTMLAttributes";
+import { CustomHTMLAttributes } from "../../types";
 import { Ocr } from "../../store/slice.ocrs";
 import css from "./ThumbnailStatusText.module.scss";
 
-type ThumbnailStatusTextPropsCustom = 
+interface ThumbnailStatusTextProps extends CustomHTMLAttributes
 {
 	ocr: Ocr;
 }
-type ThumbnailStatusTextProps = CustomHTMLAttributes & ThumbnailStatusTextPropsCustom;
 
 const ThumbnailStatusText = ({className, ocr}: ThumbnailStatusTextProps) : JSX.Element => 
 {

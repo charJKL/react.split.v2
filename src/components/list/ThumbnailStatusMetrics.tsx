@@ -1,12 +1,11 @@
-import { CustomHTMLAttributes } from "../types/CustomHTMLAttributes";
+import { CustomHTMLAttributes } from "../../types";
 import { Metric } from "../../store/slice.metrics";
 import css from "./ThumbnailStatusMetrics.module.scss";
 
-type ThumbnailStatusMetricsPropsCustom = 
+interface ThumbnailStatusMetricsProps extends CustomHTMLAttributes
 {
 	metric: Metric;
 }
-type ThumbnailStatusMetricsProps = CustomHTMLAttributes & ThumbnailStatusMetricsPropsCustom;
 
 const ThumbnailStatusMetrics = ({className, metric}: ThumbnailStatusMetricsProps) : JSX.Element => 
 {
