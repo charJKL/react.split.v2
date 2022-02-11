@@ -13,6 +13,7 @@ const useGetDesktopPosition = (editor: HTMLElement | null, editorName: string, p
 
 	useEffect(() => {
 		if(editor === null) return;
+		if(pageId === "") return;
 		
 		const mousedown = (e: MouseEvent) =>
 		{

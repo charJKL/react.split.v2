@@ -20,6 +20,7 @@ const useGetScale = (editor: HTMLElement | null, editorName: string, pageId: str
 
 	useEffect(()=>{
 		if(editor === null) return;
+		if(pageId === "") return;
 		
 		const mousewheel = (e: WheelEvent) =>
 		{
