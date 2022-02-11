@@ -3,6 +3,7 @@ import { useAppDispatch, useAppSelector } from "../../../store/store.hooks";
 import { applayScaleToSize, calculateScale } from "../Editor";
 import useGetBoundingRect from "../../hooks/useGetBoundingRect";
 import useGetPageSize from "./useGetPageSize";
+import { useLayoutEffect } from "react";
 
 const useInitializeSetting = (editor: HTMLDivElement | null, editorName: string, pageId: string) =>
 {
@@ -11,16 +12,18 @@ const useInitializeSetting = (editor: HTMLDivElement | null, editorName: string,
 	const pageSize = useGetPageSize(pageId);
 	const dispatch = useAppDispatch();
 	
-	if(isInitialized === false && editorSize && pageSize)
-	{
-		const padding = {x: 20, y: 20};
-		const editorSizeWithPadding = {width: editorSize.width - padding.x, height: editorSize.height - padding.y};
-		const scale = calculateScale(editorSizeWithPadding, pageSize);
-		const size = applayScaleToSize(pageSize, scale);
-		const position = { left: (editorSize.width - size.width) / 2, top: (editorSize.height - size.height) / 2 };
-		const setting = {scale, position};
-		dispatch(initializeSetting({editorName, pageId, setting}));
-	}
+	useLayoutEffect(()=>{
+		if(isInitialized === false && editorSize && pageSize)
+		{
+			const padding = {x: 20, y: 20};
+			const editorSizeWithPadding = {width: editorSize.width - padding.x, height: editorSize.height - padding.y};
+			const scale = calculateScale(editorSizeWithPadding, pageSize);
+			const size = applayScaleToSize(pageSize, scale);
+			const position = { left: (editorSize.width - size.width) / 2, top: (editorSize.height - size.height) / 2 };
+			const setting = {scale, position};
+			dispatch(initializeSetting({editorName, pageId, setting}));
+		}
+	}, [editorName, pageId, isInitialized, editorSize, pageSize, dispatch])
 }
 
 export default useInitializeSetting;
