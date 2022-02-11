@@ -1,8 +1,9 @@
-import { ChangeEvent, FocusEvent } from "react";
+import { ChangeEvent } from "react";
 import { useAppSelector, useAppDispatch } from "../../store/store.hooks";
 import { selectSelectedPage } from "../../store/slice.pages";
 import { MetricName, selectMetricsForPage, updateMetricValue } from "../../store/slice.metrics";
-import { setSearching, selectSearching } from "../../store/slice.gui";
+import { selectSearching } from "../../store/slice.gui";
+import EditorInputSearch from "./EditorInputSearch";
 import css from "./EditorInput.module.scss";
 
 interface EditorInputProps 
@@ -16,17 +17,6 @@ const EditorInput = ({className}: EditorInputProps) =>
 	const metrics = useAppSelector(selectMetricsForPage(page ? page.id : ""));
 	const dispatch = useAppDispatch();
 	const isDisabled = page === null;
-
-	const onChangeName = (e: ChangeEvent<HTMLInputElement>) =>
-	{
-		console.log("on change");
-		const value = e.target.value;
-		dispatch(setSearching(value));
-	}
-	const onBlurName = (e: FocusEvent) =>
-	{
-		dispatch(setSearching(null));
-	}
 	const onChangeMetricValue = (e: ChangeEvent<HTMLInputElement>) =>
 	{
 		if(page && metrics)
@@ -45,11 +35,10 @@ const EditorInput = ({className}: EditorInputProps) =>
 	const y1 = metrics ? metrics.y1 : 0;
 	const y2 = metrics ? metrics.y2 : 0;
 	const rotate = metrics ? metrics.rotate : 0;
-	
 	const classForEditor = [css.editor, className].join(" ");
 	return (
 		<div className={classForEditor}>
-			<label> name: <input name="name" type="text" value={name} onChange={onChangeName} onBlur={onBlurName}/></label>
+			<label> name: <EditorInputSearch className={css.inputName} value={name}/></label>
 			<label>x1: <input name="x1" type="number" disabled={isDisabled} value={x1.toFixed(0)} onChange={onChangeMetricValue}/></label>
 			<label>x2: <input name="x2" type="number" disabled={isDisabled} value={x2.toFixed(0)} onChange={onChangeMetricValue}/></label>
 			<label>y1: <input name="y1" type="number" disabled={isDisabled} value={y1.toFixed(0)} onChange={onChangeMetricValue}/></label>
