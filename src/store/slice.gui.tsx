@@ -80,14 +80,8 @@ const selectPage = (pageId: string) => (dispatch: StoreDispatch, getState: GetSt
 	if(pages.ids.includes(pageId)) dispatch(selectPage(pageId));
 }
 
-const setSearchingFor = (search: string) => (dispatch: StoreDispatch, getState: GetStoreState ) => 
-{
-	const { setSearching } = Gui.actions;
-	dispatch(setSearching(search));
-}
-
 export const { setSearching, initializeSetting, updatePosition, updateScale } = Gui.actions;
-export { selectPage, setSearchingFor };
+export { selectPage };
 
 export type { Setting };
 export default Gui;
