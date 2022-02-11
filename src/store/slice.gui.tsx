@@ -19,12 +19,14 @@ type Setting =
 type InitialStateGui =
 {
 	selected: string | null;
-	settings: { [key: Key]: Setting },
+	searching: string | null;
+	settings: { [key: Key]: Setting };
 }
 
 const InitialState : InitialStateGui = 
 {
 	selected: null,
+	searching: null,
 	settings: {},
 }
 
@@ -33,9 +35,13 @@ const Gui = createSlice({
 	initialState: InitialState,
 	reducers: 
 	{
-		selectPage: (state, action: PayloadAction<string>) =>
+		selectPage: (state, action: PayloadAction<string | null>) =>
 		{
 			state.selected = action.payload;
+		},
+		setSearching: (state, action: PayloadAction<string | null>) =>
+		{
+			state.searching = action.payload;
 		},
 		initializeSetting: (state, action: PayloadAction<KeyValue>) =>
 		{
@@ -64,6 +70,7 @@ const Gui = createSlice({
 export const isSettingInitialized = (editorName: string, pageId: string) => (state: StoreState) : boolean => state.gui.settings[editorName+pageId] !== undefined;
 export const selectPositionSetting = (editorName: string, pageId: string) => (state: StoreState) : Position | null => state.gui.settings[editorName+pageId]?.position ?? null;
 export const selectScaleSetting = (editorName: string, pageId: string) => (state: StoreState) : Scale | null => state.gui.settings[editorName+pageId]?.scale ?? null;
+export const selectSearching = (state: StoreState) => state.gui.searching;
 
 const selectPage = (pageId: string) => (dispatch: StoreDispatch, getState: GetStoreState ) => 
 {
@@ -73,8 +80,14 @@ const selectPage = (pageId: string) => (dispatch: StoreDispatch, getState: GetSt
 	if(pages.ids.includes(pageId)) dispatch(selectPage(pageId));
 }
 
-export const { initializeSetting, updatePosition, updateScale } = Gui.actions;
-export { selectPage };
+const setSearchingFor = (search: string) => (dispatch: StoreDispatch, getState: GetStoreState ) => 
+{
+	const { setSearching } = Gui.actions;
+	dispatch(setSearching(search));
+}
+
+export const { setSearching, initializeSetting, updatePosition, updateScale } = Gui.actions;
+export { selectPage, setSearchingFor };
 
 export type { Setting };
 export default Gui;
