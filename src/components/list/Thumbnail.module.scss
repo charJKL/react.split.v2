@@ -49,13 +49,25 @@
 	position: absolute;
 	bottom: 0px; left: 0px;
 	width: 100%;
-	box-sizing: border-box;
-	border: none;
-	text-align: center;
 	height: 20px;
+	text-align: center;
+	background: #fff;
+	font: 12px / 20px $font;
 	z-index: 2;
-	&:focus{
-		outline: none;
+	> input
+	{
+		border: none;
+		box-sizing: border-box;
+		&:focus{
+			outline: none;
+		}
+	}
+	> div 
+	{
+		> span
+		{
+			background: #f00;
+		}
 	}
 }
 .metric

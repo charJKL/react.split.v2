@@ -3,11 +3,12 @@ import { useAppDispatch, useAppSelector } from "../../store/store.hooks";
 import { Page, isPageIdle, loadPage, selectPageById, selectSelectedPage } from "../../store/slice.pages";
 import { Metric, selectMetricsForPage } from "../../store/slice.metrics";
 import { selectOcrForPage } from "../../store/slice.ocrs";
-import { selectPage } from "../../store/slice.gui";
+import { selectPage, selectSearching } from "../../store/slice.gui";
 import useIsElementVisible from "../hooks/useIsElementVisible";
 import EditorThumbnail from "../editors/EditorThumbnail";
 import ThumbnailStatusMetrics from "./ThumbnailStatusMetrics";
 import ThumbnailStatusText from "./ThumbnailStatusText";
+import ThumbnailName from "./ThumbnailName";
 import placeholder from "../../assets/placeholder.svg";
 import waiting from "../../assets/waiting.svg";
 import css from "./Thumbnail.module.scss";
@@ -23,6 +24,7 @@ const Thumbnail = ({id}: ThumbnailProps) : JSX.Element =>
 	const metric = useAppSelector(selectMetricsForPage(page.id)) as Metric;
 	const selected = useAppSelector(selectSelectedPage);
 	const ocr = useAppSelector(selectOcrForPage(page.id));
+	const searching = useAppSelector(selectSearching);
 	const [element, isVisible] = useIsElementVisible<HTMLDivElement>({threshold: [0, 1]});
 	const isSelected = page === selected;
 	const dispatch = useAppDispatch();
@@ -30,7 +32,7 @@ const Thumbnail = ({id}: ThumbnailProps) : JSX.Element =>
 	useEffect(() => {
 		if(page == null) return;
 		if(isVisible === true && isPageIdle(page) ) dispatch(loadPage(id))
-	}, [isVisible]);
+	}, [isVisible, page, id, dispatch]);
 	
 	const onClickHandler = () =>
 	{
@@ -40,19 +42,19 @@ const Thumbnail = ({id}: ThumbnailProps) : JSX.Element =>
 	switch(page.status)
 	{
 		case "Idle":
-			var image = <img className={css.placeholder} src={placeholder} />
+			var image = <img className={css.placeholder} src={placeholder} alt="" /> // eslint-disable-line @typescript-eslint/no-redeclare
 			break;
 			
 		case "Loading":
-			var image = <img className={css.loading} src={waiting} />;
+			var image = <img className={css.loading} src={waiting} alt=""/>; // eslint-disable-line @typescript-eslint/no-redeclare
 			break;
 			
 		case "Loaded":
-			var image = <EditorThumbnail page={page} metric={metric} />;
+			var image = <EditorThumbnail page={page} metric={metric} />; // eslint-disable-line @typescript-eslint/no-redeclare
 			break;
 			
 		case "Error":
-			var image = <span>Error occur</span>;
+			var image = <span>Error occur</span>; // eslint-disable-line @typescript-eslint/no-redeclare
 	}
 	
 	const isSelectedClass = isSelected ? css.selected : '';
@@ -62,7 +64,7 @@ const Thumbnail = ({id}: ThumbnailProps) : JSX.Element =>
 			{ image }
 			{ metric && <ThumbnailStatusMetrics className={css.metric} metric={metric} /> }
 			{ ocr && <ThumbnailStatusText className={css.ocr} ocr={ocr} /> }
-			<input className={css.name} value={page.name} readOnly />
+			<ThumbnailName className={css.name} name={page.name} searching={searching} />
 		</div>
 	)
 }
