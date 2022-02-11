@@ -11,3 +11,15 @@
 {
 	margin-left: index.$row-margin * 2;
 }
+
+.buttons
+{
+	margin: index.$row-margin index.$row-margin * 2 0px auto;
+	display: flex;
+	flex-flow: row nowrap;
+}
+.button
+{
+	@extend %input-main;
+	margin-left: 7px;
+}
