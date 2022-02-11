@@ -1,4 +1,4 @@
-import { createAsyncThunk, createSlice, PayloadAction } from "@reduxjs/toolkit";
+import { createAsyncThunk, createSlice, PayloadAction, Store } from "@reduxjs/toolkit";
 import type { StoreState, ThunkStoreTypes } from "./store";
 import StoreException from "./lib/storeException";
 
@@ -87,6 +87,7 @@ const loadPage = createAsyncThunk<void, string, ThunkStoreTypes>('pages/loadPage
 
 export const selectPageIds = (state: StoreState) => state.pages.ids;
 export const selectPageById = (id: string) => (state: StoreState) : Page | null => state.pages.entities[id] ?? null;
+export const selectPageByName = (name: string) => (state: StoreState) : Array<Page> => Object.values(state.pages.entities).filter(page => name && page.name.includes(name));
 export const selectSelectedPage = (state: StoreState) : Page | null => state.gui.selected ? state.pages.entities[state.gui.selected] ?? null : null;
 
 export const { addPage } = Pages.actions;
