@@ -1,7 +1,8 @@
-import { ChangeEvent } from "react";
+import { ChangeEvent, FocusEvent } from "react";
 import { useAppSelector, useAppDispatch } from "../../store/store.hooks";
 import { selectSelectedPage } from "../../store/slice.pages";
 import { MetricName, selectMetricsForPage, updateMetricValue } from "../../store/slice.metrics";
+import { setSearching, selectSearching } from "../../store/slice.gui";
 import css from "./EditorInput.module.scss";
 
 interface EditorInputProps 
@@ -18,7 +19,13 @@ const EditorInput = ({className}: EditorInputProps) =>
 
 	const onChangeName = (e: ChangeEvent<HTMLInputElement>) =>
 	{
-		console.log("on-chnage-name", e);
+		console.log("on change");
+		const value = e.target.value;
+		dispatch(setSearching(value));
+	}
+	const onBlurName = (e: FocusEvent) =>
+	{
+		dispatch(setSearching(null));
 	}
 	const onChangeMetricValue = (e: ChangeEvent<HTMLInputElement>) =>
 	{
@@ -31,7 +38,8 @@ const EditorInput = ({className}: EditorInputProps) =>
 		}
 	}
 	
-	const name = page ? page.name : "";
+	const searching = useAppSelector(selectSearching);
+	const name = searching ?? page?.name ?? "";
 	const x1 = metrics ? metrics.x1 : 0;
 	const x2 = metrics ? metrics.x2 : 0;
 	const y1 = metrics ? metrics.y1 : 0;
@@ -41,7 +49,7 @@ const EditorInput = ({className}: EditorInputProps) =>
 	const classForEditor = [css.editor, className].join(" ");
 	return (
 		<div className={classForEditor}>
-			<label> name: <input name="name" type="text" value={name} onChange={onChangeName} /></label>
+			<label> name: <input name="name" type="text" value={name} onChange={onChangeName} onBlur={onBlurName}/></label>
 			<label>x1: <input name="x1" type="number" disabled={isDisabled} value={x1.toFixed(0)} onChange={onChangeMetricValue}/></label>
 			<label>x2: <input name="x2" type="number" disabled={isDisabled} value={x2.toFixed(0)} onChange={onChangeMetricValue}/></label>
 			<label>y1: <input name="y1" type="number" disabled={isDisabled} value={y1.toFixed(0)} onChange={onChangeMetricValue}/></label>

@@ -22,4 +22,7 @@
 {
 	@extend %input-main;
 	width: 200px;
+	&:focus{
+		border: solid 1px #f00;
+	}
 }
