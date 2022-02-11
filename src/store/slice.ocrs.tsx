@@ -5,6 +5,7 @@ import { StoreState, ThunkStoreTypes } from "./store";
 import { Baseline, Bbox, Choice, createWorker,  } from 'tesseract.js';
 import getHTMLImageElement from "./lib/getHTMLImageElement"
 import drawRotateImage from "./lib/drawRotateImage"
+import StoreException from "./lib/storeException";
 
 type Key = string;
 type OcrStatus = "Idle" | "Preprocessing" | "Initializaing" | "Parsing" | "Parsed" | "Error";
@@ -52,8 +53,8 @@ const Ocrs = createSlice({
 		{
 			const id = action.payload.id;
 			const ocr = state.entities[id];
-			if(ocr === undefined) throw console.error(`You update ocr status for nonexisting page`, action.payload);
-			if(action.payload.status === "Parsed" && (ocr.text === undefined || ocr.lines === undefined || ocr.words === undefined)) throw console.error(`You can't set status="Parsed" until results are set.`, action.payload, ocr);
+			if(ocr === undefined) throw new StoreException(`You update ocr status for nonexisting page`, action.payload);
+			if(action.payload.status === "Parsed" && (ocr.text === undefined || ocr.lines === undefined || ocr.words === undefined)) throw new StoreException(`You can't set status="Parsed" until results are set.`, action.payload);
 			ocr.status = action.payload.status;
 			ocr.details = action.payload.details;
 		},
@@ -61,7 +62,7 @@ const Ocrs = createSlice({
 		{
 			const id = action.payload.id;
 			const ocr = state.entities[id];
-			if(ocr === undefined) throw console.error(`You set ocr result of nonexistent page.`, action.payload);
+			if(ocr === undefined) throw new StoreException(`You set ocr result of nonexistent page.`, action.payload);
 			ocr.text = action.payload.text;
 			ocr.lines = action.payload.lines;
 			ocr.words = action.payload.words;
@@ -71,7 +72,7 @@ const Ocrs = createSlice({
 			const id = action.payload.id;
 			const log = action.payload.log as {status: string, progress: number};
 			const ocr = state.entities[id];
-			if(ocr === undefined) throw console.error(`You logging for nonexisting page.`, action.payload);
+			if(ocr === undefined) throw new StoreException(`You logging for nonexisting page.`, action.payload);
 			switch(log.status)
 			{
 				case "loading tesseract core":
@@ -110,7 +111,7 @@ const readPage = createAsyncThunk<void, ReadPageBatch, ThunkStoreTypes>('ocrs/re
 	const dispatch = thunk.dispatch;
 	const { updateStatus, setResults, tesseractLog } = Ocrs.actions;
 	
-	if(isPageLoaded(batch.page) === false) throw `asd`;
+	if(isPageLoaded(batch.page) === false) new StoreException(`Page must be loaded before disaptch tesseract parse.`, batch.page);
 	const page = batch.page as PageLoaded;
 	const metrics = batch.metrics;
 	

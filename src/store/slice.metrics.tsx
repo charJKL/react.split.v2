@@ -1,5 +1,6 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import type { StoreState } from "./store";
+import StoreException from "./lib/storeException";
 
 type Key = string;
 type MetricStatus = "Idle" | "Invalid" | "Edited";
@@ -49,7 +50,7 @@ const Metrics = createSlice({
 			const id = action.payload.id;
 			const name = action.payload.name;
 			const entity = state.entities[id];
-			if(entity === undefined) throw console.error(`You update metrics value for nonexisting page`, action.payload);
+			if(entity === undefined) throw new StoreException(`You update metrics value for nonexisting page`, action.payload);
 			entity.status = "Edited";
 			entity[name] = action.payload.value;
 			switch(true)
@@ -80,7 +81,7 @@ const Metrics = createSlice({
 			const id = action.payload.id;
 			const status = action.payload.status;
 			const entity = state.entities[id];
-			if(entity === undefined) throw console.error(`You update metrics status for nonexisting page`, action.payload);
+			if(entity === undefined) throw new StoreException(`You update metrics status for nonexisting page`, action.payload);
 			entity.status = status;
 		}
 	}

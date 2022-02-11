@@ -1,5 +1,6 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import type { GetStoreState, StoreDispatch, StoreState } from "./store";
+import StoreException from "./lib/storeException";
 
 type Key = string;
 type Position = {top: number, left: number};
@@ -45,7 +46,7 @@ const Gui = createSlice({
 		{
 			const key = action.payload.editorName + action.payload.pageId;
 			const setting = state.settings[key];
-			if(setting === undefined) throw console.error(`You update "position" for nonexistent setting "${key}":`, action.payload);
+			if(setting === undefined) throw new StoreException(`You update "position" for nonexistent setting "${key}":`, action.payload);
 			setting.position.top += action.payload.movementY;
 			setting.position.left += action.payload.movementX;
 		},
@@ -53,7 +54,7 @@ const Gui = createSlice({
 		{
 			const key = action.payload.editorName + action.payload.pageId;
 			const setting = state.settings[key];
-			if(setting === undefined) throw console.error(`You update "scale" for nonexistent setting "${key}":`, action.payload);
+			if(setting === undefined) throw new StoreException(`You update "scale" for nonexistent setting "${key}":`, action.payload);
 			setting.scale.x += action.payload.x;
 			setting.scale.y += action.payload.y;
 		}
@@ -77,3 +78,4 @@ export { selectPage };
 
 export type { Setting };
 export default Gui;
+

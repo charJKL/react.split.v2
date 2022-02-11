@@ -1,5 +1,6 @@
 import { createAsyncThunk, createSlice, PayloadAction } from "@reduxjs/toolkit";
 import type { StoreState, ThunkStoreTypes } from "./store";
+import StoreException from "./lib/storeException";
 
 type PageStatus = "Idle" | "Loading" | "Loaded" | "Error";
 type Key = string;
@@ -43,15 +44,15 @@ const Pages = createSlice({
 		{
 			const id = action.payload.id;
 			const page = state.entities[id];
-			if(page === undefined) throw console.error(`You updating status of nonexistent page`, action.payload);
-			if(action.payload.status === "Loaded" && (page.width === undefined || page.height === undefined)) throw console.error(`You can't set status="Loaded" for page ${page.name}#${page.id} before setting size.`, action.payload,);
+			if(page === undefined) throw new StoreException(`You updating status of nonexistent page`, action.payload);
+			if(action.payload.status === "Loaded" && (page.width === undefined || page.height === undefined)) throw new StoreException(`You can't set status="Loaded" for page ${page.name}#${page.id} before setting size.`, action.payload);
 			page.status = action.payload.status;
 		},
 		setSize: (state, action: PayloadAction<SizeValue>) => 
 		{
 			const id = action.payload.id;
 			const page = state.entities[id];
-			if(page === undefined) throw console.error(`You updating status of nonexistent page`, action.payload);
+			if(page === undefined) throw new StoreException(`You updating status of nonexistent page`, action.payload);
 			page.width = action.payload.width;
 			page.height = action.payload.height;
 		}
