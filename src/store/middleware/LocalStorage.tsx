@@ -19,9 +19,6 @@ const storeItemInStorage = (key: string, value: any) =>
 	catch(e : unknown)
 	{
 		console.error(`Cant convert object to JSON string.`, e);
-	}
-	finally
-	{
 		return false;
 	}
 }
@@ -36,10 +33,6 @@ const loadItemFromStorage = (key: string) =>
 	catch(e: unknown)
 	{
 		console.error(`Item under ${key} is invalid JSON.`, e);
-		return null;
-	}
-	finally
-	{
 		return null;
 	}
 }
@@ -64,8 +57,12 @@ const LocalStorage = (prefix: string, settings?: settings) =>
 {
 	const settingsPaths = settings ? Object.keys(settings) : [];
 	var customKey = "";
-	const middlewareInternalReducer = (action: Action) =>
+
+	return (middleware: Middleware) => (next: any) => (action: Action) =>
 	{
+		const result = next(action);
+		
+		// handle internal middleware actions:
 		switch(action.type)
 		{
 			case Actions.changeKey:
@@ -75,17 +72,12 @@ const LocalStorage = (prefix: string, settings?: settings) =>
 			case Actions.loadItem:
 				const key = [prefix, action.payload].join('.');
 				const item = loadItemFromStorage(key);
+				console.log('load item', key, item);
 				if(item === null) return;
-				console.log('load item', item);
-				//Object.entries(store).forEach(([name, slice]) => { middleware.dispatch({type: `${name}/load`, payload: slice}); });
+				Object.entries(item).forEach(([name, slice]) => { middleware.dispatch({type: `${name}/load`, payload: slice}); });
 				return;
 		}
-	}
-	return (middleware: Middleware) => (next: any) => (action: Action) =>
-	{
-		middlewareInternalReducer(action);
-		const result = next(action);
-		
+
 		// save state into localStorage:
 		const settingId = settingsPaths.find(path => action.type.startsWith(path));
 		if(settings && settingId)
