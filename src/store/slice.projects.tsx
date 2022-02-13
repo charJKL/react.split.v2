@@ -2,6 +2,7 @@ import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import type { GetStoreState, StoreDispatch, StoreState } from "./store";
 import StoreException from "./lib/storeException";
 import getRandomId from "./lib/getRandomId";
+import trimFileExtension from "./lib/trimFileExtension";
 import { Page, addPage } from "./slice.pages";
 import { Metric, addMetric } from "./slice.metrics";
 import { Ocr, addOcr } from "./slice.ocrs";
@@ -89,12 +90,12 @@ const loadFile = (files: Array<File>) => (dispatch: StoreDispatch, getState: Get
 	const { projects, pages } = getState();
 	const { addProject } = Projects.actions;
 	
-	console.log(files);
+	if(files.length === 0) throw new StoreException(`Array of files is empty.`, {type: `projects/loadFile`, payload: files});
 	
 	// create project:
 	let id = getRandomId(10);
 	while(projects.ids.includes(id)) id = getRandomId(10);
-	const name = "testowa nazwa";
+	const name = files[0] ? trimFileExtension(files[0].name) : "";
 	dispatch(addProject({id, name}));
 	dispatch(selectProject(id));
 	
