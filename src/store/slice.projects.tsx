@@ -1,9 +1,14 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import type { GetStoreState, StoreDispatch, StoreState } from "./store";
 import StoreException from "./lib/storeException";
+import getRandomId from "./lib/getRandomId";
+import { Page, addPage } from "./slice.pages";
+import { Metric, addMetric } from "./slice.metrics";
+import { Ocr, addOcr } from "./slice.ocrs";
 import { changeKey } from "./middleware/LocalStorage";
 
 type Key = string;
+type ProjectValue = {id: Key, name: string};
 type NameValue = {id: Key, name: string};
 type Project = 
 {
@@ -20,12 +25,8 @@ type InitialStateProjects =
 
 const InitialState : InitialStateProjects = 
 {
-	ids: ["123", "124", "125"],
-	entities: {
-		"123": {id: "123", name: "Project 1"},
-		"124": {id: "124", name: "Project 2"},
-		"125": {id: "125", name: "Some long book name"},
-	},
+	ids: [],
+	entities: { },
 	selected: null,
 }
 
@@ -34,6 +35,19 @@ const Projects = createSlice({
 	initialState: InitialState,
 	reducers: 
 	{
+		load: (state, action: PayloadAction<InitialStateProjects>) =>
+		{
+			state.ids = action.payload.ids;
+			state.entities = action.payload.entities;
+			state.selected = action.payload.selected;
+		},
+		addProject: (state, action: PayloadAction<ProjectValue>) =>
+		{
+			const id = action.payload.id;
+			const project = action.payload;
+			state.ids.push(id);
+			state.entities[id] = project;
+		},
 		selectProject: (state, action: PayloadAction<Key>) =>
 		{
 			state.selected = action.payload;
@@ -70,24 +84,39 @@ const selectProject = (projectId: Key) => (dispatch: StoreDispatch, getState: Ge
 	}
 }
 
-
-const loadProjects = (key: string) => (dispatch: StoreDispatch, getStore: GetStoreState) =>
+const loadFile = (files: Array<File>) => (dispatch: StoreDispatch, getState: GetStoreState) =>
 {
-	return new Promise((resolve, reject) => {
-		const stored = localStorage.getItem(key);
-		console.log("load projects");
-		if(stored === null) return;
-		const store = JSON.parse(stored);
-		Object.entries(store).forEach(([slice, state]) => {
-			console.log(slice, state);
-		});
-		
-		resolve(true);
+	const { projects, pages } = getState();
+	const { addProject } = Projects.actions;
+	
+	console.log(files);
+	
+	// create project:
+	let id = getRandomId(10);
+	while(projects.ids.includes(id)) id = getRandomId(10);
+	const name = "testowa nazwa";
+	dispatch(addProject({id, name}));
+	dispatch(selectProject(id));
+	
+	// load files:
+	let counter = pages.ids.length;
+	files.forEach((file) => {
+		const id = (counter++).toString();
+		const evenOdd = (counter % 2) ? 'eve' : 'odd';
+		const name = `page-${evenOdd}-${id}`;
+		const url = URL.createObjectURL(file);
+		const page : Page = {id: id, status: "Idle", url: url, name: name};
+		const metric : Metric = {id: id, status: "Idle", details: null, x1: 10, x2:150, y1: 10, y2: 250, rotate: 0};
+		const ocr: Ocr = {id: id, status: "Idle", details: null, text: "", lines: [], words: []};
+		dispatch(addPage(page));
+		dispatch(addMetric(metric));
+		dispatch(addOcr(ocr));
 	});
-}
+};
+
 
 export const { renameProject, deleteProject } = Projects.actions;
-export { selectProject };
+export { selectProject, loadFile };
 
 export type { Project };
 export default Projects;
