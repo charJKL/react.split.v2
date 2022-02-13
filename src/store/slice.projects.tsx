@@ -49,6 +49,7 @@ const Projects = createSlice({
 		deleteProject: (state, action: PayloadAction<Key>) =>
 		{
 			const id = action.payload;
+			if(state.selected === id) state.selected = null; 
 			delete state.entities[id];
 			state.ids.splice(state.ids.indexOf(id), 1);
 		},
