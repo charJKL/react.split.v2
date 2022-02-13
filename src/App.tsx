@@ -1,6 +1,6 @@
-import React from 'react';
+import { useEffect } from 'react';
 import { useAppDispatch } from './store/store.hooks';
-import { load } from "./store/middleware/LocalStorage";
+import { loadItem } from "./store/middleware/LocalStorage";
 import css from './App.module.scss';
 
 import Header from "./components/Header";
@@ -10,8 +10,10 @@ import Main from "./components/Main";
 
 function App() {
 	const dispatch = useAppDispatch();
-	
-	dispatch(load("projects"));
+
+	useEffect(()=>{
+		dispatch(loadItem("projects"));
+	}, []);
 	
 	return (
 		<>

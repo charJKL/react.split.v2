@@ -1,4 +1,4 @@
-import { Key } from "react";
+import { pick } from "lodash";
 
 type Middleware = {dispatch: any, getState: any};
 type Action = {type: string, payload?: any}
@@ -9,7 +9,7 @@ enum Actions
 	loadItem = "localStorage/loadItem"
 };
 
-const storeKeyInStorage = (key: string, value: any) =>
+const storeItemInStorage = (key: string, value: any) =>
 {
 	try
 	{
@@ -26,7 +26,7 @@ const storeKeyInStorage = (key: string, value: any) =>
 	}
 }
 
-const loadKeyFromStorage = (key: string) =>
+const loadItemFromStorage = (key: string) =>
 {
 	const item = localStorage.getItem(key);
 	if(item === null) return null;
@@ -44,46 +44,63 @@ const loadKeyFromStorage = (key: string) =>
 	}
 }
 
+const filterObject = (object: any, properties: Array<string>) =>
+{
+	return pick(object, properties);
+}
+
 const changeKey = (key: string) =>
 {
-	return {type: Actions.changeKey, value: key};
+	return {type: Actions.changeKey, payload: key};
 }
 
 const loadItem = (key: string) =>
 {
-	return {type: Actions.loadItem, value: key};
+	return {type: Actions.loadItem, payload: key};
 }
-
-type settings = {[index: string] : string};
+type setting = { key: string, slices: Array<string>} 
+type settings = {[index: string] : setting };
 const LocalStorage = (prefix: string, settings?: settings) =>
 {
-	const slices = settings ? Object.keys(settings) : [];
-	var custom = "";
-	
+	const settingsPaths = settings ? Object.keys(settings) : [];
+	var customKey = "";
+	const middlewareInternalReducer = (action: Action) =>
+	{
+		switch(action.type)
+		{
+			case Actions.changeKey:
+				customKey = action.payload;
+				return;
+				
+			case Actions.loadItem:
+				const key = [prefix, action.payload].join('.');
+				const item = loadItemFromStorage(key);
+				if(item === null) return;
+				console.log('load item', item);
+				//Object.entries(store).forEach(([name, slice]) => { middleware.dispatch({type: `${name}/load`, payload: slice}); });
+				return;
+		}
+	}
 	return (middleware: Middleware) => (next: any) => (action: Action) =>
 	{
-		const postfix = slices.find(slice => action.type.startsWith(slice)) ?? custom;
-		const key = prefix + '.' + postfix;
+		middlewareInternalReducer(action);
 		const result = next(action);
-		if(action.type === Actions.changeKey)
-		{
-			custom = action.payload;
-			return;
-		}
-		if(action.type === Actions.loadItem)
-		{
-			const store = loadKeyFromStorage(key);
-			if(store === null) return;
-			Object.entries(store).forEach(([name, slice]) =>{
-				console.log('load item', name, slice);
-				middleware.dispatch({type: `${name}/load`, payload: slice});
-			});
-			return;
-		}
 		
-		const state = middleware.getState();
-		const filter = postfix ? state[postfix] : state;
-		storeKeyInStorage(key, filter);
+		// save state into localStorage:
+		const settingId = settingsPaths.find(path => action.type.startsWith(path));
+		if(settings && settingId)
+		{
+			const setting = settings[settingId] as setting;
+			const key = [prefix, setting.key].join('.');
+			const state = filterObject(middleware.getState(), setting?.slices);
+			storeItemInStorage(key, state);
+		}
+		else
+		{
+			const key = [prefix, customKey].join('.');
+			const state = middleware.getState();
+			storeItemInStorage(key, state);
+		}
 		return result;
 	}
 }
