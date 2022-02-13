@@ -1,8 +1,8 @@
-
+import { ChangeEvent, MouseEvent, useRef } from "react";
 import { useAppDispatch, useAppSelector } from "../../store/store.hooks";
-import { deleteProject, Project, renameProject, selectProject, selectProjectById } from "../../store/slice.projects";
+import { deleteProject, Project, renameProject, selectProject, selectProjectById, selectSelectedProject } from "../../store/slice.projects";
 import css from "./ProjectOption.module.scss"
-import { ChangeEvent, MouseEvent } from "react";
+
 
 interface ProjectProps
 {
@@ -12,17 +12,20 @@ interface ProjectProps
 const ProjectOption = ({projectId}: ProjectProps) : JSX.Element => 
 {
 	const project = useAppSelector(selectProjectById(projectId)) as Project;
+	const selected = useAppSelector(selectSelectedProject);
+	const optionRef = useRef<HTMLDivElement>(null);
 	const dispatch = useAppDispatch();
 	
 	const onClickSelectProject = (e: MouseEvent<HTMLDivElement>) =>
 	{
-		console.log('select element', project.id);
-		const id = project.id;
-		dispatch(selectProject(id));
+		if(e.target === optionRef.current)
+		{
+			const id = project.id;
+			dispatch(selectProject(id));
+		}
 	}
 	const onChangeProjectName = (e: ChangeEvent<HTMLInputElement>) =>
 	{
-		e.stopPropagation();
 		const id = project.id;
 		const name = e.target.value;
 		dispatch(renameProject({id, name}));
@@ -30,7 +33,6 @@ const ProjectOption = ({projectId}: ProjectProps) : JSX.Element =>
 	}
 	const onClickDeleteProject = (e: MouseEvent<HTMLButtonElement>) =>
 	{
-		e.stopPropagation();
 		const confirm = window.confirm(`Are you sure to delete ${project.name}?`);
 		if(confirm === true)
 		{
@@ -38,11 +40,20 @@ const ProjectOption = ({projectId}: ProjectProps) : JSX.Element =>
 			dispatch(deleteProject(id));
 		}
 	}
+	const onChangeProjectSelection = (e: ChangeEvent<HTMLInputElement>) =>
+	{
+		const value = e.target.checked;
+		if(value === true)
+		{
+			dispatch(selectProject(project.id));
+		}
+	}
 	
-	
+	const isChecked = project.id === selected?.id;
 	const styleForInput = { width: `${project.name.length}ch`}
 	return (
-		<div className={css.option} onClick={onClickSelectProject}>
+		<div className={css.option} onClick={onClickSelectProject} ref={optionRef}>
+			<input className={css.checkbox} type="checkbox" checked={isChecked} onChange={onChangeProjectSelection} />
 			<input className={css.input} style={styleForInput} value={project.name} onChange={onChangeProjectName} />
 			<button className={css.delete} onClick={onClickDeleteProject}>⨯</button>
 		</div>

@@ -14,19 +14,23 @@
 		cursor: pointer;
 	}
 }
+.checkbox
+{
+	margin: 0px 3px 0px 4px;
+}
 .input
 {
 	border: none;
-	margin: 0px 0px 0px 5px;
+	margin: 0px;
 	font: 16px index.$font;
 	background: none;
 	&:focus{ border: none; outline: none;}
 }
 .delete
 {
-	margin: 0px 3px 0px auto;
+	margin: 0px 4px 0px auto;
 	padding: 2px;
-	font: 11px index.$font;
+	font: 11px / 11px index.$font;
 	border: solid 1px #000;
 	&:hover { background: red; }
 	&:focus{ outline: none; }
