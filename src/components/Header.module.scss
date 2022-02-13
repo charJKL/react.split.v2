@@ -1,24 +1,22 @@
 @use "../index.scss";
-$margin: 7px;
 
 .header
 {
 	display: flex;
 	flex-flow: row nowrap;
 	align-items: center;
-	height: index.$input-main-height + $margin + $margin;
+	height: index.$input-main-height + index.$row-padding + index.$row-padding;
 	background: rgba(180, 180, 180, 1);
 }
 
 .load
 {
 	@extend %input-main;
-	margin: $margin 0px $margin 14px;
+	margin: index.$row-padding 0px index.$row-padding index.$row-padding;
 }
 
 .select
 {
-	@extend %input-main;
 	width: 250px;
-	margin: $margin $margin $margin 7px;
+	margin: index.$row-padding 0px index.$row-padding 14px;
 }

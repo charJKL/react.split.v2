@@ -1,0 +1,33 @@
+@use "../../index.scss";
+
+.option
+{
+	display: flex;
+	flex-flow: row nowrap;
+	align-items: center;
+	border-bottom: solid 1px #f0f0f0;
+	height: 30px;
+	&:last-child{ border: none;}
+	&:hover
+	{
+		background: #e9e9e9;
+		cursor: pointer;
+	}
+}
+.input
+{
+	border: none;
+	margin: 0px 0px 0px 5px;
+	font: 16px index.$font;
+	background: none;
+	&:focus{ border: none; outline: none;}
+}
+.delete
+{
+	margin: 0px 3px 0px auto;
+	padding: 2px;
+	font: 11px index.$font;
+	border: solid 1px #000;
+	&:hover { background: red; }
+	&:focus{ outline: none; }
+}
