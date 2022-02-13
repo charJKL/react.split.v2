@@ -1,6 +1,7 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import type { GetStoreState, StoreDispatch, StoreState } from "./store";
 import StoreException from "./lib/storeException";
+import { changeKey } from "./middleware/LocalStorage";
 
 type Key = string;
 type NameValue = {id: Key, name: string};
@@ -35,9 +36,7 @@ const Projects = createSlice({
 	{
 		selectProject: (state, action: PayloadAction<Key>) =>
 		{
-			const id = action.payload;
-			if(state.ids.includes(id) === false) throw new StoreException(`You select nonexisting project.`, action.payload);
-			state.selected = id;
+			state.selected = action.payload;
 		},
 		renameProject: (state, action: PayloadAction<NameValue>) =>
 		{
@@ -60,6 +59,17 @@ export const selectProjects = (state: StoreState) => state.projects.ids;
 export const selectProjectById = (id: string) => (state: StoreState) : Project | null => state.projects.entities[id] ?? null;
 export const selectSelectedProject = (state: StoreState) : Project | null => state.projects.selected ? state.projects.entities[state.projects.selected] ?? null : null;
 
+const selectProject = (projectId: Key) => (dispatch: StoreDispatch, getState: GetStoreState) =>
+{
+	const { projects } = getState();
+	const { selectProject } = Projects.actions;
+	if(projects.ids.includes(projectId)) 
+	{
+		dispatch(changeKey(projectId));
+		dispatch(selectProject(projectId));
+	}
+}
+
 
 const loadProjects = (key: string) => (dispatch: StoreDispatch, getStore: GetStoreState) =>
 {
@@ -76,8 +86,8 @@ const loadProjects = (key: string) => (dispatch: StoreDispatch, getStore: GetSto
 	});
 }
 
-export const { selectProject, renameProject, deleteProject } = Projects.actions;
-export { loadProjects };
+export const { renameProject, deleteProject } = Projects.actions;
+export { selectProject };
 
 export type { Project };
 export default Projects;
