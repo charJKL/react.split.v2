@@ -4,17 +4,17 @@
 {
 	display: flex;
 	flex-flow: row nowrap;
-	height: index.$input-main-height + index.$row-margin + index.$row-margin;
+	height: index.$input-main-height + index.$row-padding + index.$row-padding;
 	background: index.$color-gray;
 }
 .editor
 {
-	margin-left: index.$row-margin * 2;
+	margin-left: index.$row-padding * 2;
 }
 
 .buttons
 {
-	margin: index.$row-margin index.$row-margin * 2 0px auto;
+	margin: index.$row-padding index.$row-padding * 2 0px auto;
 	display: flex;
 	flex-flow: row nowrap;
 }
