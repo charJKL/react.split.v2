@@ -13,27 +13,33 @@ interface SelectProps
 const Select = ({className, children} : SelectProps) : JSX.Element =>
 {
 	const project = useAppSelector(selectSelectedProject);
-	const [isOpen, setOpen] = useState<boolean>(true);
+	const [isOpen, setOpen] = useState<boolean>(false);
 	
 	const onChangeProjectName = (e: ChangeEvent<HTMLInputElement>) =>
 	{
 		const value = e.target.value;
 		console.log(value);
 	}
-	const onOpenList = (e: MouseEvent<HTMLDivElement>) =>
+	const onMousemoveOpenList = (e: MouseEvent<HTMLDivElement>) =>
 	{
-		setOpen(state => !state);
+		setOpen(true);
+	}
+	const onMouseLeaveCloseList = (e: MouseEvent<HTMLDivElement>) =>
+	{
+		setOpen(false);
 	}
 	
 	const name = project ? project.name : "";
+	const isListOpen = isOpen ? "block" : "none";
+	const styleForOptions = {display: isListOpen }
 	const classNameForSelect = [className, css.select].join(" ");
 	return (
-		<div className={classNameForSelect}>
+		<div className={classNameForSelect} onMouseEnter={onMousemoveOpenList} onMouseLeave={onMouseLeaveCloseList}>
 			<div className={css.input}>
 				<input type="text" value={name} onChange={onChangeProjectName} />
-				<div onClick={onOpenList}>{ isOpen ? '▼' : '◄' }</div>
+				<div>{ isOpen ? '▼' : '◄' }</div>
 			</div>
-			<div className={css.options}>
+			<div className={css.options} style={styleForOptions}>
 				{children}
 			</div>
 		</div>
