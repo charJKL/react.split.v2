@@ -1,45 +1,19 @@
+import { Key } from "react";
+
 type Middleware = {dispatch: any, getState: any};
 type Action = {type: string, payload?: any}
 
-const localStorageKey = "epub.split.key";
-const loadActionKey = "localStorage/load";
-
-const load = (id: string) =>
-{
-	return {type: loadActionKey, payload: id};
-}
-
-const LocalStorage = (middleware: Middleware) => (next: any) => (action: Action) =>
-{
-	if(action.type == loadActionKey)
-	{
-		const key = action.payload as string;
-		const store = loadKeyFromStorage(key);
-		if(store === null) return;
-		Object.entries(store).forEach(([name, slice]) =>{
-			console.log(name, slice);
-			middleware.dispatch({type: `${name}/load`, payload: slice});
-		});
-		return;
-	}
-
-	const result = next(action);
-	
-	// Store redux state int localStorage:
-	if(action.type.startsWith('projects'))
-	{
-		console.log('store action', action);
-		storeKeyInStorage('projects', middleware.getState());
-	}
-	
-	return result;
-}
+enum Actions 
+{ 
+	changeKey = "localStorage/changeKey",
+	loadItem = "localStorage/loadItem"
+};
 
 const storeKeyInStorage = (key: string, value: any) =>
 {
 	try
 	{
-		localStorage.setItem(localStorageKey, JSON.stringify(value));
+		localStorage.setItem(key, JSON.stringify(value));
 		return true;
 	}
 	catch(e : unknown)
@@ -70,5 +44,49 @@ const loadKeyFromStorage = (key: string) =>
 	}
 }
 
+const changeKey = (key: string) =>
+{
+	return {type: Actions.changeKey, value: key};
+}
+
+const loadItem = (key: string) =>
+{
+	return {type: Actions.loadItem, value: key};
+}
+
+type settings = {[index: string] : string};
+const LocalStorage = (prefix: string, settings?: settings) =>
+{
+	const slices = settings ? Object.keys(settings) : [];
+	var custom = "";
+	
+	return (middleware: Middleware) => (next: any) => (action: Action) =>
+	{
+		const postfix = slices.find(slice => action.type.startsWith(slice)) ?? custom;
+		const key = prefix + '.' + postfix;
+		const result = next(action);
+		if(action.type === Actions.changeKey)
+		{
+			custom = action.payload;
+			return;
+		}
+		if(action.type === Actions.loadItem)
+		{
+			const store = loadKeyFromStorage(key);
+			if(store === null) return;
+			Object.entries(store).forEach(([name, slice]) =>{
+				console.log('load item', name, slice);
+				middleware.dispatch({type: `${name}/load`, payload: slice});
+			});
+			return;
+		}
+		
+		const state = middleware.getState();
+		const filter = postfix ? state[postfix] : state;
+		storeKeyInStorage(key, filter);
+		return result;
+	}
+}
+
 export default LocalStorage;
-export {load};
+export {changeKey, loadItem};

@@ -6,9 +6,10 @@ import OcrSlice from "./slice.ocrs";
 import GuiSlice from "./slice.gui";
 import LocalStorage from "./middleware/LocalStorage";
 
+const LocalStorageMiddleware = LocalStorage("epub.split", {projects: "projects"});
 
 const Store = configureStore({
-	middleware: (getDefaultMiddleware) => getDefaultMiddleware().concat(LocalStorage),
+	middleware: (getDefaultMiddleware) => getDefaultMiddleware().concat(LocalStorageMiddleware),
 	reducer: {
 		projects: ProjectsSlice.reducer,
 		pages: PagesSlice.reducer,
