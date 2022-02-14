@@ -1,6 +1,15 @@
 @use "../../index.scss";
 
-.hide
+div.wrapper
+{
+	position: relative;
+	padding: 0px;
+}
+.button
+{
+	@extend %input-nested;
+}
+.files
 {
 	display: none;
 }

@@ -30,9 +30,9 @@ const LoadFileInput = ({className, children}: LoadFileInput) : JSX.Element =>
 	const classNameForWrapper = [className, css.wrapper].join(" ");
 	return (
 		<div className={classNameForWrapper}>
-			<button onClick={onClickRedirectEvent}>{children}</button>
-			<input className={css.hide} type="file" accept="image/*" multiple ref={fileInputRef} onChange={onChangeLoadSelectedFile} />
-			<Tooltip show={false} alignment="top-left">
+			<button className={css.button} onClick={onClickRedirectEvent}>{children}</button>
+			<input className={css.files} type="file" accept="image/*" multiple ref={fileInputRef} onChange={onChangeLoadSelectedFile} />
+			<Tooltip show={true} alignment="top-left" width="150%">
 				Start here from loading image from which you want to extract text.
 			</Tooltip>
 		</div>
