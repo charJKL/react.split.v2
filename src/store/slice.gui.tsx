@@ -5,9 +5,13 @@ import StoreException from "./lib/storeException";
 type Key = string;
 type Position = {top: number, left: number};
 type Scale = {x: number, y: number};
+type Tooltips = "startHere";
 type KeyValue = {editorName: string; pageId: string; setting: Omit<Setting, "id">; }
 type PositionValue = {editorName: string, pageId: string, movementX: number, movementY: number };
 type ScaleValue = {editorName: string, pageId: string, x: number, y: number };
+type TooltipValue = {tooltip: Tooltips, value: boolean};
+
+
 
 type Setting = 
 {
@@ -21,6 +25,7 @@ type InitialStateGui =
 	selected: string | null;
 	searching: string | null;
 	settings: { [key: Key]: Setting };
+	tooltips: { [i in Tooltips]: boolean };
 }
 
 const InitialState : InitialStateGui = 
@@ -28,6 +33,7 @@ const InitialState : InitialStateGui =
 	selected: null,
 	searching: null,
 	settings: {},
+	tooltips: { startHere: true },
 }
 
 const Gui = createSlice({
@@ -63,6 +69,13 @@ const Gui = createSlice({
 			if(setting === undefined) throw new StoreException(`You update "scale" for nonexistent setting "${key}":`, action.payload);
 			setting.scale.x += action.payload.x;
 			setting.scale.y += action.payload.y;
+		},
+		updateTooltip: (state, action: PayloadAction<TooltipValue>) =>
+		{
+			const tooltip = state.tooltips[action.payload.tooltip];
+			const value = action.payload.value;
+			if(tooltip === undefined) throw new StoreException(`You update "${action.payload.tooltip}" tooltip wich doesn't exist.`, action.payload);
+			state.tooltips[action.payload.tooltip] = value;
 		}
 	}
 });
@@ -70,6 +83,7 @@ const Gui = createSlice({
 export const isSettingInitialized = (editorName: string, pageId: string) => (state: StoreState) : boolean => state.gui.settings[editorName+pageId] !== undefined;
 export const selectPositionSetting = (editorName: string, pageId: string) => (state: StoreState) : Position | null => state.gui.settings[editorName+pageId]?.position ?? null;
 export const selectScaleSetting = (editorName: string, pageId: string) => (state: StoreState) : Scale | null => state.gui.settings[editorName+pageId]?.scale ?? null;
+export const selectTooltip = (tooltip: Tooltips) => (state: StoreState): boolean => state.gui.tooltips[tooltip] ?? false;
 export const selectSearching = (state: StoreState) => state.gui.searching;
 
 const selectPage = (pageId: string) => (dispatch: StoreDispatch, getState: GetStoreState ) => 
@@ -80,7 +94,7 @@ const selectPage = (pageId: string) => (dispatch: StoreDispatch, getState: GetSt
 	if(pages.ids.includes(pageId)) dispatch(selectPage(pageId));
 }
 
-export const { setSearching, initializeSetting, updatePosition, updateScale } = Gui.actions;
+export const { setSearching, initializeSetting, updatePosition, updateScale, updateTooltip } = Gui.actions;
 export { selectPage };
 
 export type { Setting };
