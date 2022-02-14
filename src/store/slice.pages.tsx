@@ -1,5 +1,5 @@
 import { createAsyncThunk, createSlice, PayloadAction, Store } from "@reduxjs/toolkit";
-import type { StoreState, ThunkStoreTypes } from "./store";
+import { GetStoreState, StoreDispatch, StoreState } from "./store";
 import StoreException from "./lib/storeException";
 
 type PageStatus = "Idle" | "Loading" | "Loaded" | "Error";
@@ -63,27 +63,28 @@ type PageLoaded = Page & {status: "Loaded"; width: number; height: number;}
 const isPageIdle = (page: Page) : boolean => page.status === "Idle";
 const isPageLoaded = (page: Page) : page is PageLoaded => page.status === "Loaded";
 
-const loadPage = createAsyncThunk<void, string, ThunkStoreTypes>('pages/loadPage', (id, thunk) => {
-	const state = thunk.getState();
-	const dispatch = thunk.dispatch;
+const loadPage = (pageId: Key) => (dispatch: StoreDispatch, getState: GetStoreState) =>
+{
+	const { pages } = getState();
 	const { updateStatus, setSize } = Pages.actions;
-	const page = state.pages.entities[id] as Page;
-
+	const page = pages.entities[pageId];
+	if(page === undefined) throw new StoreException(`You try load page with doesn't exist.`, {type: 'pages/loadPage', payload: pageId})
+	
 	const image = new Image();
-	dispatch(updateStatus({id: id, status: "Loading"}));
+	dispatch(updateStatus({id: pageId, status: "Loading"}));
 	image.addEventListener('load', (e: Event) => {
 		const image = e.target as HTMLImageElement;
 		const width = image.naturalWidth;
 		const height = image.naturalHeight;
-		dispatch(setSize({id: id, width, height}));
-		dispatch(updateStatus({id: id, status: "Loaded"}));
+		dispatch(setSize({id: pageId, width, height}));
+		dispatch(updateStatus({id: pageId, status: "Loaded"}));
 	});
 	image.addEventListener('error', (e: Event) => {
 		
-		dispatch(updateStatus({id: id, status: "Error"}));
+		dispatch(updateStatus({id: pageId, status: "Error"}));
 	});
 	image.src = page.url;
-});
+}
 
 export const selectPageIds = (state: StoreState) => state.pages.ids;
 export const selectPageById = (id: string) => (state: StoreState) : Page | null => state.pages.entities[id] ?? null;
