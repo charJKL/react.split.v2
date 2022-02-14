@@ -51,11 +51,11 @@ const loadItem = (key: string) =>
 {
 	return {type: Actions.loadItem, payload: key};
 }
-type setting = { key: string, slices: Array<string>} 
+type setting = { key: string | null, slices: Array<string>} 
 type settings = {[index: string] : setting };
-const LocalStorage = (prefix: string, settings?: settings) =>
+const LocalStorage = (prefix: string, settings: settings) =>
 {
-	const settingsPaths = settings ? Object.keys(settings) : [];
+	const settingsPaths = Object.keys(settings);
 	var customKey = "";
 
 	return (middleware: Middleware) => (next: any) => (action: Action) =>
@@ -63,34 +63,36 @@ const LocalStorage = (prefix: string, settings?: settings) =>
 		const result = next(action);
 		
 		// handle internal middleware actions:
-		switch(action.type)
+		if(action.type.startsWith('localStorage'))
 		{
-			case Actions.changeKey:
-				customKey = action.payload;
-				return;
+			switch(action.type)
+			{
+				case Actions.changeKey:
+					customKey = action.payload;
+					return;
+					
+				case Actions.loadItem:
+					const key = [prefix, action.payload].join('.');
+					const item = loadItemFromStorage(key);
+					console.log('load', key, item);
+					if(item === null) return;
+					Object.entries(item).forEach(([name, slice]) => { middleware.dispatch({type: `localStorage/${name}`, payload: slice}); });
+					return;
 				
-			case Actions.loadItem:
-				const key = [prefix, action.payload].join('.');
-				const item = loadItemFromStorage(key);
-				console.log('load item', key, item);
-				if(item === null) return;
-				Object.entries(item).forEach(([name, slice]) => { middleware.dispatch({type: `${name}/load`, payload: slice}); });
-				return;
+				default:
+					return;
+			}
 		}
-
+		
 		// save state into localStorage:
 		const settingId = settingsPaths.find(path => action.type.startsWith(path));
-		if(settings && settingId)
+		if(settingId !== undefined)
 		{
 			const setting = settings[settingId] as setting;
-			const key = [prefix, setting.key].join('.');
+			const id = setting.key ?? customKey;
+			const key = [prefix, id].join('.');
 			const state = filterObject(middleware.getState(), setting?.slices);
-			storeItemInStorage(key, state);
-		}
-		else
-		{
-			const key = [prefix, customKey].join('.');
-			const state = middleware.getState();
+			console.log('save', action, key, state);
 			storeItemInStorage(key, state);
 		}
 		return result;

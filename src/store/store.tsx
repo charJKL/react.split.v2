@@ -9,7 +9,8 @@ import LocalStorage from "./middleware/LocalStorage";
 
 const storeSettings =
 {
-	"projects/": { key: "projects", slices: ["projects"]}
+	"projects/": { key: "projects", slices: ["projects"]},
+	"": { key: null, slices: ["pages", "metrics", "ocrs", "gui"]}
 }
 const LocalStorageMiddleware = LocalStorage("epub.split", storeSettings);
 
