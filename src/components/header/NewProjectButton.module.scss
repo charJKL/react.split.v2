@@ -1,0 +1,12 @@
+@use "../../index.scss";
+
+div.wrapper
+{
+	position: relative;
+	padding: 0px;
+}
+.button
+{
+	@extend %input-nested;
+	padding: 0px 10px;
+}

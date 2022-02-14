@@ -7,17 +7,21 @@
 	align-items: center;
 	height: index.$input-height + index.$row-padding + index.$row-padding;
 	background: rgba(180, 180, 180, 1);
-	z-index: 1;
+	z-index: 2;
 }
 
+.new
+{
+	@extend %input;
+	margin: index.$row-padding 0px index.$row-padding 14px;
+}
 .load
 {
 	@extend %input;
 	margin: index.$row-padding 0px index.$row-padding index.$row-padding;
 }
-
 .select
 {
 	width: 250px;
-	margin: index.$row-padding 0px index.$row-padding 14px;
+	margin: index.$row-padding 0px index.$row-padding index.$row-padding;
 }

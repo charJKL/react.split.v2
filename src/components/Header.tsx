@@ -1,6 +1,7 @@
 import {CustomHTMLAttributes} from "../types";
 import { useAppSelector } from "../store/store.hooks";
 import { selectProjects } from "../store/slice.projects";
+import NewProjectButton from "./header/NewProjectButton";
 import LoadFileInput from "./header/LoadFileInput";
 import Select from "./header/Select";
 import ProjectOption from "./header/ProjectOption";
@@ -13,11 +14,11 @@ const Header = ({className} : CustomHTMLAttributes) : JSX.Element =>
 	const cssHeader = [className, css.header].join(' ');
 	return (
 		<header className={cssHeader}>
+			<NewProjectButton className={css.new}>New project</NewProjectButton>
+			<LoadFileInput className={css.load}>Load file</LoadFileInput>
 			<Select className={css.select}>
 				{ projects.map((projectId) => <ProjectOption key={projectId} projectId={projectId}/>) }
 			</Select>
-			
-			<LoadFileInput className={css.load}>Load file</LoadFileInput>
 		</header>
 	);
 }
