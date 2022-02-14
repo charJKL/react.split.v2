@@ -6,7 +6,8 @@ type Action = {type: string, payload?: any}
 enum Actions 
 { 
 	changeKey = "localStorage/changeKey",
-	loadItem = "localStorage/loadItem"
+	loadItem = "localStorage/loadItem",
+	deleteItem = "localStorage/deleteItem"
 };
 
 const storeItemInStorage = (key: string, value: any) =>
@@ -51,6 +52,12 @@ const loadItem = (key: string) =>
 {
 	return {type: Actions.loadItem, payload: key};
 }
+
+const deleteItem = (key: string) =>
+{
+	return {type: Actions.deleteItem, payload: key};
+}
+
 type setting = { key: string | null, slices: Array<string>} 
 type settings = {[index: string] : setting };
 const LocalStorage = (prefix: string, settings: settings) =>
@@ -79,6 +86,11 @@ const LocalStorage = (prefix: string, settings: settings) =>
 					Object.entries(item).forEach(([name, slice]) => { middleware.dispatch({type: `localStorage/${name}`, payload: slice}); });
 					return;
 				
+				case Actions.deleteItem:
+					const deleteKey = [prefix, action.payload].join('.');
+					localStorage.removeItem(deleteKey);
+					return;
+				
 				default:
 					return;
 			}
@@ -100,4 +112,4 @@ const LocalStorage = (prefix: string, settings: settings) =>
 }
 
 export default LocalStorage;
-export {changeKey, loadItem};
+export {changeKey, loadItem, deleteItem};

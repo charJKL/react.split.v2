@@ -6,7 +6,7 @@ import trimFileExtension from "./lib/trimFileExtension";
 import { Page, addPage } from "./slice.pages";
 import { Metric, addMetric } from "./slice.metrics";
 import { Ocr, addOcr } from "./slice.ocrs";
-import { changeKey, loadItem } from "./middleware/LocalStorage";
+import { changeKey, deleteItem, loadItem } from "./middleware/LocalStorage";
 
 type Key = string;
 type ProjectValue = {id: Key, name: string};
@@ -61,6 +61,7 @@ const Projects = createSlice({
 			if(state.selected === id) state.selected = null; 
 			delete state.entities[id];
 			state.ids.splice(state.ids.indexOf(id), 1);
+			
 		},
 	},
 	extraReducers: (builder) => { builder
@@ -99,6 +100,17 @@ const createProject = (name?: string) => (dispatch: StoreDispatch, getState: Get
 	dispatch(selectProject(projectId));
 }
 
+const deleteProject = (projectId: Key) => (dispatch: StoreDispatch, getState: GetStoreState) =>
+{
+	const { projects } = getState();
+	const { deleteProject } = Projects.actions;
+	if(projects.ids.includes(projectId)) 
+	{
+		dispatch(deleteProject(projectId));
+		dispatch(deleteItem(projectId));
+	}
+}
+
 const loadFile = (files: Array<File>) => (dispatch: StoreDispatch, getState: GetStoreState) =>
 {
 	const { projects, pages } = getState();
@@ -130,8 +142,8 @@ const loadFile = (files: Array<File>) => (dispatch: StoreDispatch, getState: Get
 };
 
 
-export const { renameProject, deleteProject } = Projects.actions;
-export { createProject, selectProject, loadFile };
+export const { renameProject } = Projects.actions;
+export { createProject, selectProject, deleteProject, loadFile };
 
 export type { Project };
 export default Projects;
