@@ -86,6 +86,19 @@ const selectProject = (projectId: Key) => (dispatch: StoreDispatch, getState: Ge
 	}
 }
 
+const createProject = (name?: string) => (dispatch: StoreDispatch, getState: GetStoreState) =>
+{
+	const { projects } = getState();
+	const { addProject } = Projects.actions;
+	
+	let projectId = getRandomId(10);
+	let projectName = name ?? "New project";
+	while(projects.ids.includes(projectId)) projectId = getRandomId(10); // make sure Id is unique
+	for(let i=1; Object.values(projects.entities).some(project => project.name === projectName); i++) projectName = `New project (${i})`; // make sure name is unique
+	dispatch(addProject({id: projectId, name: projectName}));
+	dispatch(selectProject(projectId));
+}
+
 const loadFile = (files: Array<File>) => (dispatch: StoreDispatch, getState: GetStoreState) =>
 {
 	const { projects, pages } = getState();
@@ -118,7 +131,7 @@ const loadFile = (files: Array<File>) => (dispatch: StoreDispatch, getState: Get
 
 
 export const { renameProject, deleteProject } = Projects.actions;
-export { selectProject, loadFile };
+export { createProject, selectProject, loadFile };
 
 export type { Project };
 export default Projects;
