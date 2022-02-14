@@ -44,7 +44,11 @@ const Thumbnail = ({id}: ThumbnailProps) : JSX.Element =>
 		case "Idle":
 			var image = <img className={css.placeholder} src={placeholder} alt="" /> // eslint-disable-line @typescript-eslint/no-redeclare
 			break;
-			
+		
+		case "Restored":
+			var image = <img className={css.placeholder} src={placeholder} alt="" /> // eslint-disable-line @typescript-eslint/no-redeclare
+			break;
+		
 		case "Loading":
 			var image = <img className={css.loading} src={waiting} alt=""/>; // eslint-disable-line @typescript-eslint/no-redeclare
 			break;
