@@ -5,14 +5,14 @@
 	display: flex;
 	flex-flow: row nowrap;
 	align-items: center;
-	height: index.$input-main-height + index.$row-padding + index.$row-padding;
+	height: index.$input-height + index.$row-padding + index.$row-padding;
 	background: rgba(180, 180, 180, 1);
 	z-index: 1;
 }
 
 .load
 {
-	@extend %input-main;
+	@extend %input;
 	margin: index.$row-padding 0px index.$row-padding index.$row-padding;
 }
 

@@ -4,7 +4,7 @@
 {
 	display: flex;
 	flex-flow: row nowrap;
-	height: index.$input-main-height + index.$row-padding + index.$row-padding;
+	height: index.$input-height + index.$row-padding + index.$row-padding;
 	background: index.$color-gray;
 }
 .editor
@@ -20,6 +20,6 @@
 }
 .button
 {
-	@extend %input-main;
+	@extend %input;
 	margin-left: 7px;
 }
