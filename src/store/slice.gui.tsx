@@ -1,4 +1,4 @@
-import { createSlice, PayloadAction } from "@reduxjs/toolkit";
+import { createAction, createSlice, PayloadAction } from "@reduxjs/toolkit";
 import type { GetStoreState, StoreDispatch, StoreState } from "./store";
 import StoreException from "./lib/storeException";
 
@@ -36,6 +36,7 @@ const InitialState : InitialStateGui =
 	tooltips: { startHere: true },
 }
 
+const LoadGuiAction = createAction<InitialStateGui>('localStorage/gui');
 const Gui = createSlice({
 	name: "gui",
 	initialState: InitialState,
@@ -77,6 +78,11 @@ const Gui = createSlice({
 			if(tooltip === undefined) throw new StoreException(`You update "${action.payload.tooltip}" tooltip wich doesn't exist.`, action.payload);
 			state.tooltips[action.payload.tooltip] = value;
 		}
+	},
+	extraReducers: (builder) => { builder
+		.addCase(LoadGuiAction, (state, action) => {
+			
+		})
 	}
 });
 

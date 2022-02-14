@@ -65,9 +65,7 @@ const Projects = createSlice({
 	},
 	extraReducers: (builder) => { builder
 		.addCase(LoadProjectAction, (state, action) => {
-			state.ids = action.payload.ids;
-			state.entities = action.payload.entities;
-			state.selected = action.payload.selected;
+			return action.payload;
 		})
 	}
 });

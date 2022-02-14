@@ -1,4 +1,4 @@
-import { createSlice, PayloadAction } from "@reduxjs/toolkit";
+import { createAction, createSlice, PayloadAction } from "@reduxjs/toolkit";
 import type { StoreState } from "./store";
 import StoreException from "./lib/storeException";
 
@@ -34,6 +34,7 @@ const InitialState : InitialStateMetrics =
 	entities: {},
 }
 
+const LoadMetricsAction = createAction<InitialStateMetrics>('localStorage/metrics');
 const Metrics = createSlice({
 	name: "metrics",
 	initialState: InitialState,
@@ -84,6 +85,11 @@ const Metrics = createSlice({
 			if(entity === undefined) throw new StoreException(`You update metrics status for nonexisting page`, action.payload);
 			entity.status = status;
 		}
+	},
+	extraReducers: (builder) => { builder
+		.addCase(LoadMetricsAction, (state, action) => {
+			return action.payload;
+		})
 	}
 });
 

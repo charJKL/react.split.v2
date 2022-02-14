@@ -1,4 +1,4 @@
-import { createAsyncThunk, createSlice, PayloadAction } from "@reduxjs/toolkit"
+import { createAction, createAsyncThunk, createSlice, PayloadAction } from "@reduxjs/toolkit"
 import { Metric } from "./slice.metrics";
 import { isPageLoaded, Page, PageLoaded } from "./slice.pages";
 import { StoreState, ThunkStoreTypes } from "./store";
@@ -38,8 +38,9 @@ const InitialState : InitialStateMetrics =
 	entities: {},
 }
 
+const LoadOcrAction = createAction<InitialStateMetrics>('localStorage/ocr');
 const Ocrs = createSlice({
-	name: "ocr",
+	name: "ocrs",
 	initialState: InitialState,
 	reducers: 
 	{
@@ -97,6 +98,11 @@ const Ocrs = createSlice({
 					return;
 			}
 		}
+	},
+	extraReducers: (builder) => { builder
+		.addCase(LoadOcrAction, (state, action) => {
+			return action.payload;
+		})
 	}
 });
 

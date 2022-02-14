@@ -1,8 +1,8 @@
-import { createAsyncThunk, createSlice, PayloadAction, Store } from "@reduxjs/toolkit";
+import { createAction, createAsyncThunk, createSlice, current, PayloadAction, Store } from "@reduxjs/toolkit";
 import { GetStoreState, StoreDispatch, StoreState } from "./store";
 import StoreException from "./lib/storeException";
 
-type PageStatus = "Idle" | "Loading" | "Loaded" | "Error";
+type PageStatus = "Idle" | "Restored" | "Loading" | "Loaded" | "Error";
 type Key = string;
 type StatusValue = {id: Key; status: PageStatus; }
 type SizeValue = {id: Key; width: number, height: number; }
@@ -29,6 +29,7 @@ const InitialState : InitialStatePages =
 	entities: {},
 }
 
+const LoadPagesAction = createAction<InitialStatePages>('localStorage/pages');
 const Pages = createSlice({
 	name: "pages",
 	initialState: InitialState,
@@ -56,6 +57,13 @@ const Pages = createSlice({
 			page.width = action.payload.width;
 			page.height = action.payload.height;
 		}
+	},
+	extraReducers: (builder) => { builder
+		.addCase(LoadPagesAction, (state, action) => {
+			const pages = action.payload;
+			Object.values(pages.entities).forEach((page) => page.status = "Restored"); // pages load from localStorage aren't loaded.
+			return pages;
+		})
 	}
 });
 
@@ -80,7 +88,6 @@ const loadPage = (pageId: Key) => (dispatch: StoreDispatch, getState: GetStoreSt
 		dispatch(updateStatus({id: pageId, status: "Loaded"}));
 	});
 	image.addEventListener('error', (e: Event) => {
-		
 		dispatch(updateStatus({id: pageId, status: "Error"}));
 	});
 	image.src = page.url;
