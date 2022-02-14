@@ -7,10 +7,12 @@ $indicator-size: 6px;
 .tooltip
 {
 	position: absolute;
+	box-sizing: border-box;
 	background: rgb(248, 248, 248);
 	border: solid 1px rgb(102, 102, 102);
 	padding: 5px;
-	font: 11px index.$font;
+	font: 14px index.$font;
+	border-radius: 4px;
 }
 %tooltip-indicator
 {
