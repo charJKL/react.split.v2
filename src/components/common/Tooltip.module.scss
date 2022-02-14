@@ -1,0 +1,75 @@
+@use "../../index.scss";
+
+$distance: 10px;
+$indicator-offset: 10px;
+$indicator-size: 6px;
+
+.tooltip
+{
+	position: absolute;
+	background: rgb(248, 248, 248);
+	border: solid 1px rgb(102, 102, 102);
+	padding: 5px;
+	font: 11px index.$font;
+}
+%tooltip-indicator
+{
+	content: "";
+	position: absolute;
+	height: $indicator-size;
+	width: $indicator-size;
+	background: rgb(248, 248, 248);
+	transform: rotate(45deg);
+}
+.top-left
+{
+	top: calc(100% + $distance); 
+	left: 0px;
+	&::before
+	{
+		@extend %tooltip-indicator;
+		bottom: calc(100% - $indicator-size / 2);
+		left: $indicator-offset;
+		border-top:inherit;
+		border-left:inherit;
+	}
+}
+.top-right
+{
+	top: calc(100% + $distance); 
+	right: 0px;
+	&::before
+	{
+		@extend %tooltip-indicator;
+		bottom: calc(100% - $indicator-size / 2);
+		right: $indicator-offset;
+		border-top:inherit;
+		border-left:inherit;
+	}
+}
+.bottom-left
+{
+	left: 0px;
+	bottom: calc(100% + $distance);
+	&::before
+	{
+		@extend %tooltip-indicator;
+		top: calc(100% - $indicator-size / 2);
+		left: $indicator-offset;
+		border-bottom:inherit;
+		border-right:inherit;
+	}
+}
+.bottom-right
+{
+	right: 0px;
+	bottom: calc(100% + $distance);
+	&::before
+	{
+		@extend %tooltip-indicator;
+		top: calc(100% - $indicator-size / 2);
+		right: $indicator-offset;
+		border-bottom:inherit;
+		border-right:inherit;
+	}
+}
