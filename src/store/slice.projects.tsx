@@ -1,4 +1,4 @@
-import { createSlice, PayloadAction } from "@reduxjs/toolkit";
+import { createAction, createSlice, PayloadAction } from "@reduxjs/toolkit";
 import type { GetStoreState, StoreDispatch, StoreState } from "./store";
 import StoreException from "./lib/storeException";
 import getRandomId from "./lib/getRandomId";
@@ -6,7 +6,7 @@ import trimFileExtension from "./lib/trimFileExtension";
 import { Page, addPage } from "./slice.pages";
 import { Metric, addMetric } from "./slice.metrics";
 import { Ocr, addOcr } from "./slice.ocrs";
-import { changeKey } from "./middleware/LocalStorage";
+import { changeKey, loadItem } from "./middleware/LocalStorage";
 
 type Key = string;
 type ProjectValue = {id: Key, name: string};
@@ -31,17 +31,12 @@ const InitialState : InitialStateProjects =
 	selected: null,
 }
 
+const LoadProjectAction = createAction<InitialStateProjects>('localStorage/projects');
 const Projects = createSlice({
 	name: "projects",
 	initialState: InitialState,
 	reducers: 
 	{
-		load: (state, action: PayloadAction<InitialStateProjects>) =>
-		{
-			state.ids = action.payload.ids;
-			state.entities = action.payload.entities;
-			state.selected = action.payload.selected;
-		},
 		addProject: (state, action: PayloadAction<ProjectValue>) =>
 		{
 			const id = action.payload.id;
@@ -67,6 +62,13 @@ const Projects = createSlice({
 			delete state.entities[id];
 			state.ids.splice(state.ids.indexOf(id), 1);
 		},
+	},
+	extraReducers: (builder) => { builder
+		.addCase(LoadProjectAction, (state, action) => {
+			state.ids = action.payload.ids;
+			state.entities = action.payload.entities;
+			state.selected = action.payload.selected;
+		})
 	}
 });
 
@@ -80,8 +82,9 @@ const selectProject = (projectId: Key) => (dispatch: StoreDispatch, getState: Ge
 	const { selectProject } = Projects.actions;
 	if(projects.ids.includes(projectId)) 
 	{
-		dispatch(changeKey(projectId));
 		dispatch(selectProject(projectId));
+		dispatch(changeKey(projectId));
+		dispatch(loadItem(projectId));
 	}
 }
 
