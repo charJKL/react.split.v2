@@ -8,6 +8,7 @@ div.wrapper
 .button
 {
 	@extend %input-nested;
+	padding: 0px 10px;
 }
 .files
 {
