@@ -1,8 +1,7 @@
-import React from "react";
 import {CustomHTMLAttributes} from "../types";
-import { useAppDispatch, useAppSelector } from "../store/store.hooks";
-import { selectProjects, loadFile } from "../store/slice.projects";
-import LoadFileInput from "./common/LoadFileInput";
+import { useAppSelector } from "../store/store.hooks";
+import { selectProjects } from "../store/slice.projects";
+import LoadFileInput from "./header/LoadFileInput";
 import Select from "./header/Select";
 import ProjectOption from "./header/ProjectOption";
 import css from "./Header.module.scss";
@@ -10,12 +9,6 @@ import css from "./Header.module.scss";
 const Header = ({className} : CustomHTMLAttributes) : JSX.Element => 
 {
 	const projects = useAppSelector(selectProjects);
-	const dispatch = useAppDispatch();
-	
-	const onFilesHandler = (files: Array<File>) =>
-	{
-		dispatch(loadFile(files));
-	}
 
 	const cssHeader = [className, css.header].join(' ');
 	return (
@@ -24,7 +17,7 @@ const Header = ({className} : CustomHTMLAttributes) : JSX.Element =>
 				{ projects.map((projectId) => <ProjectOption key={projectId} projectId={projectId}/>) }
 			</Select>
 			
-			<LoadFileInput className={css.load} onFiles={onFilesHandler}>Load file</LoadFileInput>
+			<LoadFileInput className={css.load}>Load file</LoadFileInput>
 		</header>
 	);
 }
