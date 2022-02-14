@@ -13,6 +13,23 @@ $indicator-size: 6px;
 	padding: 5px;
 	font: 14px index.$font;
 	border-radius: 4px;
+	transition: opacity 0.1s ease-in-out;
+	opacity: 0;
+	&.show
+	{
+		opacity: 1;
+	}
+	> p {
+		margin: 3px 0px;
+		line-height: 20px;
+	}
+	> p > span 
+	{
+		background: rgb(160, 160, 160);
+		border: solid 1px #000;
+		border-radius: 2px;
+		padding: 1px 3px;
+	}
 }
 %tooltip-indicator
 {
