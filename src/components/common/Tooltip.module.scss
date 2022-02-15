@@ -13,10 +13,12 @@ $indicator-size: 6px;
 	padding: 5px;
 	font: 14px index.$font;
 	border-radius: 4px;
-	transition: opacity 0.1s ease-in-out;
+	transition: opacity .9s ease-in-out;
+	visibility: hidden;
 	opacity: 0;
 	&.show
 	{
+		visibility: visible;
 		opacity: 1;
 	}
 	> p {
