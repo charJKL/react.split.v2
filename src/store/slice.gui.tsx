@@ -11,8 +11,6 @@ type PositionValue = {editorName: string, pageId: string, movementX: number, mov
 type ScaleValue = {editorName: string, pageId: string, x: number, y: number };
 type TooltipValue = {tooltip: Tooltips, value: boolean};
 
-
-
 type Setting = 
 {
 	id: Key;
@@ -81,7 +79,7 @@ const Gui = createSlice({
 	},
 	extraReducers: (builder) => { builder
 		.addCase(LoadGuiAction, (state, action) => {
-			
+			return action.payload;
 		})
 	}
 });
