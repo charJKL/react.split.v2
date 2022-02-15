@@ -48,7 +48,10 @@ body
 	display: block;
 	width: 100%;
 	height: 100%;
+	padding: 0px;
 	border: none;
+	$font-line-height: $input-height - $input-border * 2;
+	font: list.slash(16px, $font-line-height) $input-font-family;
 	&:focus{ outline: none; }
 }
 button
