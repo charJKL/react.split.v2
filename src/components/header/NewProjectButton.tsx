@@ -18,15 +18,15 @@ const NewProjectButton = ({className, children}: NewProjectbuttonProps) : JSX.El
 	
 	const onClickCreateNewProject = (e: MouseEvent<HTMLButtonElement>) =>
 	{
-		dispatch(updateTooltip({tooltip: "startHere", value: false})); // it's importat to dispose `startHere` tooltip before `loadFile` action.
 		dispatch(createProject());
+		dispatch(updateTooltip({tooltip: "startHere", value: false})); // it's importat to dispose popup after creating new project.
 	}
 	
 	const classNameForWrapper = [className, css.wrapper].join(" ");
 	return (
 		<div className={classNameForWrapper}>
 			<button className={css.button} onClick={onClickCreateNewProject}>{children}</button>
-			<Tooltip show={showStartHereTooltip} alignment="top-left" width="300%">
+			<Tooltip show={showStartHereTooltip} alignment="top-left" width="190%">
 				<p>Start here from creating new project.</p>
 			</Tooltip>
 		</div>

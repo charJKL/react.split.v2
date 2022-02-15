@@ -66,7 +66,9 @@ const Projects = createSlice({
 	},
 	extraReducers: (builder) => { builder
 		.addCase(LoadProjectAction, (state, action) => {
-			return action.payload;
+			const projects = action.payload;
+			projects.selected = null; // remove selected project.
+			return projects;
 		})
 	}
 });
