@@ -6,7 +6,7 @@ interface TooltipProps
 	className?: string;
 	children: React.ReactNode;
 	show: boolean;
-	alignment: "top-left" | "top-right" | "bottom-left" | "bottom-right";
+	alignment: "top-left" | "top-right" | "top-center" | "bottom-left" | "bottom-right";
 	width?: string;
 }
 

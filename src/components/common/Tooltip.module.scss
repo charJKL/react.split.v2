@@ -68,6 +68,21 @@ $indicator-size: 6px;
 		border-left:inherit;
 	}
 }
+.top-center
+{
+	top: calc(100% + $distance);
+	left: 50%;
+	transform: translateX(-50%);
+	text-align: center;
+	&::before
+	{
+		@extend %tooltip-indicator;
+		bottom: calc(100% - $indicator-size / 2);
+		right: calc(50% - $indicator-size / 2);
+		border-top:inherit;
+		border-left:inherit;
+	}
+}
 .bottom-left
 {
 	left: 0px;
