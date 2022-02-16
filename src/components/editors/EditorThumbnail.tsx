@@ -1,5 +1,5 @@
 
-import { isPageLoaded, Page,  } from "../../store/slice.pages";
+import { isPageKnown, Page,  } from "../../store/slice.pages";
 import { Metric } from "../../store/slice.metrics";
 import { calculateScale, applayScaleToSize, applayScaleToMetrics} from "./Editor";
 import useRefElement from "./../hooks/useRefElement";
@@ -26,7 +26,7 @@ const EditorThumbnail = ({page, metric} : EditorThumbnailProps): JSX.Element =>
 	const scaledMetrics = scale && applayScaleToMetrics(metric, scale);
 	
 	var layers: Array<JSX.Element> = [];
-	if(isPageLoaded(page) && scaledDesktopSize && scaledMetrics)
+	if(isPageKnown(page) && scaledDesktopSize && scaledMetrics)
 	{
 		layers.push(<LayerPage key="editor-metric-page" className={css.page} page={page} metric={scaledMetrics} desktopSize={scaledDesktopSize} />);
 		layers.push(<LayerHighlight key="editor-metric-highlight" className={css.highlight} page={page} metric={scaledMetrics} desktopSize={scaledDesktopSize}/>);
