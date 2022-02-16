@@ -25,7 +25,7 @@ const Thumbnail = ({id}: ThumbnailProps) : JSX.Element =>
 	const selected = useAppSelector(selectSelectedPage);
 	const ocr = useAppSelector(selectOcrForPage(page.id));
 	const searching = useAppSelector(selectSearching);
-	const [element, isVisible] = useIsElementVisible<HTMLDivElement>({threshold: [0, 1]});
+	const [isVisible, setElementRef] = useIsElementVisible<HTMLDivElement>({threshold: [0, 1]});
 	const isSelected = page === selected;
 	const dispatch = useAppDispatch();
 	
@@ -64,7 +64,7 @@ const Thumbnail = ({id}: ThumbnailProps) : JSX.Element =>
 	const isSelectedClass = isSelected ? css.selected : '';
 	const classNameForThumbnail = [css.thumbnail, isSelectedClass].join(" ");
 	return (
-		<div className={classNameForThumbnail} ref={element} onClick={onClickHandler}>
+		<div className={classNameForThumbnail} ref={setElementRef} onClick={onClickHandler}>
 			{ image }
 			{ metric && <ThumbnailStatusMetrics className={css.metric} metric={metric} /> }
 			{ ocr && <ThumbnailStatusText className={css.ocr} ocr={ocr} /> }

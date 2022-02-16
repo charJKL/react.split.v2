@@ -1,19 +1,20 @@
-import React, { useState, useRef, useEffect } from "react";
+import { useState, useEffect, ForwardedRef } from "react";
+import useRefElement from "./useRefElement";
 
-const useIsElementVisible = <T extends HTMLElement>(options: IntersectionObserverInit) : [React.RefObject<T>, boolean] =>
+const useIsElementVisible = <T extends HTMLElement>(options: IntersectionObserverInit) : [boolean, ForwardedRef<T>] =>
 {
 	const [isVisible, setIsVisible] = useState(false);
-	const element = useRef<T>(null);
+	const [element, setElementRef] = useRefElement<T>(null);
 	
 	useEffect(() =>{
 		const intersection = new IntersectionObserver((entries) => { setIsVisible(entries[0]!.isIntersecting) }, options);
-		if(element.current) intersection.observe(element.current);
+		if(element) intersection.observe(element);
 		return () => {
-			if(element.current) intersection.unobserve(element.current);
+			if(element) intersection.unobserve(element);
 		}
-	}, [element])
+	}, [element, options])
 	
-	return [element, isVisible];
+	return [isVisible, setElementRef];
 }
 
 export default useIsElementVisible;
