@@ -98,9 +98,11 @@ const EditorMetrics = ({style}: EditorMetricsProps) : JSX.Element =>
 		layers.push(<LayerLines key="editor-metric-lines" className={css.metricLines} page={page} metric={scaledMetrics} desktopSize={scaledDesktopSize} objectHovered={objectHovered}/>)
 		toolbars.push(<>🔍 {scale.x.toFixed(2)} / {scale.y.toFixed(2)}</>);
 	}
+	
+	const styleBorder = page ? {border: "solid 1px #222"} : {};
 	const cursor = { cursor: resolveCursor(isScaling, isPositioning, objectHovered, objectSelected) }
 	const styleForEditor = { ...style, ...cursor };
-	const styleForDesktop = { ...scaledDesktopSize, ...desktopPosition };
+	const styleForDesktop = { ...styleBorder, ...scaledDesktopSize, ...desktopPosition };
 	return (
 		<div className={css.editor} style={styleForEditor} ref={setEditorRef} onMouseDown={onMouseDown} onMouseMove={onMouseMove} onMouseUp={onMouseUp} onWheel={onWheel}>
 			<div className={css.toolbars}>

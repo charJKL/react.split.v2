@@ -1,6 +1,6 @@
 import { MouseEvent } from "react"; 
 import { useAppSelector, useAppDispatch } from "../../store/store.hooks";
-import { isPageKnown, selectSelectedPage } from "../../store/slice.pages";
+import { isPageKnown, isPageLoaded, selectSelectedPage } from "../../store/slice.pages";
 import { selectMetricsForPage } from "../../store/slice.metrics";
 import { isOcrIdle, isOcrNotIdle, isOcrParsed, readPage, selectOcrForPage } from "../../store/slice.ocrs";
 import EditorTextStatus from "./EditorTextStatus";
@@ -34,7 +34,8 @@ const EditorText = ({style} : EditorTextProps) : JSX.Element =>
 	console.log(page, ocr);
 	if(page && ocr && isOcrIdle(ocr))
 	{
-		layers.push(<div key="editor-text-button" className={css.empty}><button className={css.button} onClick={onProcessHandler}>Proccess file</button></div>);
+		const isProccessButtonDisabled = isPageLoaded(page) === true;
+		layers.push(<div key="editor-text-button" className={css.empty}><button className={css.button} onClick={onProcessHandler} disabled={isProccessButtonDisabled}>Proccess file</button></div>);
 	}
 	if(page && ocr && isOcrNotIdle(ocr))
 	{

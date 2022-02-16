@@ -12,17 +12,13 @@
 	align-items: center;
 	margin: 0px 10px 0px 0px;
 }
-.editor label input
+.input
 {
 	@extend %input;
 	width: 100px;
 	padding: 0px 0px 0px 10px;
 }
-.editor .inputName
+.inputName
 {
-	@extend %input;
 	width: 200px;
-	&:focus{
-		border: solid 1px #f00;
-	}
 }

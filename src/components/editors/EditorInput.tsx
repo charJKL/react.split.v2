@@ -39,11 +39,11 @@ const EditorInput = ({className}: EditorInputProps) =>
 	return (
 		<div className={classForEditor}>
 			<label> name: <EditorInputSearch className={css.inputName} value={name}/></label>
-			<label>x1: <input name="x1" type="number" disabled={isDisabled} value={x1.toFixed(0)} onChange={onChangeMetricValue}/></label>
-			<label>x2: <input name="x2" type="number" disabled={isDisabled} value={x2.toFixed(0)} onChange={onChangeMetricValue}/></label>
-			<label>y1: <input name="y1" type="number" disabled={isDisabled} value={y1.toFixed(0)} onChange={onChangeMetricValue}/></label>
-			<label>y2: <input name="y2" type="number" disabled={isDisabled} value={y2.toFixed(0)} onChange={onChangeMetricValue}/></label>
-			<label>rotate: <input name="rotate" type="number" step="0.1" disabled={isDisabled} value={rotate.toFixed(2)} onChange={onChangeMetricValue}/></label>
+			<label>x1: <input className={css.input} name="x1" type="number" disabled={isDisabled} value={x1.toFixed(0)} onChange={onChangeMetricValue}/></label>
+			<label>x2: <input className={css.input} name="x2" type="number" disabled={isDisabled} value={x2.toFixed(0)} onChange={onChangeMetricValue}/></label>
+			<label>y1: <input className={css.input} name="y1" type="number" disabled={isDisabled} value={y1.toFixed(0)} onChange={onChangeMetricValue}/></label>
+			<label>y2: <input className={css.input} name="y2" type="number" disabled={isDisabled} value={y2.toFixed(0)} onChange={onChangeMetricValue}/></label>
+			<label>rotate: <input className={css.input} name="rotate" type="number" step="0.1" disabled={isDisabled} value={rotate.toFixed(2)} onChange={onChangeMetricValue}/></label>
 		</div>
 	)
 }
