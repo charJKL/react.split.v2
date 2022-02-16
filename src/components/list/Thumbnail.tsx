@@ -30,9 +30,8 @@ const Thumbnail = ({id}: ThumbnailProps) : JSX.Element =>
 	const dispatch = useAppDispatch();
 	
 	useEffect(() => {
-		if(page == null) return;
-		if(isVisible === true && isPageIdle(page) ) dispatch(loadPage(id))
-	}, [isVisible, page, id, dispatch]);
+		if(isVisible === true) dispatch(loadPage(id))
+	}, [isVisible, id, dispatch]);
 	
 	const onClickHandler = () =>
 	{
@@ -46,6 +45,7 @@ const Thumbnail = ({id}: ThumbnailProps) : JSX.Element =>
 			break;
 		
 		case "Restored":
+		case "Stalled":
 			var image = <img className={css.placeholder} src={placeholder} alt="" /> // eslint-disable-line @typescript-eslint/no-redeclare
 			break;
 		
