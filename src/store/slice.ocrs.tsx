@@ -7,7 +7,6 @@ import { Baseline, Bbox, Choice, createWorker,  } from 'tesseract.js';
 import getHTMLImageElement from "./lib/getHTMLImageElement"
 import drawRotateImage from "./lib/drawRotateImage"
 import StoreException from "./lib/storeException";
-import { add } from "lodash";
 
 type Key = string;
 type OcrStatus = "Idle" | "Preprocessing" | "Initializaing" | "Parsing" | "Parsed" | "Error";
