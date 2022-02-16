@@ -1,6 +1,6 @@
 import { createAction, createAsyncThunk, createSlice, PayloadAction } from "@reduxjs/toolkit"
 import { Metric } from "./slice.metrics";
-import { isPageLoaded, Page, PageLoaded } from "./slice.pages";
+import { isPageLoaded, Page, PageKnown } from "./slice.pages";
 import { StoreState, ThunkStoreTypes } from "./store";
 import { resetState } from "./store.reset";
 import { Baseline, Bbox, Choice, createWorker,  } from 'tesseract.js';
@@ -27,20 +27,20 @@ type Ocr =
 }
 type OcrIdle = Ocr & {status: "Idle"};
 
-type InitialStateMetrics =
+type InitialStateOcrs =
 {
 	ids: Array<string>,
 	entities: { [key: string]: Ocr },
 }
 
-const InitialState : InitialStateMetrics = 
+const InitialState : InitialStateOcrs = 
 {
 	ids: [],
 	entities: {},
 }
 
 const SliceName = "ocrs";
-const LoadOcrAction = createAction<InitialStateMetrics>('localStorage/ocr');
+const LoadOcrsAction = createAction<InitialStateOcrs>('localStorage/ocrs');
 const Ocrs = createSlice({
 	name: SliceName,
 	initialState: InitialState,
@@ -102,7 +102,7 @@ const Ocrs = createSlice({
 		}
 	},
 	extraReducers: (builder) => { builder
-		.addCase(LoadOcrAction, (state, action) => {
+		.addCase(LoadOcrsAction, (state, action) => {
 			return action.payload;
 		})
 		.addCase(resetState, (state, action) => {
@@ -123,7 +123,7 @@ const readPage = createAsyncThunk<void, ReadPageBatch, ThunkStoreTypes>('ocrs/re
 	const { updateStatus, setResults, tesseractLog } = Ocrs.actions;
 	
 	if(isPageLoaded(batch.page) === false) new StoreException(`Page must be loaded before disaptch tesseract parse.`, batch.page);
-	const page = batch.page as PageLoaded;
+	const page = batch.page as PageKnown;
 	const metrics = batch.metrics;
 	
 	
