@@ -1,9 +1,6 @@
 import { createAction, createSlice, PayloadAction } from "@reduxjs/toolkit";
 import type { GetStoreState, StoreDispatch, StoreState } from "./store";
 import { changeKey, deleteItem, loadItem } from "./middleware/LocalStorage";
-import { Page, addPage } from "./slice.pages";
-import { Metric, addMetric } from "./slice.metrics";
-import { Ocr, addOcr } from "./slice.ocrs";
 import { resetState } from "./store.reset";
 import StoreException from "./lib/storeException";
 import getRandomId from "./lib/getRandomId";
@@ -121,31 +118,8 @@ const deleteProject = (projectId: Key) => (dispatch: StoreDispatch, getState: Ge
 	}
 }
 
-const loadFiles = (files: Array<File>) => (dispatch: StoreDispatch, getState: GetStoreState) =>
-{
-	const { pages } = getState();
-
-	if(files.length === 0) throw new StoreException(`Array of files is empty.`, {type: `projects/loadFile`, payload: files});
-	
-	// load files:
-	let counter = pages.ids.length;
-	files.forEach((file) => {
-		const id = (counter++).toString();
-		const evenOdd = (counter % 2) ? 'eve' : 'odd';
-		const name = `page-${evenOdd}-${id}`;
-		const url = URL.createObjectURL(file);
-		const page : Page = {id: id, status: "Idle", url: url, name: name};
-		const metric : Metric = {id: id, status: "Idle", details: null, x1: 10, x2:150, y1: 10, y2: 250, rotate: 0};
-		const ocr: Ocr = {id: id, status: "Idle", details: null, text: "", lines: [], words: []};
-		dispatch(addPage(page));
-		dispatch(addMetric(metric));
-		dispatch(addOcr(ocr));
-	});
-};
-
-
 export const { renameProject } = Projects.actions;
-export { createProject, selectProject, deleteProject, loadFiles };
+export { createProject, selectProject, deleteProject };
 
 export type { Project };
 export default Projects;
