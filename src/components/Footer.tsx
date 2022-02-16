@@ -1,6 +1,6 @@
 import {CustomHTMLAttributes} from "../types";
 import { useAppDispatch } from "../store/store.hooks";
-import getTxtResult from "../store/store.result"
+import getTxtResult from "../store/thunk.result"
 import useRefElement from "./hooks/useRefElement";
 import EditorInput from "../components/editors/EditorInput";
 import css from "./Footer.module.scss";
