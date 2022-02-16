@@ -5,13 +5,13 @@ import { updateTooltip } from "../../store/slice.gui";
 
 import css from "./LoadFileInput.module.scss";
 
-interface LoadFileInput 
+interface LoadFileInputProps
 {
 	className?: string;
 	children: React.ReactNode;
 }
 
-const LoadFileInput = ({className, children}: LoadFileInput) : JSX.Element =>
+const LoadFileInput = ({className, children}: LoadFileInputProps) : JSX.Element =>
 {
 	const project = useAppSelector(selectSelectedProject);
 	const dispatch = useAppDispatch();
