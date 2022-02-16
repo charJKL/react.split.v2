@@ -1,6 +1,7 @@
 import React, { useRef, ChangeEvent } from "react";
 import { useAppDispatch, useAppSelector } from "../../store/store.hooks";
-import { loadFiles, selectSelectedProject } from "../../store/slice.projects";
+import { selectSelectedProject } from "../../store/slice.projects";
+import loadFiles from "../../store/thunk.loadFiles";
 
 import css from "./LoadFileInput.module.scss";
 
@@ -25,6 +26,7 @@ const LoadFileInput = ({className, children}: LoadFileInputProps) : JSX.Element 
 		const files = e.target.files ?? [];
 		const array = Array.from(files);
 		dispatch(loadFiles(array));
+		e.target.value = "";
 	}
 	
 	const isDisabled = project ? false : true;
