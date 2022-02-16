@@ -11,11 +11,7 @@ const Footer = ({className}: CustomHTMLAttributes) : JSX.Element =>
 {
 	const dispatch = useAppDispatch();
 	const [downloadRef, setDownloadRef] = useRefElement<HTMLAnchorElement>(null);
-	
-	const openPreviewHandler = () =>
-	{
-		
-	}
+
 	const saveResultHandler = async () =>
 	{
 		if(downloadRef == null) return;
@@ -31,7 +27,6 @@ const Footer = ({className}: CustomHTMLAttributes) : JSX.Element =>
 		<footer className={classNameForFooter}>
 			<EditorInput className={css.editor} />
 			<div className={css.buttons}>
-				<button className={css.button} onClick={openPreviewHandler}>Open preview</button>
 				<button className={css.button} onClick={saveResultHandler}>Save</button>
 			</div>
 			<a href="blob:" download="mock.txt" ref={setDownloadRef}></a>
