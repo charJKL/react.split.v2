@@ -1,12 +1,12 @@
 import { createAction, createSlice, PayloadAction } from "@reduxjs/toolkit";
 import type { GetStoreState, StoreDispatch, StoreState } from "./store";
-import StoreException from "./lib/storeException";
-import getRandomId from "./lib/getRandomId";
-import trimFileExtension from "./lib/trimFileExtension";
+import { changeKey, deleteItem, loadItem } from "./middleware/LocalStorage";
 import { Page, addPage } from "./slice.pages";
 import { Metric, addMetric } from "./slice.metrics";
 import { Ocr, addOcr } from "./slice.ocrs";
-import { changeKey, deleteItem, loadItem } from "./middleware/LocalStorage";
+import { resetState } from "./store.reset";
+import StoreException from "./lib/storeException";
+import getRandomId from "./lib/getRandomId";
 
 type Key = string;
 type ProjectValue = {id: Key, name: string};
@@ -31,9 +31,10 @@ const InitialState : InitialStateProjects =
 	selected: null,
 }
 
+const SliceName = "projects";
 const LoadProjectAction = createAction<InitialStateProjects>('localStorage/projects');
 const Projects = createSlice({
-	name: "projects",
+	name: SliceName,
 	initialState: InitialState,
 	reducers: 
 	{
@@ -70,6 +71,9 @@ const Projects = createSlice({
 			projects.selected = null; // remove selected project.
 			return projects;
 		})
+		.addCase(resetState, (state, action) => {
+			if(action.payload.includes(SliceName)) return InitialState;
+		});
 	}
 });
 
@@ -92,14 +96,18 @@ const selectProject = (projectId: Key) => (dispatch: StoreDispatch, getState: Ge
 const createProject = (name?: string) => (dispatch: StoreDispatch, getState: GetStoreState) =>
 {
 	const { projects } = getState();
-	const { addProject } = Projects.actions;
+	const { addProject, selectProject } = Projects.actions;
 	
 	let projectId = getRandomId(10);
 	let projectName = name ?? "New project";
 	while(projects.ids.includes(projectId)) projectId = getRandomId(10); // make sure Id is unique
 	for(let i=1; Object.values(projects.entities).some(project => project.name === projectName); i++) projectName = `New project (${i})`; // make sure name is unique
+	
 	dispatch(addProject({id: projectId, name: projectName}));
 	dispatch(selectProject(projectId));
+	dispatch(changeKey(projectId));
+	dispatch(resetState(['pages', 'metrics', 'ocrs', 'gui']));
+	dispatch(loadItem(projectId));
 }
 
 const deleteProject = (projectId: Key) => (dispatch: StoreDispatch, getState: GetStoreState) =>
@@ -115,17 +123,9 @@ const deleteProject = (projectId: Key) => (dispatch: StoreDispatch, getState: Ge
 
 const loadFile = (files: Array<File>) => (dispatch: StoreDispatch, getState: GetStoreState) =>
 {
-	const { projects, pages } = getState();
-	const { addProject } = Projects.actions;
-	
+	const { pages } = getState();
+
 	if(files.length === 0) throw new StoreException(`Array of files is empty.`, {type: `projects/loadFile`, payload: files});
-	
-	// create project:
-	let id = getRandomId(10);
-	while(projects.ids.includes(id)) id = getRandomId(10);
-	const name = files[0] ? trimFileExtension(files[0].name) : "";
-	dispatch(addProject({id, name}));
-	dispatch(selectProject(id));
 	
 	// load files:
 	let counter = pages.ids.length;

@@ -1,5 +1,6 @@
 import { createAction, createSlice, PayloadAction } from "@reduxjs/toolkit";
 import type { StoreState } from "./store";
+import { resetState } from "./store.reset";
 import StoreException from "./lib/storeException";
 
 type Key = string;
@@ -34,9 +35,10 @@ const InitialState : InitialStateMetrics =
 	entities: {},
 }
 
+const SliceName = "metrics";
 const LoadMetricsAction = createAction<InitialStateMetrics>('localStorage/metrics');
 const Metrics = createSlice({
-	name: "metrics",
+	name: SliceName,
 	initialState: InitialState,
 	reducers: 
 	{
@@ -90,6 +92,9 @@ const Metrics = createSlice({
 		.addCase(LoadMetricsAction, (state, action) => {
 			return action.payload;
 		})
+		.addCase(resetState, (state, action) => {
+			if(action.payload.includes(SliceName)) return InitialState;
+		});
 	}
 });
 

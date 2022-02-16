@@ -1,6 +1,7 @@
 import { createAction, createSlice, PayloadAction } from "@reduxjs/toolkit";
 import type { GetStoreState, StoreDispatch, StoreState } from "./store";
 import StoreException from "./lib/storeException";
+import { resetState } from "./store.reset";
 
 type Key = string;
 type Position = {top: number, left: number};
@@ -34,9 +35,10 @@ const InitialState : InitialStateGui =
 	tooltips: { startHere: true },
 }
 
+const SliceName = "gui";
 const LoadGuiAction = createAction<InitialStateGui>('localStorage/gui');
 const Gui = createSlice({
-	name: "gui",
+	name: SliceName,
 	initialState: InitialState,
 	reducers: 
 	{
@@ -81,6 +83,9 @@ const Gui = createSlice({
 		.addCase(LoadGuiAction, (state, action) => {
 			return action.payload;
 		})
+		.addCase(resetState, (state, action) =>{
+			if(action.payload.includes(SliceName)) return InitialState;
+		});
 	}
 });
 

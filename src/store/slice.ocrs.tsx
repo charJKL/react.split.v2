@@ -2,10 +2,12 @@ import { createAction, createAsyncThunk, createSlice, PayloadAction } from "@red
 import { Metric } from "./slice.metrics";
 import { isPageLoaded, Page, PageLoaded } from "./slice.pages";
 import { StoreState, ThunkStoreTypes } from "./store";
+import { resetState } from "./store.reset";
 import { Baseline, Bbox, Choice, createWorker,  } from 'tesseract.js';
 import getHTMLImageElement from "./lib/getHTMLImageElement"
 import drawRotateImage from "./lib/drawRotateImage"
 import StoreException from "./lib/storeException";
+import { add } from "lodash";
 
 type Key = string;
 type OcrStatus = "Idle" | "Preprocessing" | "Initializaing" | "Parsing" | "Parsed" | "Error";
@@ -38,9 +40,10 @@ const InitialState : InitialStateMetrics =
 	entities: {},
 }
 
+const SliceName = "ocrs";
 const LoadOcrAction = createAction<InitialStateMetrics>('localStorage/ocr');
 const Ocrs = createSlice({
-	name: "ocrs",
+	name: SliceName,
 	initialState: InitialState,
 	reducers: 
 	{
@@ -102,6 +105,9 @@ const Ocrs = createSlice({
 	extraReducers: (builder) => { builder
 		.addCase(LoadOcrAction, (state, action) => {
 			return action.payload;
+		})
+		.addCase(resetState, (state, action) => {
+			if(action.payload.includes(SliceName)) return InitialState;
 		})
 	}
 });

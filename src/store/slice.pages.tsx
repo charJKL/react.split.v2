@@ -1,5 +1,6 @@
 import { createAction, createAsyncThunk, createSlice, current, PayloadAction, Store } from "@reduxjs/toolkit";
 import { GetStoreState, StoreDispatch, StoreState } from "./store";
+import {resetState} from "./store.reset";
 import StoreException from "./lib/storeException";
 
 type PageStatus = "Idle" | "Restored" | "Loading" | "Loaded" | "Error";
@@ -64,6 +65,9 @@ const Pages = createSlice({
 			Object.values(pages.entities).forEach((page) => page.status = "Restored"); // pages load from localStorage aren't loaded.
 			return pages;
 		})
+		.addCase(resetState, (state, action) => {
+			if(action.payload.includes("pages")) return InitialState;
+		});
 	}
 });
 
