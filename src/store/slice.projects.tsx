@@ -121,7 +121,7 @@ const deleteProject = (projectId: Key) => (dispatch: StoreDispatch, getState: Ge
 	}
 }
 
-const loadFile = (files: Array<File>) => (dispatch: StoreDispatch, getState: GetStoreState) =>
+const loadFiles = (files: Array<File>) => (dispatch: StoreDispatch, getState: GetStoreState) =>
 {
 	const { pages } = getState();
 
@@ -145,7 +145,7 @@ const loadFile = (files: Array<File>) => (dispatch: StoreDispatch, getState: Get
 
 
 export const { renameProject } = Projects.actions;
-export { createProject, selectProject, deleteProject, loadFile };
+export { createProject, selectProject, deleteProject, loadFiles };
 
 export type { Project };
 export default Projects;

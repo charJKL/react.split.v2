@@ -1,7 +1,6 @@
 import React, { useRef, ChangeEvent } from "react";
 import { useAppDispatch, useAppSelector } from "../../store/store.hooks";
-import { loadFile, selectSelectedProject } from "../../store/slice.projects";
-import { updateTooltip } from "../../store/slice.gui";
+import { loadFiles, selectSelectedProject } from "../../store/slice.projects";
 
 import css from "./LoadFileInput.module.scss";
 
@@ -25,7 +24,7 @@ const LoadFileInput = ({className, children}: LoadFileInputProps) : JSX.Element 
 	{
 		const files = e.target.files ?? [];
 		const array = Array.from(files);
-		dispatch(loadFile(array));
+		dispatch(loadFiles(array));
 	}
 	
 	const isDisabled = project ? false : true;
