@@ -10,13 +10,14 @@
 	&:last-child{ border: none;}
 	&:hover
 	{
-		background: #e9e9e9;
+		background: #f8f8f8;
 		cursor: pointer;
 	}
 }
 .checkbox
 {
-	margin: 0px 3px 0px 4px;
+	margin: 0px 3px 0px 6px;
+	cursor: pointer;
 }
 .input
 {

@@ -5,33 +5,32 @@ div.select
 {
 	position: relative;
 	padding: 0px;
-	border: solid 1px #000;
-	height: index.$input-height;
-	box-sizing: border-box;
 }
-.input
+.wrapper
 {
+	position: relative;
 	display: flex;
 	flex-flow: row nowrap;
 	align-items: center;
 	height: 100%;
-	> input
-	{
-		border: none;
-		width: 100%;
-		height: 100%;
-		padding: 0px 20px 0px 7px;
-		font: list.slash(16px, 28px) index.$input-font-family;
-		&:focus{ border: none; outline: none;}
-	}
-	> div
-	{
-		position: absolute;
-		right: 3px;
-		user-select: none;
-	}
 }
-
+.input
+{
+	@extend %input-nested;
+	padding: 0px 0px 0px 45px;
+}
+.indicator
+{
+	position: absolute;
+	left: 5px;
+	user-select: none;
+}
+.count
+{
+	position: absolute;
+	left: 23px;
+	font-size: 11px;
+}
 .options
 {
 	position: absolute;
@@ -39,4 +38,5 @@ div.select
 	width: 100%;
 	border: solid 1px #000;
 	background: #fff;
+	z-index: 1;
 }

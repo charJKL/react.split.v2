@@ -1,4 +1,4 @@
-import React, {MouseEvent} from "react";
+import React, {MouseEvent, useLayoutEffect} from "react";
 import { useAppDispatch, useAppSelector } from "../../store/store.hooks";
 import { selectTooltip, updateTooltip } from "../../store/slice.gui";
 import { createProject } from "../../store/slice.projects";

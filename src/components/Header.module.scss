@@ -22,6 +22,7 @@
 }
 .select
 {
-	width: 250px;
+	@extend %input;
+	width: 300px;
 	margin: index.$row-padding 0px index.$row-padding index.$row-padding;
 }

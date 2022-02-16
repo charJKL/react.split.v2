@@ -2,6 +2,7 @@ import { ChangeEvent, MouseEvent, useRef } from "react";
 import { useAppDispatch, useAppSelector } from "../../store/store.hooks";
 import { deleteProject, Project, renameProject, selectProject, selectProjectById, selectSelectedProject } from "../../store/slice.projects";
 import css from "./ProjectOption.module.scss"
+import { updateTooltip } from "../../store/slice.gui";
 
 
 interface ProjectProps
@@ -16,12 +17,22 @@ const ProjectOption = ({projectId}: ProjectProps) : JSX.Element =>
 	const optionRef = useRef<HTMLDivElement>(null);
 	const dispatch = useAppDispatch();
 	
+	const onChangeProjectSelection = (e: ChangeEvent<HTMLInputElement>) =>
+	{
+		const value = e.target.checked;
+		if(value === true)
+		{
+			dispatch(selectProject(project.id));
+			dispatch(updateTooltip({tooltip: "startHere", value: false})); // it's importat to dispose popup after creating new project.
+		}
+	}
 	const onClickSelectProject = (e: MouseEvent<HTMLDivElement>) =>
 	{
 		if(e.target === optionRef.current)
 		{
 			const id = project.id;
 			dispatch(selectProject(id));
+			dispatch(updateTooltip({tooltip: "startHere", value: false})); // it's importat to dispose popup after creating new project.
 		}
 	}
 	const onChangeProjectName = (e: ChangeEvent<HTMLInputElement>) =>
@@ -29,7 +40,6 @@ const ProjectOption = ({projectId}: ProjectProps) : JSX.Element =>
 		const id = project.id;
 		const name = e.target.value;
 		dispatch(renameProject({id, name}));
-		
 	}
 	const onClickDeleteProject = (e: MouseEvent<HTMLButtonElement>) =>
 	{
@@ -38,14 +48,6 @@ const ProjectOption = ({projectId}: ProjectProps) : JSX.Element =>
 		{
 			const id = project.id;
 			dispatch(deleteProject(id));
-		}
-	}
-	const onChangeProjectSelection = (e: ChangeEvent<HTMLInputElement>) =>
-	{
-		const value = e.target.checked;
-		if(value === true)
-		{
-			dispatch(selectProject(project.id));
 		}
 	}
 	
