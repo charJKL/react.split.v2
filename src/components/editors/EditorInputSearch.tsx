@@ -1,6 +1,6 @@
 import { ChangeEvent, FocusEvent, KeyboardEvent, useState } from "react";
 import { selectPage, selectSearching, setSearching } from "../../store/slice.gui";
-import { Page, selectPageByName } from "../../store/slice.pages";
+import { selectPageByName, selectSelectedPage } from "../../store/slice.pages";
 import { useAppDispatch, useAppSelector } from "../../store/store.hooks";
 import Tooltip from "../common/Tooltip";
 import css from "./EditorInputSearch.module.scss";
@@ -8,11 +8,11 @@ import css from "./EditorInputSearch.module.scss";
 interface EditorInputSearchProps
 {
 	className?: string;
-	value: string;
 }
 
-const EditorInputSearch = ({className, value} : EditorInputSearchProps) : JSX.Element =>
+const EditorInputSearch = ({className} : EditorInputSearchProps) : JSX.Element =>
 {
+	const page = useAppSelector(selectSelectedPage);
 	const searching = useAppSelector(selectSearching);
 	const results = useAppSelector(selectPageByName(searching ?? ""));
 	const [showTooltip, setShowTooltip] = useState<boolean>(false);
@@ -54,6 +54,7 @@ const EditorInputSearch = ({className, value} : EditorInputSearchProps) : JSX.El
 		}
 	}
 	
+	const value = searching ?? page?.name ?? "";
 	const foundOneIndicator = result ? css.indicator : "";
 	const classNameForInput = [className, css.input].join(" ");
 	const classNameForResult = [css.result, foundOneIndicator].join(" ");
