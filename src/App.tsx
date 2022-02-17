@@ -15,6 +15,14 @@ function App() {
 		dispatch(loadItem("projects"));
 	}, []);
 	
+	
+	useEffect(() =>{
+		// https://bugzilla.mozilla.org/show_bug.cgi?id=801176
+		if(navigator.userAgent.toLowerCase().indexOf('firefox') > -1){
+			alert("Firefox doesn't support `OffscreenCanvas`, henve tesseract will not work.");
+		}
+	}, [])
+	
 	return (
 		<>
 			<Header className={css.header}/>
