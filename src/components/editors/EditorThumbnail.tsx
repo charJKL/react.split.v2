@@ -31,8 +31,12 @@ const EditorThumbnail = ({page, metric} : EditorThumbnailProps): JSX.Element =>
 		layers.push(<LayerPage key="editor-metric-page" className={css.page} page={page} metric={scaledMetrics} desktopSize={scaledDesktopSize} />);
 		layers.push(<LayerHighlight key="editor-metric-highlight" className={css.highlight} page={page} metric={scaledMetrics} desktopSize={scaledDesktopSize}/>);
 	}
+	
+	const width = scaledDesktopSize?.width ?? "100%";
+	const height = scaledDesktopSize?.height ?? "100%";
+	const styleForEditor = {width: width, height: height};
 	return (
-		<div className={css.editor} ref={setEditorRef} >
+		<div className={css.editor} style={styleForEditor} ref={setEditorRef} >
 			{ layers.map((layer) => layer ) }
 		</div>
 	)
