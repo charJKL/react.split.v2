@@ -31,8 +31,8 @@ const Thumbnail = ({id}: ThumbnailProps) : JSX.Element =>
 	
 	useEffect(() => {
 		console.log("is use effect triggered?");
-		if(isVisible === true) dispatch(loadPage(id))
-	}, [isVisible, page, id, dispatch]);
+		if(isVisible === true && page.status !== "Loaded") dispatch(loadPage(id))
+	}, [isVisible, page.status, id, dispatch]);
 	
 	const onClickHandler = () =>
 	{
