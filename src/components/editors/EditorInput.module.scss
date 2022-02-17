@@ -12,13 +12,3 @@
 	align-items: center;
 	margin: 0px 10px 0px 0px;
 }
-.input
-{
-	@extend %input;
-	width: 100px;
-	padding: 0px 0px 0px 10px;
-}
-.inputName
-{
-	width: 200px;
-}

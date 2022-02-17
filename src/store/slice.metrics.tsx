@@ -54,7 +54,6 @@ const Metrics = createSlice({
 			const name = action.payload.name;
 			const entity = state.entities[id];
 			if(entity === undefined) throw new StoreException(`You update metrics value for nonexisting page`, action.payload);
-			entity.status = "Edited";
 			entity[name] = action.payload.value;
 			switch(true)
 			{
@@ -77,6 +76,10 @@ const Metrics = createSlice({
 					entity.status = "Invalid";
 					entity.details = "y2<y1";
 					break;
+				
+				default:
+					entity.status = "Edited";
+					entity.details = null;
 			}
 		},
 		updateStatus: (state, action: PayloadAction<StatusValue>) =>

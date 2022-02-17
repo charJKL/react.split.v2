@@ -1,0 +1,13 @@
+@use "../../index.scss";
+
+.wrapper
+{
+	position: relative;
+}
+.input
+{
+	@extend %input;
+	padding: 0 0 0 10px;
+	width: 100px;
+	&.invalid{ border: solid 1px #f00; }
+}
