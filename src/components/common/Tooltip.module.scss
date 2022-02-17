@@ -109,3 +109,18 @@ $indicator-size: 6px;
 		border-right:inherit;
 	}
 }
+.bottom-center
+{
+	bottom: calc(100% + $distance);
+	left: 50%;
+	transform: translateX(-50%);
+	text-align: center;
+	&::before
+	{
+		@extend %tooltip-indicator;
+		top: calc(100% - $indicator-size / 2);
+		right: calc(50% - $indicator-size / 2);
+		border-bottom:inherit;
+		border-right:inherit;
+	}
+}
