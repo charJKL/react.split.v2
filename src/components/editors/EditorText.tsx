@@ -1,9 +1,8 @@
-import { MouseEvent } from "react"; 
-import { useAppSelector, useAppDispatch } from "../../store/store.hooks";
-import { isPageKnown, isPageLoaded, selectSelectedPage } from "../../store/slice.pages";
-import { selectMetricsForPage } from "../../store/slice.metrics";
-import { isOcrIdle, isOcrNotIdle, isOcrParsed, readPage, selectOcrForPage } from "../../store/slice.ocrs";
+import { useAppSelector,  } from "../../store/store.hooks";
+import { selectSelectedPage } from "../../store/slice.pages";
+import { isOcrIdle, isOcrNotIdle, isOcrParsed, selectOcrForPage } from "../../store/slice.ocrs";
 import EditorTextStatus from "./EditorTextStatus";
+import EditorTextProcessButton from "./EditorTextProcessButton";
 import css from "./EditorText.module.scss";
 
 interface EditorTextProps
@@ -14,33 +13,18 @@ interface EditorTextProps
 const EditorText = ({style} : EditorTextProps) : JSX.Element =>
 {
 	const page = useAppSelector(selectSelectedPage);
-	const metrics = useAppSelector(selectMetricsForPage(page ? page.id : ""));
 	const ocr = useAppSelector(selectOcrForPage(page ? page.id : ""));
-	const dispatch = useAppDispatch();
 	
-	const onProcessHandler = (e: MouseEvent) =>
-	{
-		if(page && metrics)
-		{
-			if(isPageKnown(page)) 
-			{
-				dispatch(readPage({page, metrics}));
-			}
-		}
-	}
-
 	var toolbars: Array<JSX.Element> = [];
 	var layers: Array<JSX.Element> = [];
-	console.log(page, ocr);
 	if(page && ocr && isOcrIdle(ocr))
 	{
-		const isProccessButtonDisabled = isPageLoaded(page) === true;
-		layers.push(<div key="editor-text-button" className={css.empty}><button className={css.button} onClick={onProcessHandler} disabled={isProccessButtonDisabled}>Proccess file</button></div>);
+		layers.push(<div key="editor-text-button" className={css.empty}><EditorTextProcessButton className={css.button} placement="desktop">Proccess file</EditorTextProcessButton></div>);
 	}
 	if(page && ocr && isOcrNotIdle(ocr))
 	{
 		layers.push(<EditorTextStatus key="editor-text-status" className={css.status} status={ocr.status} details={ocr.details}/>);
-		toolbars.push(<button onClick={onProcessHandler}>Proccess file</button>);
+		toolbars.push(<EditorTextProcessButton className={css.button} placement="toolbar">Proccess file</EditorTextProcessButton>);
 	}
 	if(page && ocr && isOcrParsed(ocr))
 	{
