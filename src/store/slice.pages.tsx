@@ -2,6 +2,7 @@ import { createAction, createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { GetStoreState, StoreDispatch, StoreState } from "./store";
 import {resetState} from "./store.reset";
 import StoreException from "./lib/storeException";
+import { updateTooltip } from "./slice.gui";
 
 type PageStatus = "Idle" | "Cached" | "Waiting" | "Restored" | "Loading" | "Loaded" | "Error";
 type Key = string;
@@ -100,6 +101,7 @@ const loadPage = (pageId: Key) => (dispatch: StoreDispatch, getState: GetStoreSt
 	if(isPageStalled(page)) 
 	{
 		dispatch(setStatus({id: pageId, status: "Waiting"}));
+		dispatch(updateTooltip({tooltip: "loadResources", value: true}));
 		return;
 	}
 	

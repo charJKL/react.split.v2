@@ -6,7 +6,7 @@ import { resetState } from "./store.reset";
 type Key = string;
 type Position = {top: number, left: number};
 type Scale = {x: number, y: number};
-type Tooltips = "startHere";
+type Tooltips = "startHere" | "loadResources";
 type KeyValue = {editorName: string; pageId: string; setting: Omit<Setting, "id">; }
 type PositionValue = {editorName: string, pageId: string, movementX: number, movementY: number };
 type ScaleValue = {editorName: string, pageId: string, x: number, y: number };
@@ -32,7 +32,7 @@ const InitialState : InitialStateGui =
 	selected: null,
 	searching: null,
 	settings: {},
-	tooltips: { startHere: true },
+	tooltips: { startHere: true, loadResources: false },
 }
 
 const SliceName = "gui";
