@@ -81,7 +81,6 @@ const LocalStorage = (prefix: string, settings: settings) =>
 				case Actions.loadItem:
 					const key = [prefix, action.payload].join('.');
 					const item = loadItemFromStorage(key);
-					console.log('load', key, item);
 					if(item === null) return;
 					Object.entries(item).forEach(([name, slice]) => { middleware.dispatch({type: `localStorage/${name}`, payload: slice}); });
 					return;
@@ -104,7 +103,6 @@ const LocalStorage = (prefix: string, settings: settings) =>
 			const id = setting.key ?? customKey;
 			const key = [prefix, id].join('.');
 			const state = filterObject(middleware.getState(), setting?.slices);
-			console.log('save', action, key, state);
 			storeItemInStorage(key, state);
 		}
 		return result;
