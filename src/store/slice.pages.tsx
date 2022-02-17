@@ -87,7 +87,7 @@ type PageKnown = Page & {status: "Cached" | "Loaded"; url: string, width: number
 type PageStalled = Page & {status: "Idle" | "Cached" | "Waiting", url: undefined; }
 const isPageIdle = (page: Page) : boolean => page.status === "Idle";
 const isPageLoaded = (page: Page): page is PageKnown => page.status === "Loaded";
-const isPageStalled = (page: Page) : page is PageStalled => page.status === "Idle" || page.status === "Cached" || page.status === "Waiting";
+const isPageStalled = (page: Page) : page is PageStalled => page.status === "Cached" || page.status === "Waiting";
 const isPageKnown = (page: Page) : page is PageKnown => page.status === "Cached" || page.status === "Loaded";
 
 const loadPage = (pageId: Key) => (dispatch: StoreDispatch, getState: GetStoreState) =>
