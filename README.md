@@ -3,7 +3,7 @@
 Application allow you extract text from images (OCR). Uses https://github.com/naptha/tesseract.js.
 
 ## Test it online
-You test it online [https://react-split-epub.netlify.app/](https://react-split-epub.netlify.app/) 
+You test it online [https://react-split-v2.netlify.app/](https://react-split-v2.netlify.app/) 
 
 ## Knowed bugs:
 - `useResolveObjectBeingHovered` doesn't work as expected, allows select line even outside dekstop 
